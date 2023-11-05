@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@800&family=Mooli&family=Public+Sans:wght@300&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+*,
+body,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: medium;
+}
