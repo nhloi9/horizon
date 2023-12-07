@@ -12,6 +12,7 @@ datasource db {
 
 model User {
   id       Int @id @default(autoincrement())
+  avatar File? 
   firstname String 
   email    String @unique
   password String?
@@ -19,9 +20,50 @@ model User {
   lastname String
   requestSent FriendRequest[] @relation("send")
   requestReceived FriendRequest[] @relation("receive")
-  birthday DateTime? @db.Date 
+  conversations ConversationMember[]
+  posts Post[]
+  wishLocations WishLocation[]
+  detail UserDetail?
+  sendComments Comment[] @relation("'sender'")
+  receiveComments Comment[] @relation("receiver")
+  reacts PostUserReact[] 
+  resetPasswordCode ResetPasswordCode?
+ 
+  adminGroups Group[] @relation("admin")
+  createGroups Group[] @relation("create")
+  groupRequests GroupReqest[]
+  sendNotifications Notification[] @relation("send_notify")
+  receiveNotifications Notification[] @relation("receive_notify")
+  reactComments CommentReact[]
+
   @@map("users")
 }
+
+model UserDetail {
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coverImage File?
+  // birthday DateTime? @db.Date 
+  birthday DateTime?  
+  country String?
+  state String?
+  intro String?
+  website String?
+  phone String?
+  gender gender?
+  @@map("user_details")
+}
+model ResetPasswordCode {
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id])
+  value Int 
+  expireTime DateTime
+  @@map("reset_password_codes")
+}
+
+
 
 model FriendRequest {
   id Int @id @default(autoincrement())
@@ -37,6 +79,218 @@ model FriendRequest {
   @@map("friend_requests")
 }
 
+model File {
+  id Int @id @default(autoincrement())
+  avatarOfUserId Int? @unique
+  avatarOfUser User? @relation(references: [id], fields: [avatarOfUserId], onDelete: SetNull) 
+  coverImageOfUserDetailId Int? @unique
+  coverImageOfUserDetail UserDetail? @relation(fields: [coverImageOfUserDetailId], references: [id], onDelete: SetNull)
+  name String
+  url String
+  createdAt DateTime @default(now())
+  postId Int?
+  post Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
+  locationId Int?
+  location Location? @relation(fields: [locationId], references: [id] , onDelete: SetNull)
+  messageId Int?
+  message Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  groupId Int? @unique
+  group Group? @relation(fields: [groupId], references:[id])
+
+  
+
+  @@map("files")
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  text String
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locationId Int?
+  location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  isCheckin Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  files File[]
+  comments Comment[]
+  reacts PostUserReact[]
+  access access?
+  approved Boolean?
+  negative Boolean?
+  shareId Int?
+  share Post? @relation("share", fields: [shareId], references: [id], onDelete: SetNull)
+  shareBys Post[] @relation("share")
+
+  @@map("posts")
+}
+
+
+
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String
+  access  accessGroup
+  creatorId Int?
+  adminId Int
+  creator User? @relation("create",fields: [creatorId], references: [id], onDelete: SetNull)
+  admin User @relation("admin",fields: [adminId], references: [id], onDelete: Cascade)
+  image File?
+  requests GroupReqest[]
+
+  @@map("groups")
+
+}
+
+
+
+model GroupReqest {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  groupId Int
+  group Group @relation(fields: [groupId], references: [id])
+  status Status
+  type groupRequestType
+
+  @@unique([userId, groupId])
+
+  @@map("group_requests")
+}
+
+
+
+model Location {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  userId Int
+  longitude Int
+  latitude Int
+  posts Post[]
+  numberOfCheckins Int
+  wishUsers WishLocation[]
+  images File[]
+
+  @@map("locations")
+}
+
+model WishLocation {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  locationId Int
+  location Location @relation(fields: [locationId], references: [id])
+   @@map("wish_locations")
+}
+
+model Conversation {
+  id Int @id @default(autoincrement())
+  isGroup Boolean
+  name String?
+  members ConversationMember[]
+   @@map("conversations")
+}
+
+model ConversationMember{
+  id Int @id @default(autoincrement())
+  conversationId Int
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  isSeen  Boolean
+  isAdmin Boolean
+  messages Message[]
+   @@map("conversation_members")
+
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  text String
+  memberId Int
+  member ConversationMember @relation(fields: [memberId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  files File[]
+   @@map("messages")
+}
+
+model React {
+  id Int @id @default(autoincrement())
+  name String
+  icon String
+  posts PostUserReact[]
+   @@map("reacts")
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  senderId Int?
+  sender User? @relation("send_notify",fields: [senderId], references: [id])
+  receiverId Int
+  receiver User? @relation("receive_notify",fields: [receiverId], references: [id])
+  isSeen Boolean @default(false)
+  content  String?
+  url String?
+
+  @@map("notifications")
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  postId Int
+  parentId Int?
+  senderId Int
+  receiverId Int?
+  content String
+  negative Boolean?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+
+  sender User @relation( "'sender'",fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User? @relation("receiver",fields: [receiverId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent Comment? @relation("answer",fields: [parentId], references: [id])
+  answers Comment[] @relation("answer")
+  reacts CommentReact[]
+
+   @@map("comments")
+
+}
+
+model CommentReact {
+  id Int @id @default(autoincrement())
+  userId Int
+  commentId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  type commentReact
+
+  @@unique([userId, commentId])
+
+  @@map("comment_reacts")
+}
+
+model PostUserReact {
+  id Int @id @default(autoincrement())
+  postId Int
+  userId Int
+  reactId Int
+  post Post @relation(references: [id], fields: [postId], onDelete: Cascade)
+  react React @relation(references: [id], fields: [reactId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([postId, userId])
+   @@map("post_user_reacts")
+}
+
+
+
+
+
 enum Role {
   user
   admin
@@ -45,4 +299,32 @@ enum Role {
 enum Status {
   waiting
   accepted
+}
+
+enum gender {
+  male
+  female
+  other
+}
+
+enum accessGroup {
+private 
+public
+}
+
+
+enum access {
+  private
+  public
+  friend
+}
+
+enum groupRequestType {
+  invite
+  join
+}
+
+enum commentReact {
+   like
+   dislike
 }

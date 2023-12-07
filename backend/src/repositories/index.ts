@@ -1,2 +1,5 @@
 export * as userRepo from './user'
 export * as friendRepo from './friend'
+export * as fileRepo from './file'
+export * as postRepo from './post'
+export * as commentRepo from './comment'

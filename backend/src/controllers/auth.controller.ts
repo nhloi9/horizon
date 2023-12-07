@@ -70,14 +70,14 @@ export const getOauthToken = async (
     }
     const decode: any = jwt.decode(id_token)
     console.log(decode)
-    const { email, given_name, family_name, piture } = decode //eslint-disable-line
+    const { email, given_name, family_name, picture } = decode //eslint-disable-line
     let user = await userRepo.findUser({ email })
     if (user === null) {
       user = await userRepo.createUser({
         email,
         firstname: given_name,
         lastname: family_name,
-        piture
+        avatar: picture
       })
     }
 

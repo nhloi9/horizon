@@ -3,8 +3,8 @@ import { prisma } from '../database/postgres'
 // import { type IUser } from '../types'
 
 const createFriendRequest = async (
-  receiverId: number,
-  senderId: number
+  senderId: number,
+  receiverId: number
 ): Promise<FriendRequest> => {
   const newFriendRequest = await prisma.friendRequest.create({
     data: {
@@ -56,4 +56,73 @@ const deleteFriendRequest = async (
   })
 }
 
-export { createFriendRequest, findFriendRequest, deleteFriendRequest }
+const acceptedFriendRequest = async (
+  senderId: number,
+  receiverId: number
+): Promise<any> => {
+  return await prisma.friendRequest.updateMany({
+    where: { senderId, receiverId },
+    data: { status: 'accepted' }
+  })
+}
+
+export {
+  createFriendRequest,
+  findFriendRequest,
+  deleteFriendRequest,
+  acceptedFriendRequest
+}
+
+export const findAllFriends = async (userId: number): Promise<any> => {
+  return await prisma.friendRequest.findMany({
+    where: {
+      OR: [
+        {
+          senderId: userId
+        },
+        {
+          receiverId: userId
+        }
+      ],
+      status: 'accepted'
+    }
+  })
+}
+
+export const findSendRequests = async (senderId: number): Promise<any> => {
+  return await prisma.friendRequest.findMany({
+    where: {
+      senderId,
+      status: 'waiting'
+    },
+    include: {
+      receiver: {
+        select: {
+          lastname: true,
+          firstname: true,
+          id: true,
+          avatar: true
+        }
+      }
+    }
+  })
+}
+
+export const findReceiveRequests = async (receiverId: number): Promise<any> => {
+  return await prisma.friendRequest.findMany({
+    where: {
+      receiverId,
+      status: 'waiting'
+    },
+    include: {
+      sender: {
+        select: {
+          lastname: true,
+          firstname: true,
+          id: true,
+          avatar: true
+        }
+      }
+    }
+  })
+}

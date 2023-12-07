@@ -26,6 +26,13 @@ export const errorConverter = (
       status: err.statusCode
     })
   }
+  if (err.message === 'multer') {
+    convertedError = new APIError({
+      status: 400,
+      ec: 500,
+      msg: 'Only .png, .jpg and .jpeg .mp4 format allowed!'
+    })
+  }
   return errorHandler(new APIError(convertedError), req, res)
 }
 

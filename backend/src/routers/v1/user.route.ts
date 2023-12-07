@@ -13,6 +13,60 @@ router
 
 router.get('/active-acount/:ciphertext', controller.activeAcount)
 router.get('/', verifyToken, controller.getUser)
+router.get('/info/:id', verifyToken, controller.getUserInfo)
 router.post('/login', controller.login)
+router.get('/google/url', controller.getOauthUrl)
+router.get('/google/callback', controller.getOauthToken)
+router.get('/logout', controller.logout)
+router.put(
+  '/avatar',
+  verifyToken,
+  validation.updateUserAvatar,
+  controller.updateAvatar
+)
+router.put(
+  '/cover-image',
+  verifyToken,
+  validation.updateUserCoverImage,
+  controller.updateCoverImage
+)
+router.put(
+  '/profile',
+  verifyToken,
+  validation.updateUserProfile,
+  controller.updateProfile
+)
+
+router.post(
+  '/forget-password',
+  validation.forgetPassword,
+  controller.forgetPassword
+)
+
+router.post(
+  '/verify-reset-password',
+  validation.verifyResetPassword,
+  controller.verifyResetPassword
+)
+
+router.post(
+  '/reset-password',
+  validation.resetPassword,
+  controller.resetPassword
+)
+
+router.put(
+  '/password',
+  validation.changePassword,
+  verifyToken,
+  controller.changePassword
+)
+
+router.put(
+  '/password/set',
+  validation.setPassword,
+  verifyToken,
+  controller.setPassword
+)
 
 export default router

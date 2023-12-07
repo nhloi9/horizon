@@ -17,11 +17,14 @@ import routerV1 from '../routers/v1'
 import { notFound, errorConverter } from '../middlewares'
 
 const app: Express = express()
-const haltOnTimedout = (req: Request, _res: Response, next: any): void => {
-  if (!req.timedout) {
-    next()
-  }
-}
+// const haltOnTimedout = (req: Request, _res: Response, next: any): void => {
+//   if (!req.timedout) {
+//     next()
+//   }
+//   // else {
+//   //   next(new Error('Timed out'))
+//   // }
+// }
 const i18n = new I18n()
 
 i18n.configure({
@@ -54,7 +57,8 @@ const initApp = (app: express.Express): void => {
 
   app.use('/', routerV1)
   app.use(notFound)
-  app.use(haltOnTimedout)
+  // app.use(haltOnTimedout)
+
   app.use(errorConverter)
 }
 

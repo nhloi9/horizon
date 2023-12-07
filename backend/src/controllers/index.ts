@@ -1,3 +1,6 @@
 export * as userControllers from './user.controller'
-export * as authControllers from './auth.controller'
-export * as friendRequestControllers from './friend.cotroller'
+// export * as authControllers from './auth.controller'
+export * as friendRequestControllers from './friend.controller'
+export * as fileControllers from './file.controller'
+export * as postControllers from './post.controller'
+export * as commentControllers from './comment.controller'

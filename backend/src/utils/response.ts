@@ -10,7 +10,7 @@ export const getApiResponse = (
 ): APIResponse => {
   const apiResponse: APIResponse = {
     ec: response.ec ?? 0,
-    msg: msg !== undefined ? res?.__(msg) : undefined,
+    msg: msg !== undefined ? res?.__(msg) : response.msg,
     data: response.data,
     total: response.total
   }
