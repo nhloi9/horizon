@@ -1,0 +1,67 @@
+import React, { useEffect, useRef, useState } from 'react'
+import EmojiPicker from 'emoji-picker-react'
+
+const EmojiSelect = ({ textRef, css }) => {
+  const [openPicker, setOpenPicker] = useState(false)
+  const dropdownRef = useRef(null)
+  const handleClickOutside = e => {
+    if (dropdownRef.current && !dropdownRef.current?.contains(e.target)) {
+      setOpenPicker(false)
+    }
+  }
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div
+      ref={dropdownRef}
+      className='cursor-pointer relative h-[20px] '
+      onClick={e => {
+        e.stopPropagation()
+        setOpenPicker(!openPicker)
+        textRef.current.focus()
+      }}
+    >
+      😀
+      {openPicker && (
+        <div
+          className={`absolute z-[5000] ${
+            // right ? ' right-6' : bottom ? 'bottom-2' : 'left-2'
+            css
+          }  z-[1000]`}
+          onClick={e => {
+            e.stopPropagation()
+          }}
+          onMouseOver={() => {
+            textRef.current.focus()
+          }}
+        >
+          <EmojiPicker
+            width='300px'
+            height='400px'
+            autoFocusSearch={false}
+            onEmojiClick={e => {
+              const currentValue = textRef.current.value
+              const start = textRef.current.selectionStart
+              const end = textRef.current.selectionEnd
+              textRef.current.value =
+                currentValue?.slice(0, start) +
+                e.emoji +
+                currentValue?.slice(end)
+              textRef.current.focus()
+
+              textRef.current.setSelectionRange(
+                start + e.emoji.length,
+                start + e.emoji.length
+              )
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default EmojiSelect

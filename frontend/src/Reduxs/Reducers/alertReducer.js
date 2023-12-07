@@ -1,9 +1,12 @@
 import {createReducer} from '@reduxjs/toolkit';
-import {globleTypes} from '../Types/globleType';
+import {globalTypes} from '../Types/globalType';
+import {authTypes} from '../Types/authType';
 
 const initialState = {loading: true};
 export const alertReducer = createReducer(initialState, (builder) => {
-	builder.addCase(globleTypes.ALERT, (state, action) => {
-		return action.payload;
-	});
+	builder
+		.addCase(globalTypes.ALERT, (state, action) => {
+			return action.payload;
+		})
+		.addCase(authTypes.LOGOUT_SUCCESS, (state, action) => ({}));
 });

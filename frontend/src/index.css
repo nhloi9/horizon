@@ -1,7 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@800&family=Mooli&family=Public+Sans:wght@300&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 *,
 body,
 html {
@@ -9,4 +10,61 @@ html {
   padding: 0;
   box-sizing: border-box;
   font-size: medium;
+}
+
+body .dark {
+  background-color: '#242526';
+}
+
+.dark {
+  color: white;
+}
+
+*,
+::before,
+::after {
+  border-width: 0;
+  border-style: solid;
+  border-color: theme('borderColor.DEFAULT', currentColor);
+}
+
+/* .left-side::-webkit-scrollbar-thumb {
+  background: white;
+} */
+
+/* Handle on hover */
+/* .left-side::-webkit-scrollbar-thumb:hover {
+  background: red;
+}
+.left-side::-webkit-scrollbar {
+  width: 10px;
+  background: #f3f4f6;
+  box-shadow: none;
+} */
+.dkkd {
+  max-width: 100%;
+  min-width: 500px;
+  width: calc((100vh + -325px) * 1);
+}
+
+.ant-image.css-dev-only-do-not-override-qgg3xn {
+  width: 100%;
+  height: 100% !important;
+}
+
+.react-input-emoji--container {
+  border-width: 0 0 1px 0 !important;
+  border-radius: 0 !important;
+  /* margin-bottom: 0 !important; */
+}
+.react-input-emoji--container:focus {
+  border-width: 0 0 10px 0 !important;
+  border-color: black !important;
+  border-radius: 0 !important;
+  /* margin-bottom: 0 !important; */
+}
+
+.react-code-input {
+  display: flex !important;
+  justify-content: space-between;
 }

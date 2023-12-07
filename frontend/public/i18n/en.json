@@ -5,5 +5,11 @@
   "signin-email-welcome": "Welcome back.",
   "signup-title": "Sign up and start exploring your world",
   "signup-email-welcome": "Welcome join",
-  "signup": "Sign up"
+  "signup": "Sign up",
+  "profile_edit": "Edit profile",
+  "friend_add": "Add friend",
+  "friend_accept": "Confirm",
+  "friend_reject": "Delete",
+  "friend_remove": "Remove",
+  "friend_cancel_request": "Cancel request"
 }

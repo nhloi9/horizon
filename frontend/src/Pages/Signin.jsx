@@ -32,12 +32,12 @@ const Signin = () => {
     <div
       className=' min-h-screen  !bg-no-repeat  flex items-center justify-center '
       style={{
-        background: 'url(images/background_login.webp) no-repeat',
+        background: 'url(images/giphy.gif) no-repeat',
         backgroundSize: 'cover'
       }}
     >
       {!emailContinue ? (
-        <div className='bg-white md:rounded w-full  md:w-[450px] p-16 min-h-screen md:min-h-[80vh] shadow flex flex-col justify-between'>
+        <div className='bg-white dark:bg-dark-200 dark:text-white md:rounded w-full  md:w-[450px] p-16 min-h-screen md:min-h-[80vh] shadow flex flex-col justify-between'>
           <h1 className='text-[28px] font-[700] w-[70%]'>
             {/* Sign in to explore your new world */}
             {t('signin-title')}
@@ -45,26 +45,26 @@ const Signin = () => {
 
           <div>
             <div
-              className='rounded-3xl h-12  border-black border-[2px] cursor-pointer flex items-center'
+              className='rounded-3xl h-12  border-gray-600  dark:border-gray-50 border-[2px] cursor-pointer flex items-center'
               onClick={() => {
-                window.location.href = 'http://localhost:3333/auth/url'
+                window.location.href = 'http://localhost:3333/users/google/url'
               }}
             >
               <img
                 src='https://static.tacdn.com/img2/google/G_color_40x40.png'
-                class='w-[20xp] h-[20px] ml-6'
+                className='w-[20xp] h-[20px] ml-6'
                 alt=''
               />
               <span className='w-full text-center'>{t('signin-google')}</span>
             </div>
             <br />
             <div
-              className='rounded-3xl h-12  border-black border-[2px] cursor-pointer flex items-center'
+              className='rounded-3xl h-12  border-gray-600 dark:border-gray-50 border-[2px] cursor-pointer flex items-center'
               onClick={() => setEmailContinue(true)}
             >
               <img
                 src='https://static.tacdn.com/img2/google/G_color_40x40.png'
-                class='w-[20xp] h-[20px] ml-6'
+                className='w-[20xp] h-[20px] ml-6'
                 alt=''
               />
               <span className='w-full text-center'>{t('signin-email')} </span>
@@ -78,7 +78,10 @@ const Signin = () => {
           </div>
         </div>
       ) : (
-        <div className='bg-white md:rounded w-full  md:w-[450px] p-16 min-h-screen md:min-h-[80vh] shadow flex flex-col justify-between relative'>
+        <div
+          className='dark:bg-dark-200
+         dark:text-white bg-white md:rounded w-full  md:w-[450px] p-16 min-h-screen md:min-h-[80vh] shadow flex flex-col justify-between relative'
+        >
           <MdArrowBackIosNew
             className='absolute top-5 left-5 cursor-pointer '
             // size={'25px'}
@@ -109,15 +112,21 @@ const Signin = () => {
           >
             <Form.Item
               label='Email address'
+              hasFeedback
+              validateDebounce={100}
               name='email'
               rules={[
                 {
                   required: true,
                   message: 'Please input email!'
+                },
+                {
+                  type: 'email',
+                  message: 'email invalid'
                 }
               ]}
             >
-              <Input />
+              <Input placeholder='name@gmail.com' />
             </Form.Item>
 
             <Form.Item
@@ -130,7 +139,7 @@ const Signin = () => {
                 }
               ]}
             >
-              <Input.Password />
+              <Input.Password placeholder='******' />
             </Form.Item>
 
             <Form.Item

@@ -5,6 +5,8 @@ import { MdArrowBackIosNew } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { signupAction } from '../Reduxs/Actions/authAction'
+import { globalTypes } from '../Reduxs/Types/globalType'
+import { postApi } from '../network/api'
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -15,9 +17,30 @@ const Signup = () => {
 
   const [emailContinue, setEmailContinue] = useState(false)
 
-  const onFinish = values => {
-    dispatch(signupAction(values))
-    form.resetFields()
+  const onFinish = async values => {
+    // dispatch(signupAction(values))
+    // form.resetFields()
+    // form.setFields([
+    //   {
+    //     name: 'email',
+    //     errors: ['Please enter a valid email address']
+    //   }
+    // ])
+    try {
+      dispatch({ type: globalTypes.ALERT, payload: { loading: true } })
+      const { msg } = await postApi('/users/register', values)
+      dispatch({
+        type: globalTypes.ALERT,
+        payload: { loading: false, success: msg }
+      })
+      form.resetFields()
+      navigate('/signin')
+    } catch (error) {
+      dispatch({
+        type: globalTypes.ALERT,
+        payload: { loading: false, error }
+      })
+    }
   }
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo)
@@ -46,7 +69,7 @@ const Signup = () => {
             <div
               className='rounded-3xl h-12  border-black border-[2px] cursor-pointer flex items-center'
               onClick={() => {
-                window.location.href = 'http://localhost:3333/auth/url'
+                window.location.href = 'http://localhost:3333/users/google/url'
               }}
             >
               <img
@@ -88,6 +111,7 @@ const Signup = () => {
             {t('signup-email-welcome')}
           </h1>
           <Form
+            form={form}
             layout='vertical'
             name='basic'
             // labelCol={{
@@ -115,9 +139,15 @@ const Signup = () => {
             <Form.Item
               name='firstname'
               label='First name'
+              validateDebounce={200}
               rules={[
                 {
-                  required: true
+                  required: true,
+                  message: false
+                },
+                {
+                  max: 10,
+                  message: 'The first name must be less than 15 characters'
                 }
               ]}
               style={{
@@ -132,7 +162,12 @@ const Signup = () => {
               label='Last name'
               rules={[
                 {
-                  required: true
+                  required: true,
+                  message: false
+                },
+                {
+                  max: 10,
+                  message: 'The last name must be less than 15 characters'
                 }
               ]}
               style={{
@@ -145,13 +180,18 @@ const Signup = () => {
             </Form.Item>
             {/* </Form.Item> */}
             <Form.Item
+              hasFeedback
               label='Email address'
+              validateDebounce={200}
+              // validateFirst
               name='email'
               rules={[
                 {
                   required: true,
-                  message: 'Please input email!'
-                }
+                  type: 'email',
+                  message: 'Please input valid email!'
+                },
+                {}
               ]}
             >
               <Input />
@@ -160,10 +200,17 @@ const Signup = () => {
             <Form.Item
               label='Password'
               name='password'
+              hasFeedback
+              validateDebounce={200}
               rules={[
                 {
                   required: true,
                   message: 'Please input your password!'
+                },
+                {
+                  pattern: /^(?=.*[A-Za-z])(?=.*\d).{8,}$/,
+                  message:
+                    'Minimum eight characters, at least one letter and one number'
                 }
               ]}
             >
@@ -198,12 +245,12 @@ const Signup = () => {
           </Form>
           <div className='w-full flex  items-center gap-1'>
             <div className='border-t flex-1 '></div>
-            <h1 className=''>Not a member? </h1>
+            <h1 className=''>Already a member?</h1>
             <h1
               className='cursor-pointer text-blue-500 hover:text-blue-400'
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/signin')}
             >
-              Sign up
+              Sign in
             </h1>
             <div className='border-t flex-1 '></div>
             <div></div>

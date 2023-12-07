@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import LinearProgress from '@mui/material/LinearProgress'
-import { globleTypes } from '../../Reduxs/Types/globleType'
+import { globalTypes } from '../../Reduxs/Types/globalType'
 
 const Alert = () => {
   const [loadingSuccess, setLoadingSuccess] = useState(false)
@@ -12,11 +12,11 @@ const Alert = () => {
   useEffect(() => {
     if (alert.success) {
       toast.success(alert.success)
-      distpatch({ type: globleTypes.ALERT, payload: {} })
+      distpatch({ type: globalTypes.ALERT, payload: {} })
     }
     if (alert.error) {
       toast.error(alert.error)
-      distpatch({ type: globleTypes.ALERT, payload: {} })
+      distpatch({ type: globalTypes.ALERT, payload: {} })
     }
   }, [alert, distpatch])
 
