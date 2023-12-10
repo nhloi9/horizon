@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import CommentCard from './CommentCard'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 
-const CommentDisplay = ({ comment, post, createComment }) => {
+const CommentDisplay = ({ comment, post }) => {
   const [showAnsweres, setShowAnswres] = useState(false)
   console.log({ comment })
   return (
@@ -10,7 +10,7 @@ const CommentDisplay = ({ comment, post, createComment }) => {
       <CommentCard
         comment={comment}
         post={post}
-        createComment={createComment}
+        // createComment={createComment}
       />
       {comment.answers?.length > 0 && (
         <div
@@ -33,7 +33,7 @@ const CommentDisplay = ({ comment, post, createComment }) => {
                 key={cm.id}
                 comment={cm}
                 post={post}
-                createComment={createComment}
+                // createComment={createComment}
               />
             ))}
         </div>

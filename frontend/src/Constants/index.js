@@ -48,3 +48,5 @@ export const reacts = [
 			'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/sad8971.png?alt=media&token=dec69134-e033-4eac-9c82-58f965a580a9',
 	},
 ];
+
+export const defaulAvatar = require('../assets/images/defaut_avatar.jpg');

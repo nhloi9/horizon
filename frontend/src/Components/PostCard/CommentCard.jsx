@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BsHeart, BsHeartFill } from 'react-icons/bs'
 import moment from 'moment'
 import InputComment from './InputComment'
@@ -8,6 +8,7 @@ import { Avatar, Button, Dropdown } from 'antd'
 import { AiOutlineMore } from 'react-icons/ai'
 import { CiEdit } from 'react-icons/ci'
 import { MdDeleteOutline } from 'react-icons/md'
+import { CommentsContext } from './CommentsContext'
 
 // import EditIcon from '@mui/icons-material/Edit'
 // import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -18,7 +19,8 @@ import { MdDeleteOutline } from 'react-icons/md'
 //   updateComment
 // } from '../../redux/actions/postAction'
 
-const CommentCard = ({ comment, post, createComment }) => {
+const CommentCard = ({ comment, post }) => {
+  const { comments, setComments } = useContext(CommentsContext)
   const editRef = useRef(null)
   const navigate = useNavigate()
   const likeRef = useRef(null)
@@ -243,12 +245,7 @@ const CommentCard = ({ comment, post, createComment }) => {
         </div>
       </div>
       {openReply && (
-        <InputComment
-          post={post}
-          comment={comment}
-          setOpen={setOpenReply}
-          createComment={createComment}
-        />
+        <InputComment post={post} comment={comment} setOpen={setOpenReply} />
       )}
     </div>
   )

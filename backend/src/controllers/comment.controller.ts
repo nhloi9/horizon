@@ -3,8 +3,9 @@ import httpStatus from 'http-status'
 // import aposToLexForm from 'apos-to-lex-form'
 import expandContractions from '@stdlib/nlp-expand-contractions'
 import natural from 'natural'
+import * as SW from 'stopword'
 // import SpellCorrector from 'spelling-corrector'
-import SpellChecker from 'spellchecker'
+// import SpellChecker from 'spellchecker'
 // import SpellChecker from 'simple-spellchecker';
 // import dictionary from 'dictionary-en'
 
@@ -26,32 +27,14 @@ export const createComment = async (
 ) => {
   const { content, receiverId, parentId, postId } = req.body
 
-  // Converting contractions into standard lexicon
-  const lexedContent = expandContractions(content)
-  console.log(lexedContent)
-  // text data to lowercase
-  const casedContent = lexedContent.toLowerCase()
-  console.log(casedContent)
-  // Removing non-alphabetical and special characters
-  const alphaOnlyContent = casedContent.replace(/[^a-zA-Z\s]+/g, '')
-  console.log(alphaOnlyContent)
-  const { WordTokenizer } = natural
-  const tokenizer = new WordTokenizer()
-  // plitting a text into its individual meaningful units.
-  let tokenizedContent: any = tokenizer.tokenize(alphaOnlyContent)
-  tokenizedContent = tokenizedContent === null ? [] : tokenizedContent
-
-  // tokenizedContent.forEach((word, index) => {
-  //     tokenizedContent[index] = nspell.
-  //   })
-
   try {
     const comment = await commentRepo.createComment({
       content,
       receiverId,
       parentId,
       postId,
-      senderId: (req.payload as any).id
+      senderId: (req.payload as any).id,
+      negative: analysisSentiment(content) < 0
     })
     res.status(httpStatus.OK).json(
       getApiResponse({
@@ -94,58 +77,26 @@ export const getComments = async (
   }
 }
 
-// export const reactPost = async (
-//   req: RequestPayload,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const { reactId } = req.body
-//   const postId = Number(req.params.id)
-//   const userId = (req.payload as any).id
-//   try {
-//     await prisma.postUserReact.upsert({
-//       where: {
-//         postId_userId: {
-//           postId,
-//           userId
-//         }
-//       },
-//       update: {
-//         reactId
-//       },
-//       create: {
-//         reactId,
-//         postId,
-//         userId
-//       }
-//     })
-//     res.status(httpStatus.OK).json({ msg: 'react post successfully' })
-//   } catch (error) {
-//     next(error)
-//   }
-// }
+function analysisSentiment (content: string = '') {
+  // Converting contractions into standard lexicon
+  const lexedContent = expandContractions(content)
+  // text data to lowercase
+  const casedContent = lexedContent.toLowerCase()
+  // Removing non-alphabetical and special characters
+  const alphaOnlyContent = casedContent.replace(/[^a-zA-Z\s]+/g, '')
+  const { WordTokenizer } = natural
+  const tokenizer = new WordTokenizer()
+  // plitting a text into its individual meaningful units.
+  let tokenizedContent: any = tokenizer.tokenize(alphaOnlyContent)
+  tokenizedContent = tokenizedContent === null ? [] : tokenizedContent
 
-// export const removeReactPost = async (
-//   req: RequestPayload,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const postId = Number(req.params.id)
-//   const userId = (req.payload as any).id
-//   try {
-//     await prisma.postUserReact.deleteMany({
-//       where: {
-//         postId,
-//         userId
-//       }
-//     })
+  // tokenizedContent.forEach((word: any, index: number) => {
+  //   tokenizedContent[index] = SpellChecker.getCorrectionsForMisspelling(word)[0]
+  // })
+  const filteredContent = SW.removeStopwords(tokenizedContent)
 
-//     res.status(httpStatus.OK).json({ msg: 'react post successfully' })
-//   } catch (error) {
-//     next(error)
-//   }
-// }
-
-// function getPostsByFriend (userId: number) {}
-// function getPostsByLike (userId: number) {}
-// function getPostsBy
+  const { SentimentAnalyzer, PorterStemmer } = natural
+  const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn')
+  const analysis = analyzer.getSentiment(filteredContent)
+  return analysis
+}

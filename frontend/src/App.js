@@ -25,6 +25,9 @@ import {
 import {getHomePostsAction} from './Reduxs/Actions/postAction';
 import PhotoPage from './Pages/PhotoPage';
 import ForgetPasswordPage from './Pages/ForgetPasswordPage';
+import StoriesPage from './Pages/StoriesPage';
+import CreateStoryPage from './Pages/CreateStoryPage';
+import CreateGroupPage from './Pages/CreateGroupPage';
 // import PostModal from './Components/PostCard/PostModal';
 function App() {
 	const dispatch = useDispatch();
@@ -100,6 +103,14 @@ function App() {
 								}
 							/>
 							<Route
+								path="/stories"
+								element={
+									<Protected>
+										<StoriesPage />
+									</Protected>
+								}
+							/>
+							<Route
 								path="/signin"
 								element={<Signin />}
 							/>
@@ -110,6 +121,14 @@ function App() {
 							<Route
 								path="/signup"
 								element={<Signup />}
+							/>
+							<Route
+								path="/stories/create"
+								element={<CreateStoryPage />}
+							/>
+							<Route
+								path="/groups/create"
+								element={<CreateGroupPage />}
 							/>
 							<Route
 								path="/active-email/:token"

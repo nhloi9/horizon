@@ -68,3 +68,70 @@ body .dark {
   display: flex !important;
   justify-content: space-between;
 }
+
+.story-video video {
+  object-fit: cover !important;
+  border-radius: 10px !important;
+}
+
+.story-video .ant-progress-inner {
+  background-color: rgb(174, 169, 169);
+}
+.story-video .ant-progress-bg {
+  background-color: white;
+  box-shadow: 3px;
+  opacity: 1;
+}
+
+.react-story ::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.home-story ::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.create-story-preview video {
+  object-fit: cover !important;
+  border-radius: 10px !important;
+}
+
+.song-card::-webkit-scrollbar {
+  width: 4px !important;
+  /* heigh
+  t: 1px !important; */
+}
+
+.create-story .ant-progress-inner {
+  background-color: rgb(174, 169, 169);
+}
+
+.create-group .dropdown-container {
+  height: 60px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.scroll-min::-webkit-scrollbar {
+  width: 5px !important;
+}
+.scroll::-webkit-scrollbar-track {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle */
+.scroll::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+.scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* .header-notify .ant-popover {
+  transform: translateX(-30px) !important;
+} */

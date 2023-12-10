@@ -1,13 +1,15 @@
 import { Button } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import InputEmoji from 'react-input-emoji'
 import { useSelector } from 'react-redux'
+import { CommentsContext } from './CommentsContext'
 
-const InputComment = ({ comment, setOpen, createComment }) => {
+const InputComment = ({ comment, setOpen }) => {
   const ref = useRef()
   const [focus, setFocus] = useState(false)
   const [text, setText] = useState('')
   const { user } = useSelector(state => state.auth)
+  const { createComment } = useContext(CommentsContext)
 
   const handleComment = () => {
     createComment({

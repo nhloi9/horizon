@@ -33,7 +33,6 @@
     "firebase-admin": "^11.11.0",
     "helmet": "^7.0.0",
     "http-status": "^1.6.2",
-    "hunspell-spellchecker": "^1.0.2",
     "i18n": "^0.15.1",
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.0",
@@ -54,6 +53,8 @@
     "qs": "^6.11.2",
     "salted-md5": "^4.0.5",
     "simple-spellchecker": "^1.0.2",
+    "stopword": "^2.0.8",
+    "stopwords-en": "^0.3.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -75,6 +76,7 @@
     "@types/nspell": "^2.1.6",
     "@types/passport-google-oauth20": "^2.0.13",
     "@types/passport-oauth2": "^1.4.14",
+    "@types/stopword": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.59.5",
     "copyfiles": "^2.4.1",

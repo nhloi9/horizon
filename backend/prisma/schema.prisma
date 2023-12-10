@@ -35,6 +35,8 @@ model User {
   sendNotifications Notification[] @relation("send_notify")
   receiveNotifications Notification[] @relation("receive_notify")
   reactComments CommentReact[]
+  viewStories Story[] 
+  stories Story[] @relation("stories")
 
   @@map("users")
 }
@@ -56,8 +58,8 @@ model UserDetail {
 }
 model ResetPasswordCode {
   id Int @id @default(autoincrement())
-  userId Int @unique
-  user User @relation(fields: [userId], references: [id])
+  userId Int? @unique
+  user User? @relation(fields: [userId], references: [id])
   value Int 
   expireTime DateTime
   @@map("reset_password_codes")
@@ -96,6 +98,8 @@ model File {
   message Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
   groupId Int? @unique
   group Group? @relation(fields: [groupId], references:[id])
+  storyId Int? @unique
+  story Story? @relation(fields: [storyId], references: [id])
 
   
 
@@ -115,7 +119,7 @@ model Post {
   files File[]
   comments Comment[]
   reacts PostUserReact[]
-  access access?
+  privacy access?
   approved Boolean?
   negative Boolean?
   shareId Int?
@@ -131,7 +135,7 @@ model Post {
 model Group {
   id Int @id @default(autoincrement())
   name String
-  access  accessGroup
+  privacy  accessGroup
   creatorId Int?
   adminId Int
   creator User? @relation("create",fields: [creatorId], references: [id], onDelete: SetNull)
@@ -288,6 +292,43 @@ model PostUserReact {
 }
 
 
+model Story {
+  id Int @id @default(autoincrement())
+  userId Int 
+  createdAt DateTime @default(now())
+  song Json?
+  video File? 
+mutedOriginal Boolean @default(false)
+views User[] 
+user User @relation("stories",fields: [userId], references: [id] , onDelete: Cascade)
+
+@@map("story")
+}
+
+
+model CommentStory {
+  id Int @id @default(autoincrement())
+  userId Int
+  content String
+  createdAt DateTime @default(now())
+  @@map("comment_story")
+
+}
+
+model ReactStory {
+  id Int @id @default(autoincrement())
+userId Int
+reactId Int
+
+@@map("react_story")
+
+}
+
+// model  ViewStory {
+//   id Int @id @default(autoincrement())
+//   userId Int
+//   storyId Int
+// }
 
 
 

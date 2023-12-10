@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import CommentDisplay from './CommentDisplay'
 
-const Comments = ({ post, comments, createComment }) => {
+const Comments = ({ post, comments }) => {
   // const [firstLevelComments, setFirstLevelComments] = useState([])
   const [showComments, setShowComments] = useState([])
   const [showCount, setShowCount] = useState(2)
@@ -26,7 +26,7 @@ const Comments = ({ post, comments, createComment }) => {
     <div className='p-4'>
       {showComments?.map(comment => (
         <CommentDisplay
-          createComment={createComment}
+          // createComment={createComment}
           key={comment._id}
           comment={comment}
           post={post}

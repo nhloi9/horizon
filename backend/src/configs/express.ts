@@ -16,6 +16,17 @@ import database from '../database'
 import routerV1 from '../routers/v1'
 import { notFound, errorConverter } from '../middlewares'
 
+const whitelist = ['http://localhost:3000']
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (whitelist.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
 const app: Express = express()
 // const haltOnTimedout = (req: Request, _res: Response, next: any): void => {
 //   if (!req.timedout) {
@@ -44,6 +55,13 @@ const initApp = (app: express.Express): void => {
     cors({
       credentials: true,
       origin: 'http://localhost:3000'
+      //  function (origin: any, callback: any) {
+      //   if (whitelist.includes(origin)) {
+      //     callback(null, true)
+      //   } else {
+      //     callback(new Error('Not allowed by CORS'))
+      //   }
+      // }
     })
   )
   app.use(cookieParser())

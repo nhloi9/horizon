@@ -5,6 +5,7 @@ import RightSide from '../Components/Home/RightSide'
 import Status from '../Components/Home/Status'
 import Posts from '../Components/Home/Posts'
 import { useSelector } from 'react-redux'
+import Stories from '../Components/Home/Stories'
 
 const HomePage = () => {
   const { posts } = useSelector(state => state.homePost)
@@ -14,10 +15,11 @@ const HomePage = () => {
       <Header />
 
       <div className=' flex justify-center bg-gray-100 mt-[50px]'>
-        <div className='hidden fixed h-screen lg:block left-0 w-[25%] max-w-[300px]'>
+        <div className='hidden fixed h-screen xl:block left-0 w-[25%] max-w-[300px]'>
           <LeftSide></LeftSide>
         </div>
-        <div className='w-full  sm:w-[600px] rounded-xl '>
+        <div className='w-full  max-w-[600px] rounded-xl  '>
+          <Stories />
           {/* <div className='w-[80%] mx-auto'> */}
           <Status />
           <br />
@@ -26,7 +28,7 @@ const HomePage = () => {
           {/* <Main></Main> */}
           {/* </div> */}
         </div>
-        <div className='hidden fixed h-screen lg:block right-0 w-[25%] max-w-[300px]'>
+        <div className='hidden fixed h-screen xl:block right-0 w-[25%] max-w-[300px]'>
           <RightSide></RightSide>
         </div>
       </div>

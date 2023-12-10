@@ -78,7 +78,7 @@ const PostCard = ({ post }) => {
 
       {isModalOpen && (
         <PostModal
-          createComment={createComment}
+          // createComment={createComment}
           post={post}
           setIsModalOpen={setIsModalOpen}
           isModalOpen={isModalOpen}

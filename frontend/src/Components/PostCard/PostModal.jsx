@@ -1,5 +1,5 @@
 import { Modal } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PostCard from './PostCard'
 import { getApi, postApi } from '../../network/api'
@@ -9,6 +9,7 @@ import CardFooter from './CardFooter'
 import InputComment from './InputComment'
 import CardHeader from './CardHeader'
 import toast from 'react-hot-toast'
+import { CommentsContext } from './CommentsContext'
 
 const PostModal = ({ post, isModalOpen, setIsModalOpen }) => {
   const [comments, setComments] = useState([])
@@ -78,28 +79,33 @@ const PostModal = ({ post, isModalOpen, setIsModalOpen }) => {
   }, [])
 
   return (
-    <>
-      <Modal
-        width={1000}
-        open={isModalOpen}
-        // title='Title'
-        // onOk={handleOk}
-        onCancel={() => {
-          setIsModalOpen(false)
-        }}
-        footer={[]}
-        maskClosable={false}
-      >
-        <div className='max-h-[70vh] overflow-scroll'>
-          <CardHeader post={post} />
-          <CardBody post={post} />
-          <CardFooter post={post} />
-          <div ref={commentRef}></div>
-          <InputComment createComment={createComment} post={post} />
-          <Comments comments={comments} createComment={createComment} />
-        </div>
-      </Modal>
-    </>
+    <CommentsContext.Provider value={{ comments, setComments, createComment }}>
+      <>
+        <Modal
+          width={1000}
+          open={isModalOpen}
+          // title='Title'
+          // onOk={handleOk}
+          onCancel={() => {
+            setIsModalOpen(false)
+          }}
+          footer={[]}
+          maskClosable={false}
+        >
+          <div className='max-h-[70vh] overflow-scroll'>
+            <CardHeader post={post} />
+            <CardBody post={post} />
+            <CardFooter post={post} />
+            <div ref={commentRef}></div>
+            <InputComment createComment={createComment} post={post} />
+            <Comments
+              comments={comments}
+              //  createComment={createComment}
+            />
+          </div>
+        </Modal>
+      </>
+    </CommentsContext.Provider>
   )
 }
 

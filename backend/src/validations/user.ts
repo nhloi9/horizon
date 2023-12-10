@@ -59,7 +59,8 @@ const verifyResetPassword: schema = {
 const resetPassword: schema = {
   body: Joi.object({
     email: Joi.string().required(),
-    newPassword: Joi.string().required()
+    newPassword: Joi.string().required(),
+    code: Joi.number().required()
   })
 }
 const changePassword: schema = {

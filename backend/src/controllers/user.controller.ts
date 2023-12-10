@@ -613,23 +613,41 @@ export const resetPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { newPassword, email } = req.body
-    const user: any = await prisma.user.update({
-      where: { email },
-      data: {
-        password: bcrypt.hashSync(newPassword, 5)
-      },
-      include: {
-        avatar: true,
-        detail: {
-          include: {
-            coverImage: true
+    const { newPassword, email, code } = req.body
+    const user: any = await prisma.user
+      .update({
+        where: {
+          email,
+          resetPasswordCode: {
+            AND: {
+              value: code,
+              expireTime: {
+                gt: new Date()
+              }
+            }
+          }
+        },
+        data: {
+          password: bcrypt.hashSync(newPassword, 5),
+          resetPasswordCode: {
+            disconnect: true
+          }
+        },
+
+        include: {
+          avatar: true,
+          detail: {
+            include: {
+              coverImage: true
+            }
           }
         }
-      }
-    })
-    if (user === null) {
-      return res.status(400).json(getApiResponse(messages.USER_NOT_FOUND))
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    if (user === null || user === undefined) {
+      return res.status(400).json(getApiResponse({ msg: 'Unauthenticated' }))
     }
     const { id, role } = user
     const token = generateToken({

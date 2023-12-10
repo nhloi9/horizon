@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 const ForgetPasswordPage = () => {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(null)
   const [email, setEmail] = useState({
     value: ''
   })
@@ -95,7 +95,9 @@ const ForgetPasswordPage = () => {
             </Form>
           </>
         )}
-        {step === 2 && <VerifyCode setStep={setStep} email={email.value} />}
+        {step === 2 && (
+          <VerifyCode setStep={setStep} email={email.value} setCode={setCode} />
+        )}
         {step === 3 && (
           <Form
             layout='vertical'
@@ -104,7 +106,8 @@ const ForgetPasswordPage = () => {
             onFinish={values => {
               postApi('/users/reset-password', {
                 newPassword: values.newPassword,
-                email: email.value
+                email: email.value,
+                code
               })
                 .then(({ data: { user } }) => {
                   dispatch({
@@ -184,7 +187,7 @@ const ForgetPasswordPage = () => {
   )
 }
 
-const VerifyCode = ({ setStep, email }) => {
+const VerifyCode = ({ setStep, email, setCode }) => {
   const [time, setTime] = useState(30)
   const [form] = Form.useForm()
   useEffect(() => {
@@ -224,6 +227,7 @@ const VerifyCode = ({ setStep, email }) => {
           postApi('/users/verify-reset-password', { email, code: values.code })
             .then(() => {
               setStep(3)
+              setCode(values.code)
             })
             .catch(err => {
               form.setFields([
