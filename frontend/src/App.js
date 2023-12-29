@@ -1,6 +1,7 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {Toaster} from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 import './i18n';
 
@@ -17,24 +18,42 @@ import Signup from './Pages/SignUp';
 import ActivationPage from './Pages/ActivationPage';
 import {ConfigProvider, theme} from 'antd';
 import ProfilePage from './Pages/ProfilePage';
-import {
-	getAllFriendsAction,
-	getReceiveRequestsAction,
-	getSendRequestsAction,
-} from './Reduxs/Actions/friendAction';
+import {getAllFriendRequestsAction} from './Reduxs/Actions/friendAction';
 import {getHomePostsAction} from './Reduxs/Actions/postAction';
 import PhotoPage from './Pages/PhotoPage';
 import ForgetPasswordPage from './Pages/ForgetPasswordPage';
 import StoriesPage from './Pages/StoriesPage';
 import CreateStoryPage from './Pages/CreateStoryPage';
 import CreateGroupPage from './Pages/CreateGroupPage';
+import {getHomeStoriesAction} from './Reduxs/Actions/storyAction';
+import DetailGroupPage from './Pages/DetailGroupPage';
+import {getAllNotifiesAction} from './Reduxs/Actions/notifyAction ';
+import MessagePage from './Pages/MessagePage';
+import {getAllConversations} from './Reduxs/Actions/conversationAction ';
+import {socket} from './socket';
+import GroupFeedPage from './Pages/GroupFeedPage';
+import {
+	getAllGroupRequestsOfUser,
+	getAllOwnGroupOfUser,
+} from './Reduxs/Actions/groupAction';
+import FriendPage from './Pages/FriendPage';
+import CreateLocation from './Pages/CreateLocation';
+import PlacesAutocomplete from './Pages/PlacesAutocomplete';
+import Test from './Pages/Test';
 // import PostModal from './Components/PostCard/PostModal';
 function App() {
 	const dispatch = useDispatch();
 	const {darkAlgorithm, defaultAlgorithm} = theme;
 	const themeApp = useSelector((state) => state.theme);
-	const {user} = useSelector((state) => state.auth);
-	const {activePost} = useSelector((state) => state.homePost);
+	const {user, socketToken} = useSelector((state) => state.auth);
+	// const {activePost} = useSelector((state) => state.homePost);
+
+	console.log(
+		document.cookie
+			.split('; ')
+			.find((row) => row.startsWith('token'))
+			?.split('=')[1]
+	);
 
 	useEffect(() => {
 		dispatch(checkAuthAction());
@@ -50,12 +69,26 @@ function App() {
 
 	useEffect(() => {
 		if (user?.id) {
-			dispatch(getAllFriendsAction());
-			dispatch(getSendRequestsAction());
-			dispatch(getReceiveRequestsAction());
 			dispatch(getHomePostsAction());
+			dispatch(getHomeStoriesAction());
+			dispatch(getAllNotifiesAction());
+			dispatch(getAllConversations());
+			dispatch(getAllGroupRequestsOfUser());
+			dispatch(getAllOwnGroupOfUser());
+			dispatch(getAllFriendRequestsAction());
+
+			dispatch({
+				type: 'socket/connect',
+			});
+		} else {
+			dispatch({type: 'socket/disconnect'});
 		}
-	}, [dispatch, user?.id]);
+		return () => dispatch({type: 'socket/disconnect'});
+	}, [dispatch, user?.id, socketToken]);
+
+	// useEffect(() => {
+
+	// }, []);
 	return (
 		<div className="min-h-screen dark:bg-dark-200">
 			<Suspense>
@@ -85,10 +118,12 @@ function App() {
 									</Protected>
 								}
 							/>
+
 							<Route
 								path="/profile/:id"
 								element={
 									<Protected>
+										{/* <HomePage /> */}
 										<ProfilePage />
 									</Protected>
 								}
@@ -124,12 +159,78 @@ function App() {
 							/>
 							<Route
 								path="/stories/create"
-								element={<CreateStoryPage />}
+								element={
+									<Protected>
+										<CreateStoryPage />
+									</Protected>
+								}
 							/>
 							<Route
 								path="/groups/create"
 								element={<CreateGroupPage />}
 							/>
+
+							<Route
+								path="/groups/feed"
+								element={
+									<Protected>
+										<GroupFeedPage />
+									</Protected>
+								}
+							/>
+
+							<Route
+								path="/groups/:id/:type?"
+								element={
+									<Protected>
+										<DetailGroupPage />
+									</Protected>
+								}
+							/>
+
+							<Route
+								path="/locations/create"
+								element={
+									<Protected>
+										<CreateLocation />
+									</Protected>
+								}
+							/>
+							<Route
+								path="/test"
+								element={
+									<Protected>
+										<Test />
+									</Protected>
+								}
+							/>
+							<Route
+								path="/locations/suggest"
+								element={
+									<Protected>
+										<PlacesAutocomplete />
+									</Protected>
+								}
+							/>
+
+							<Route
+								path="/message/:id?"
+								element={
+									<Protected>
+										<MessagePage />
+									</Protected>
+								}
+							/>
+
+							<Route
+								path="/friends"
+								element={
+									<Protected>
+										<FriendPage />
+									</Protected>
+								}
+							/>
+
 							<Route
 								path="/active-email/:token"
 								element={<ActivationPage />}

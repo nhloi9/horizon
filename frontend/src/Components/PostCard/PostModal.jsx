@@ -9,103 +9,39 @@ import CardFooter from './CardFooter'
 import InputComment from './InputComment'
 import CardHeader from './CardHeader'
 import toast from 'react-hot-toast'
-import { CommentsContext } from './CommentsContext'
 
 const PostModal = ({ post, isModalOpen, setIsModalOpen }) => {
-  const [comments, setComments] = useState([])
-  const { user } = useSelector(state => state.auth)
   const commentRef = useRef()
-
-  const addComment = (comment, comments) => {
-    let cloneComments = structuredClone(comments)
-
-    if (comment.parentId) {
-      const parentComment = cloneComments.find(
-        item => item.id === comment.parentId
-      )
-      parentComment.answers.push(comment)
-    } else {
-      cloneComments = [comment, ...cloneComments]
-    }
-    return cloneComments
-  }
-
-  const createComment = async ({ content, parentId, receiver }) => {
-    try {
-      let originalComments = comments
-      const previewComment = {
-        postId: post.id,
-        senderId: user.id,
-        parentId,
-        receiverId: receiver?.id,
-        content: content,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        sender: user,
-        receiver,
-        answers: []
-      }
-      setComments(addComment(previewComment, comments))
-
-      const {
-        data: { comment }
-      } = await postApi('/comments', {
-        content,
-        postId: post.id,
-        parentId,
-        receiverId: receiver?.id
-      })
-      setComments(addComment(comment, originalComments))
-    } catch (error) {
-      toast.error(error)
-    }
-  }
-
-  useEffect(() => {
-    getApi('/comments', {
-      postId: post.id,
-      limitPerPage: 1000
-    })
-      .then(response => {
-        setComments(response.data.comments)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [post?.id])
 
   useEffect(() => {
     commentRef?.current?.scrollIntoView()
   }, [])
 
   return (
-    <CommentsContext.Provider value={{ comments, setComments, createComment }}>
-      <>
-        <Modal
-          width={1000}
-          open={isModalOpen}
-          // title='Title'
-          // onOk={handleOk}
-          onCancel={() => {
-            setIsModalOpen(false)
-          }}
-          footer={[]}
-          maskClosable={false}
-        >
-          <div className='max-h-[70vh] overflow-scroll'>
-            <CardHeader post={post} />
-            <CardBody post={post} />
-            <CardFooter post={post} />
-            <div ref={commentRef}></div>
-            <InputComment createComment={createComment} post={post} />
-            <Comments
-              comments={comments}
-              //  createComment={createComment}
-            />
-          </div>
-        </Modal>
-      </>
-    </CommentsContext.Provider>
+    <>
+      <Modal
+        destroyOnClose={true}
+        width={1000}
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false)
+        }}
+        footer={[]}
+        maskClosable={false}
+      >
+        <div className='flex justify-center pt-2 pb-4'>
+          <h1 className='text-[20px] '>{post.user?.firstname}'s Post</h1>
+        </div>
+        <div className='max-h-[70vh] overflow-y-scroll scroll-min'>
+          <CardHeader post={post} />
+          <CardBody post={post} />
+          <CardFooter post={post} />
+          <div ref={commentRef}></div>
+          <InputComment post={post} />
+          <Comments post={post} />
+        </div>
+      </Modal>
+    </>
   )
 }
 

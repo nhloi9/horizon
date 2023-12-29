@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -12,17 +13,18 @@ datasource db {
 
 model User {
   id       Int @id @default(autoincrement())
+  
   avatar File? 
   firstname String 
   email    String @unique
   password String?
   role Role @default(user) 
   lastname String
+  fullname String?
   requestSent FriendRequest[] @relation("send")
   requestReceived FriendRequest[] @relation("receive")
   conversations ConversationMember[]
   posts Post[]
-  wishLocations WishLocation[]
   detail UserDetail?
   sendComments Comment[] @relation("'sender'")
   receiveComments Comment[] @relation("receiver")
@@ -37,6 +39,9 @@ model User {
   reactComments CommentReact[]
   viewStories Story[] 
   stories Story[] @relation("stories")
+  reactStories ReactStory[]
+  commentsStory CommentStory[]
+  taggedPosts Post[] @relation("tag")
 
   @@map("users")
 }
@@ -45,7 +50,8 @@ model UserDetail {
   id Int @id @default(autoincrement())
   userId Int @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  coverImage File?
+  coverImage File? 
+  
   // birthday DateTime? @db.Date 
   birthday DateTime?  
   country String?
@@ -84,22 +90,20 @@ model FriendRequest {
 model File {
   id Int @id @default(autoincrement())
   avatarOfUserId Int? @unique
-  avatarOfUser User? @relation(references: [id], fields: [avatarOfUserId], onDelete: SetNull) 
-  coverImageOfUserDetailId Int? @unique
+  avatarOfUser User?  @relation(fields: [avatarOfUserId], references: [id], onDelete: Cascade)
   coverImageOfUserDetail UserDetail? @relation(fields: [coverImageOfUserDetailId], references: [id], onDelete: SetNull)
+ coverImageOfUserDetailId Int? @unique
   name String
   url String
+  thumbnail String?
   createdAt DateTime @default(now())
   postId Int?
   post Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
-  locationId Int?
-  location Location? @relation(fields: [locationId], references: [id] , onDelete: SetNull)
   messageId Int?
   message Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
   groupId Int? @unique
   group Group? @relation(fields: [groupId], references:[id])
-  storyId Int? @unique
-  story Story? @relation(fields: [storyId], references: [id])
+  story Story?
 
   
 
@@ -108,23 +112,25 @@ model File {
 
 model Post {
   id Int @id @default(autoincrement())
-  text String
+  text String?
   userId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  locationId Int?
-  location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
-  isCheckin Boolean @default(false)
+  location Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   files File[]
   comments Comment[]
   reacts PostUserReact[]
   privacy access?
-  approved Boolean?
   negative Boolean?
   shareId Int?
   share Post? @relation("share", fields: [shareId], references: [id], onDelete: SetNull)
   shareBys Post[] @relation("share")
+  tags User[] @relation("tag")
+  feel Json?
+  accepted Boolean? @default(true)
+  groupId Int?
+  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
@@ -134,14 +140,19 @@ model Post {
 
 model Group {
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
+  description String?
   privacy  accessGroup
+  requireApproval Boolean @default(true)
   creatorId Int?
   adminId Int
   creator User? @relation("create",fields: [creatorId], references: [id], onDelete: SetNull)
   admin User @relation("admin",fields: [adminId], references: [id], onDelete: Cascade)
   image File?
   requests GroupReqest[]
+  createdAt DateTime @default(now())
+  posts Post[]
+  
 
   @@map("groups")
 
@@ -157,6 +168,7 @@ model GroupReqest {
   group Group @relation(fields: [groupId], references: [id])
   status Status
   type groupRequestType
+  createdAt DateTime @default(now())
 
   @@unique([userId, groupId])
 
@@ -165,48 +177,32 @@ model GroupReqest {
 
 
 
-model Location {
-  id Int @id @default(autoincrement())
-  name String
-  description String
-  userId Int
-  longitude Int
-  latitude Int
-  posts Post[]
-  numberOfCheckins Int
-  wishUsers WishLocation[]
-  images File[]
 
-  @@map("locations")
-}
 
-model WishLocation {
-  id Int @id @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  locationId Int
-  location Location @relation(fields: [locationId], references: [id])
-   @@map("wish_locations")
-}
+
 
 model Conversation {
   id Int @id @default(autoincrement())
-  isGroup Boolean
+  isGroup Boolean @default(false)
   name String?
   members ConversationMember[]
+  lastMessage Json?
    @@map("conversations")
+   updatedAt DateTime @updatedAt
 }
 
 model ConversationMember{
   id Int @id @default(autoincrement())
   conversationId Int
-  conversation Conversation @relation(fields: [conversationId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   userId Int
   user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-  isSeen  Boolean
-  isAdmin Boolean
+  isSeen  Boolean @default(false)
+  isAdmin Boolean @default(false)
   messages Message[]
+  @@unique([conversationId, userId])
+
    @@map("conversation_members")
 
 }
@@ -215,7 +211,7 @@ model Message {
   id Int @id @default(autoincrement())
   text String
   memberId Int
-  member ConversationMember @relation(fields: [memberId], references: [id])
+  member ConversationMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   files File[]
@@ -228,6 +224,8 @@ model React {
   icon String
   posts PostUserReact[]
    @@map("reacts")
+
+   stories ReactStory[]
 }
 
 model Notification {
@@ -238,7 +236,12 @@ model Notification {
   receiver User? @relation("receive_notify",fields: [receiverId], references: [id])
   isSeen Boolean @default(false)
   content  String?
+  text String?
   url String?
+  type String?
+  target Json?
+  createdAt DateTime @default(now())
+
 
   @@map("notifications")
 }
@@ -294,22 +297,30 @@ model PostUserReact {
 
 model Story {
   id Int @id @default(autoincrement())
-  userId Int 
+  userId Int? 
   createdAt DateTime @default(now())
   song Json?
-  video File? 
+  videoId Int? @unique
+  video File?  @relation(references: [id], fields: [videoId])
+ 
 mutedOriginal Boolean @default(false)
 views User[] 
-user User @relation("stories",fields: [userId], references: [id] , onDelete: Cascade)
-
-@@map("story")
+user User? @relation("stories",fields: [userId], references: [id] , onDelete: Cascade)
+reacts ReactStory[]
+comments CommentStory[]
+@@map("stories")
 }
+
+
 
 
 model CommentStory {
   id Int @id @default(autoincrement())
   userId Int
+  user User @relation(fields: [userId], references: [id] , onDelete: Cascade)
   content String
+  storyId Int
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   @@map("comment_story")
 
@@ -318,8 +329,13 @@ model CommentStory {
 model ReactStory {
   id Int @id @default(autoincrement())
 userId Int
+user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 reactId Int
+storyId Int
+story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
+react React @relation(fields: [reactId], references: [id], onDelete: Cascade)
+@@unique([storyId, userId])
 @@map("react_story")
 
 }
@@ -369,3 +385,10 @@ enum commentReact {
    like
    dislike
 }
+
+
+enum notify {
+  iviteGroup
+
+}
+

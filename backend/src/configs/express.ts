@@ -8,6 +8,8 @@ import morgan from 'morgan'
 import { I18n } from 'i18n'
 import path from 'path'
 import cookieParser from 'cookie-parser'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 
 import { emitter } from './event-emitter'
 import { vars } from './vars'
@@ -15,19 +17,29 @@ import { events } from '../constants'
 import database from '../database'
 import routerV1 from '../routers/v1'
 import { notFound, errorConverter } from '../middlewares'
+import { soketRoute } from '../routers/v1/socket.route'
 
-const whitelist = ['http://localhost:3000']
-const corsOptions = {
-  origin: function (origin: any, callback: any) {
-    if (whitelist.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
+// const whitelist = ['http://localhost:3000']
+// const corsOptions = {
+//   origin: function (origin: any, callback: any) {
+//     if (whitelist.includes(origin)) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   }
+// }
 
 const app: Express = express()
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  /* options */
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
+})
+
 // const haltOnTimedout = (req: Request, _res: Response, next: any): void => {
 //   if (!req.timedout) {
 //     next()
@@ -44,7 +56,14 @@ i18n.configure({
   defaultLocale: 'en'
 })
 
-const initApp = (app: express.Express): void => {
+const initApp = (app: express.Express, io: Server): void => {
+  soketRoute(io)
+
+  // app.use((req: any, res: any, next: any) => {
+  //   console.log(req.url)
+  //   next()
+  // })
+
   app.use(timeout('50s'))
   app.use(morgan('dev'))
   app.use(bodyParser.json())
@@ -68,7 +87,7 @@ const initApp = (app: express.Express): void => {
   app.use(i18n.init)
 
   app.get('/health', (_req: Request, res: Response) => {
-    console.log(_req.headers['accept-language'])
+    // console.log(_req.headers['accept-language'])
     // res.send('OK')
     res.send(res.__('hello'))
   })
@@ -82,10 +101,12 @@ const initApp = (app: express.Express): void => {
 
 export const start = (): void => {
   emitter.on(events.DB_CONNECTED, () => {
-    initApp(app)
-    app.listen(vars.port, () => {
+    initApp(app, io)
+    httpServer.listen(vars.port, () => {
       console.info(`[server] listen on port ${vars.port}`)
     })
   })
   database.connect()
 }
+
+export { io }

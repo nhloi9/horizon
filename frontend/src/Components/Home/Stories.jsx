@@ -7,138 +7,8 @@ import useSelection from 'antd/es/table/hooks/useSelection'
 import { useSelector } from 'react-redux'
 import { defaulAvatar } from '../../Constants'
 
-const storiesData = [
-  {
-    id: 1,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 1,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  },
-  {
-    id: 2,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      name: 'Y2meta3743.mp4',
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Y2meta3743.mp4?alt=media&token=475fda37-1b7f-498f-9e39-3b19fd948a18'
-    }
-  },
-  {
-    id: 4,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 5,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  },
-  {
-    id: 6,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      name: 'Y2meta3743.mp4',
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Y2meta3743.mp4?alt=media&token=475fda37-1b7f-498f-9e39-3b19fd948a18'
-    }
-  },
-  {
-    id: 7,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 8,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  },
-  {
-    id: 9,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 1,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  },
-  {
-    id: 10,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 11,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  },
-  {
-    id: 12,
-    user: {
-      id: 1,
-      firstname: 'test',
-      lastname: '1',
-      avatar: {
-        name: '145653.png',
-        url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/145653.png?alt=media&token=6657c3dd-9f61-4785-9653-2f8a53fde1e4'
-      }
-    },
-    video: {
-      id: 13,
-      url: 'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/Thanh%20Pahm3343.mp4?alt=media&token=238ff17e-9623-4ca2-8878-bafa90a05c5e'
-    }
-  }
-]
-
 const Stories = () => {
+  const { stories } = useSelector(state => state.stories)
   const { user } = useSelector(state => state.auth)
   const navigate = useNavigate()
   return (
@@ -168,7 +38,7 @@ const Stories = () => {
               <Avatar className='border-[3px] border-blue-500' />
             </div>
           </div>
-          {storiesData.map((story, index) => (
+          {stories.map((story, index) => (
             // <Link
             //   to={{
             //     pathname: '/stories',
@@ -185,18 +55,18 @@ const Stories = () => {
               }}
             >
               <video
-                src={story.video.url}
+                src={story.video?.url}
                 className='w-full h-full object-cover rounded-lg shadow'
               ></video>
-              <div className='absolute bottom-3 left-0 w-full  px-3'>
-                <h1 className='text-gray-50'>
-                  {story.user.firstname + ' ' + story.user.lastname}
-                </h1>
+              <div className='absolute bottom-1 left-0 w-full  px-3 text-center'>
+                <p className='text-gray-200 shadow-md font-[600] text-[13px]'>
+                  {story.user?.firstname + ' ' + story.user?.lastname}
+                </p>
               </div>
               <div className='absolute top-3 left-0 w-full  px-3'>
                 <Avatar
                   className='border-[3px] border-blue-500'
-                  src={story.user?.avatar?.url}
+                  src={story.user?.avatar?.url ?? defaulAvatar}
                 />
               </div>
             </div>

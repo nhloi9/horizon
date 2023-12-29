@@ -6,10 +6,23 @@ const createStory: schema = {
   body: Joi.object({
     mutedOriginal: Joi.boolean().required(),
     song: Joi.object(),
-    fileId: Joi.object().required()
+    file: Joi.object().required()
   })
 }
 
-export const postValidation = {
-  createStory: validate(createStory)
+const reactStory: schema = {
+  body: Joi.object({
+    reactId: Joi.number().required()
+  })
+}
+const commentStory: schema = {
+  body: Joi.object({
+    content: Joi.string().required()
+  })
+}
+
+export const storyValidation = {
+  createStory: validate(createStory),
+  reactStory: validate(reactStory),
+  commentStory: validate(commentStory)
 }

@@ -1,5 +1,5 @@
 import { Avatar, Dropdown, Space } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { CiEdit } from 'react-icons/ci'
@@ -7,10 +7,14 @@ import moment from 'moment'
 import { MdDeleteOutline } from 'react-icons/md'
 import { FaRegCopy } from 'react-icons/fa'
 import { IoIosMore } from 'react-icons/io'
+import CreatePost from '../Home/CreatePost'
 
 const CardHeader = ({ post }) => {
   const { user } = useSelector(state => state.auth)
-  const editPost = () => {}
+  const [openEditPost, setOpenEditPost] = useState(false)
+  const editPost = () => {
+    setOpenEditPost(true)
+  }
 
   const handleDeletePost = () => {}
 
@@ -41,7 +45,7 @@ const CardHeader = ({ post }) => {
         </div>
       </div>
       <div>
-        {user.id === post.user.id ? (
+        {user?.id === post?.user?.id ? (
           <Dropdown
             menu={{
               items: [
@@ -107,7 +111,9 @@ const CardHeader = ({ post }) => {
           </Dropdown>
         )}
       </div>
-      {/* {onEdit && <CreatePost setOnCreatePost={setOnEdit} post={post} />} */}
+      {openEditPost && (
+        <CreatePost open={openEditPost} setOpen={setOpenEditPost} post={post} />
+      )}
     </div>
   )
 }

@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { BsHeart, BsHeartFill } from 'react-icons/bs'
 import moment from 'moment'
+import { BiDislike, BiLike } from 'react-icons/bi'
 import InputComment from './InputComment'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Avatar, Button, Dropdown } from 'antd'
+import { Avatar, Button, Dropdown, Tooltip } from 'antd'
 import { AiOutlineMore } from 'react-icons/ai'
 import { CiEdit } from 'react-icons/ci'
 import { MdDeleteOutline } from 'react-icons/md'
-import { CommentsContext } from './CommentsContext'
+import { updateComment } from '../../Reduxs/Actions/postAction'
 
 // import EditIcon from '@mui/icons-material/Edit'
 // import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -20,11 +21,11 @@ import { CommentsContext } from './CommentsContext'
 // } from '../../redux/actions/postAction'
 
 const CommentCard = ({ comment, post }) => {
-  const { comments, setComments } = useContext(CommentsContext)
   const editRef = useRef(null)
   const navigate = useNavigate()
   const likeRef = useRef(null)
   const { user } = useSelector(state => state.auth)
+  const dispatch = useDispatch()
 
   const [onEdit, setOnEdit] = useState(false)
   const [openReply, setOpenReply] = useState(false)
@@ -33,10 +34,20 @@ const CommentCard = ({ comment, post }) => {
 
   //update comment
   const handleUpdateComment = () => {
-    if (editRef.current.value !== comment.value) {
-      // dispatch(updateComment(comment, post, editRef.current.value))
+    if (
+      editRef?.current?.value &&
+      editRef.current?.value?.trim() &&
+      editRef.current?.value?.trim() !== comment.value
+    ) {
+      dispatch(
+        updateComment({
+          commentId: comment?.id,
+          postId: post?.id,
+          content: editRef.current?.value?.trim()
+        })
+      )
+      setOnEdit(false)
     }
-    setOnEdit(false)
   }
 
   //like comment
@@ -71,17 +82,24 @@ const CommentCard = ({ comment, post }) => {
         <Avatar src={comment.sender?.avatar?.url} size='small' />
         <p className=' translate-y-[-3px] font-[500]  capitalize'>
           {comment.sender?.firstname + ' ' + comment.sender?.lastname}
+          <span className='text-gray-400 text-[13px] font-[300]'>
+            {' '}
+            {moment(comment.createdAt).fromNow()}
+          </span>
         </p>
       </div>
-      <div className=' mt-[1px] p-2 w-full rounded-b-md rounded-tr-md bg-gray-200 min-h-[30px] flex items-center gap-2'>
+      <div className=' mt-[1px] p-2 w-full rounded-b-md rounded-tr-md bg-gray-200 min-h-[30px] flex items-center justify-between gap-2'>
         {onEdit ? (
-          <div className='w-full'>
+          <div className='w-[calc(100%-30px)]'>
             <textarea
+              rows={2}
               ref={editRef}
+              contentEditable
               name=''
               id=''
-              className=' w-full outline-none p-2'
+              className=' w-full outline-none p-2 resize-none bg-transparent'
             ></textarea>
+
             <div className='flex justify-end gap-4 text-[14px]  '>
               <span
                 className='text-red-400 cursor-pointer'
@@ -100,10 +118,9 @@ const CommentCard = ({ comment, post }) => {
             </div>
           </div>
         ) : (
-          <div className='w-full'>
+          <div className='w-[calc(100%-30px)]'>
             <p>
-              {comment.receiver &&
-              comment.receiver?.id !== comment.sender.id ? (
+              {comment.receiverId && comment.receiverId !== comment.senderId ? (
                 <span
                   className='font-[500] mr-1 cursor-pointer capitalize'
                   onClick={() => navigate(`/profile/${comment.tag._id}`)}
@@ -136,10 +153,20 @@ const CommentCard = ({ comment, post }) => {
                 ''
               )}
             </p>
-            <div className='flex items-center gap-3 text-[12px] mt-1'>
-              <p className='text-gray-500 text-sm'>
-                {moment(comment.createdAt).fromNow()}
-              </p>
+            <div className='flex items-center gap-7 text-[12px] mt-1'>
+              <div className='flex gap-1 items-center'>
+                <Tooltip title='Like' placement='bottomRight'>
+                  <BiLike className='!cursor-pointer' />
+                </Tooltip>
+                <span className='text-sm text-gray-400'>12</span>
+              </div>
+              <div className='flex gap-1 items-center'>
+                <Tooltip title='Dislike' placement='bottomLeft'>
+                  <BiDislike className='!cursor-pointer' />
+                </Tooltip>
+                <span className='text-sm text-gray-400'>12</span>
+              </div>
+
               <p className='font-[500]'>
                 {/* {comment.likes.length} <span>likes</span> */}
               </p>
@@ -161,63 +188,64 @@ const CommentCard = ({ comment, post }) => {
             </div>
           </div>
         )}
-        <div className='flex justify-end gap-2 w-[50px]'>
-          <div className='hidden  group-hover:block'>
-            {comment.sender.id === user.id ? (
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      label: (
-                        <div
-                          onClick={() => {
-                            setOnEdit(true)
-                            setTimeout(() => {
+        {/* <div className='flex justify-end gap-2 w-[50px]'> */}
+        <div className='hidden  group-hover:block'>
+          {comment.senderId === user.id ? (
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    label: (
+                      <div
+                        onClick={() => {
+                          setOnEdit(true)
+                          setTimeout(() => {
+                            if (editRef.current)
                               editRef.current.value = comment.content
-                              editRef.current.focus()
-                            }, 100)
-                          }}
-                        >
-                          <CiEdit /> Edit Comment
-                        </div>
-                      ),
-                      key: '0'
-                    },
-                    {
-                      label: (
-                        <div onClick={handleDelete}>
-                          <MdDeleteOutline /> Remove Comment
-                        </div>
-                      ),
-                      key: '1'
-                    }
-                  ]
-                }}
-              >
-                <AiOutlineMore size={18} className='cursor-pointer' />
-              </Dropdown>
-            ) : comment.sender.id === user.id ? (
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      label: (
-                        <div onClick={handleDelete}>
-                          <MdDeleteOutline /> Remove Comment
-                        </div>
-                      ),
-                      key: '1'
-                    }
-                  ]
-                }}
-              >
-                <AiOutlineMore size={18} className='cursor-pointer' />
-              </Dropdown>
-            ) : (
-              ''
-            )}
-          </div>
-          <div
+                            editRef.current?.focus()
+                          }, 100)
+                        }}
+                      >
+                        <CiEdit /> Edit Comment
+                      </div>
+                    ),
+                    key: '0'
+                  },
+                  {
+                    label: (
+                      <div onClick={handleDelete}>
+                        <MdDeleteOutline /> Remove Comment
+                      </div>
+                    ),
+                    key: '1'
+                  }
+                ]
+              }}
+            >
+              <AiOutlineMore size={18} className='cursor-pointer' />
+            </Dropdown>
+          ) : post.id === user.id ? (
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    label: (
+                      <div onClick={handleDelete}>
+                        <MdDeleteOutline /> Remove Comment
+                      </div>
+                    ),
+                    key: '1'
+                  }
+                ]
+              }}
+            >
+              <AiOutlineMore size={18} className='cursor-pointer' />
+            </Dropdown>
+          ) : (
+            ''
+          )}
+        </div>
+        {/* <div
             className=''
             ref={likeRef}
             onClick={() => {
@@ -241,8 +269,8 @@ const CommentCard = ({ comment, post }) => {
                 onClick={handleLikeComment}
               />
             )}
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
       </div>
       {openReply && (
         <InputComment post={post} comment={comment} setOpen={setOpenReply} />

@@ -75,7 +75,7 @@ const LeftSide = () => {
   }
 
   return (
-    <div className='left-side w-full h-full  bg-gray-100    overflow-y-hidden hover:overflow-y-scroll  pb-4 border-2 rounded-r-xl shadow-lg'>
+    <div className='left-side w-full h-full  bg-gray-100    overflow-y-hidden hover:overflow-y-scroll scroll-min  pb-4 border-2 rounded-r-xl shadow-lg'>
       <div className='flex flex-col items-center relative pt-5'>
         <img
           className='h-28 w-full rounded-r-xl'
@@ -158,7 +158,6 @@ const LeftSide = () => {
         ></div>
         <img className='h-36 rounded-lg' src={data.image} alt='ads'></img>
       </div>
-      <div className='h-screen'></div>
     </div>
   )
 }

@@ -22,9 +22,11 @@ export const vars = {
   }
 }
 
-export const accessTokenSettings = {
-  secret: process.env.ACCESS_TOKEN_SECRET ?? 'secret_1',
-  expireTime: Number(process.env.ACCESS_TOKEN_EXP) ?? 1000 // seconds
+export const socketTokenSettings = {
+  secret: process.env.SOCKET_TOKEN_SECRET ?? 'secret_2',
+  expireTime: !isNaN(Number(process.env.SOCKET_TOKEN_EXP))
+    ? Number(process.env.SOCKET_TOKEN_EXP)
+    : 2 * 24 * 3600 // seconds
 }
 export const tokenSettings = {
   secret: process.env.TOKEN_SECRET ?? 'secret_1',

@@ -4,9 +4,13 @@ import validate from './validate'
 
 const createPost: schema = {
   body: Joi.object({
-    text: Joi.string().required(),
+    text: Joi.string(),
     files: Joi.array(),
-    access: Joi.string()
+    privacy: Joi.string(),
+    tags: Joi.array().items(Joi.number()),
+    feel: Joi.object(),
+    location: Joi.object(),
+    groupId: Joi.number()
   })
 }
 const reactPost: schema = {

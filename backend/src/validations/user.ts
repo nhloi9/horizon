@@ -76,6 +76,12 @@ const setPassword: schema = {
   })
 }
 
+const searchUser: schema = {
+  query: Joi.object({
+    q: Joi.string().trim().required()
+  })
+}
+
 export const userValidation = {
   registerUser: validate(registerUser),
   getUser: validate(getUser),
@@ -86,5 +92,6 @@ export const userValidation = {
   verifyResetPassword: validate(verifyResetPassword),
   resetPassword: validate(resetPassword),
   changePassword: validate(changePassword),
-  setPassword: validate(setPassword)
+  setPassword: validate(setPassword),
+  searchUser: validate(searchUser)
 }

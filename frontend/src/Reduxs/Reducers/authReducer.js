@@ -1,12 +1,19 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {authTypes} from '../Types/authType';
 
-const initialState = {};
+const initialState = {
+	user: null,
+	isLogin: false,
+};
 export const authReducer = createReducer(initialState, (builder) => {
 	builder
-		.addCase(authTypes.USER, (state, action) => {
+		.addCase(authTypes.ALL, (state, action) => {
 			state.isLogin = true;
-			state.user = action.payload;
+			state.user = action.payload?.user;
+			state.socketToken = action.payload?.socketToken;
+		})
+		.addCase(authTypes.USER, (state, action) => {
+			state.user = action.payload?.user;
 		})
 		.addCase(authTypes.UPDATE_AVATAR_SUCCESS, (state, action) => {
 			state.user = {...state.user, avatar: action.payload};

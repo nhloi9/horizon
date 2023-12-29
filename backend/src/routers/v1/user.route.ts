@@ -69,4 +69,6 @@ router.put(
   controller.setPassword
 )
 
+router.get('/search', validation.searchUser, verifyToken, controller.search)
+
 export default router

@@ -69,7 +69,7 @@ export const getOauthToken = async (
         .json(getApiResponse(messages.OAUTH_ERROR, res, 'OATH_ERROR'))
     }
     const decode: any = jwt.decode(id_token)
-    console.log(decode)
+    // console.log(decode)
     const { email, given_name, family_name, picture } = decode //eslint-disable-line
     let user = await userRepo.findUser({ email })
     if (user === null) {
@@ -96,7 +96,7 @@ export const getOauthToken = async (
       })
       .redirect('http://localhost:3000')
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.redirect('http://localhost:3000/signin')
   }
 }

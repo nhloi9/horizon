@@ -10,7 +10,7 @@ import { userRepo } from '../repositories'
 import { generateToken, getApiResponse } from '../utils'
 import { messages } from '../constants'
 import { userMail } from '../mail'
-import { tokenSettings, oauth2Settings } from '../configs'
+import { tokenSettings, oauth2Settings, socketTokenSettings } from '../configs'
 import type { RequestPayload } from '../types'
 import { prisma } from '../database/postgres'
 import { error } from 'console'
@@ -26,7 +26,7 @@ export const registerUser = async (
       email
       // active: true
     })
-    console.log(existingUser)
+    // console.log(existingUser)
 
     if (existingUser !== null) {
       res
@@ -142,11 +142,7 @@ export const login = async (
   try {
     const { email, password } = req.body
     let user: any = await prisma.user.findUnique({
-      where: { email },
-
-      select: {
-        password: true
-      }
+      where: { email }
     })
     // if (user?.birthday !== null && user?.birthday !== undefined) {
     //   console.log(user?.birthday.getHours())
@@ -189,6 +185,15 @@ export const login = async (
         exp: tokenSettings.expireTime
       })
 
+      const socketToken = generateToken({
+        data: {
+          id,
+          role
+        },
+        secret: socketTokenSettings.secret,
+        exp: socketTokenSettings.expireTime
+      })
+
       res
         .status(httpStatus.OK)
         .cookie('token', token, {
@@ -198,7 +203,8 @@ export const login = async (
         .json(
           getApiResponse({
             data: {
-              user: { ...user, password }
+              user: { ...user, password: undefined },
+              socketToken
             }
           })
         )
@@ -214,7 +220,7 @@ export const getUser = async (
   next: NextFunction
 ) => {
   try {
-    console.log(await prisma.react.findMany())
+    // console.log(await prisma.react.findMany())
     const user = await userRepo.findUser({ id: (req.payload as any).id })
     if (user === null) {
       return res
@@ -226,10 +232,21 @@ export const getUser = async (
     //   user.detail.birthday =
     //     user.detail.birthday === null ? null : user.detail.birthday
     // }
+
+    // console.log({ secret: tokenSettings.secret, exp: tokenSettings.expireTime })
+    // console.log({
+    //   secret: socketTokenSettings.secret,
+    //   exp: socketTokenSettings.expireTime
+    // })
     const token = generateToken({
       data: { id: user.id, role: user.role },
       secret: tokenSettings.secret,
       exp: tokenSettings.expireTime
+    })
+    const socketToken = generateToken({
+      data: { id: user.id, role: user.role },
+      secret: socketTokenSettings.secret,
+      exp: socketTokenSettings.expireTime
     })
     res
       .status(httpStatus.OK)
@@ -240,7 +257,8 @@ export const getUser = async (
       .json(
         getApiResponse({
           data: {
-            user
+            user,
+            socketToken
           }
         })
       )
@@ -268,6 +286,49 @@ export const getUserInfo = async (
       getApiResponse({
         data: {
           user: { ...user, password: undefined }
+        }
+      })
+    )
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getGroupRequests = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: (req.payload as any).id
+      },
+      select: {
+        groupRequests: {
+          include: {
+            group: {
+              include: {
+                image: {
+                  select: {
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    let groupRequests: any = []
+    if (user !== null) {
+      groupRequests = user.groupRequests
+    }
+
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: {
+          groupRequests
         }
       })
     )
@@ -359,7 +420,7 @@ export const getOauthToken = async (
       })
       .redirect('http://localhost:3000')
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.redirect('http://localhost:3000/signin')
   }
 }
@@ -385,15 +446,6 @@ export const updateAvatar = async (
         .json(getApiResponse(messages.USER_NOT_FOUND, res, 'USER_NOT_FOUND'))
     }
     const { name, url } = req.body
-    // await fileRepo
-    //   .deleteFile({
-    //     avatarOfUserId: user.id
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
-
-    // await fileRepo.createFile({ name, url, avatarOfUserId: user.id })
 
     await prisma.user.update({
       where: {
@@ -466,19 +518,19 @@ export const updateCoverImage = async (
         }
       })
     } else {
-      await prisma.file
-        .upsert({
+      await prisma.userDetail
+        .update({
           where: {
-            coverImageOfUserDetailId: user.detail.id
+            id: user.detail.id
           },
-          update: {
-            name,
-            url
-          },
-          create: {
-            coverImageOfUserDetail: user.detail.id,
-            name,
-            url
+          data: {
+            coverImage: {
+              disconnect: true,
+              create: {
+                name,
+                url
+              }
+            }
           }
         })
         .catch(error)
@@ -658,6 +710,11 @@ export const resetPassword = async (
       secret: tokenSettings.secret,
       exp: tokenSettings.expireTime
     })
+    const socketToken = generateToken({
+      data: { id: user.id, role: user.role },
+      secret: socketTokenSettings.secret,
+      exp: socketTokenSettings.expireTime
+    })
     delete user.password
 
     res
@@ -668,9 +725,7 @@ export const resetPassword = async (
       })
       .json(
         getApiResponse({
-          data: {
-            user: { ...user }
-          }
+          data: { socketToken, user: { ...user } }
         })
       )
   } catch (error) {
@@ -742,6 +797,61 @@ export const setPassword = async (
     })
 
     res.status(httpStatus.OK).json(getApiResponse({ msg: 'Password seted' }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const search = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const q: any = req.query.q
+    console.log({ q })
+    const tokens: string[] = q
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .split(' ')
+      .filter((token: string) => {
+        return token.trim().length > 0
+      })
+    // if (tokens.length === 1) {
+    const users = await prisma.user.findMany({
+      where: {
+        AND: tokens.map(token => ({
+          fullname: {
+            contains: token
+          }
+        }))
+      },
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        avatar: {
+          select: {
+            id: true,
+            name: true,
+            url: true
+          }
+        }
+      }
+    })
+    // } else {
+    //   users = await prisma.user.findMany({
+    //     where: {
+    //       fullname: {
+    //         search: tokens.join('&')
+    //       }
+    //     }
+    //   })
+    // }
+    console.log(users)
+    res.status(httpStatus.OK).json(getApiResponse({ data: { users } }))
   } catch (error) {
     next(error)
   }

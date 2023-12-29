@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { IoIosNotifications } from 'react-icons/io'
 import { useDispatch, useSelector } from 'react-redux'
 import { Input, Space, Dropdown, Popconfirm, Avatar, Popover } from 'antd'
@@ -7,10 +7,13 @@ import { Input, Space, Dropdown, Popconfirm, Avatar, Popover } from 'antd'
 import { logoutAction } from '../../Reduxs/Actions/authAction'
 import { defaulAvatar } from '../../Constants'
 import Notify from './Notify'
+import { FaFacebookMessenger } from 'react-icons/fa6'
 // import { AudioOutlined } from '@ant-design/icons'
 const { Search } = Input
 
 const Header = () => {
+  const navigate = useNavigate()
+  const { notifies, push, sound } = useSelector(state => state.notifies)
   const dispatch = useDispatch()
   const { isLogin, user } = useSelector(state => state.auth)
   const [openNotify, setOpenNotify] = useState(false)
@@ -22,7 +25,11 @@ const Header = () => {
     },
     {
       title: 'Group',
-      to: '/groups'
+      to: '/groups/feed'
+    },
+    {
+      title: 'Friends',
+      to: '/friends'
     },
     { title: 'Discover', to: '/discover' }
   ]
@@ -36,6 +43,13 @@ const Header = () => {
     // console.log(e)
     // toast.error('Click on No')
   }
+
+  useEffect(() => {
+    console.log('header mount')
+    return () => {
+      console.log('header unmount')
+    }
+  })
 
   return (
     <div className='fixed bg-gray-50  w-full z-[50] top-0 h-[60px] shadow-sm flex justify-between items-center font-robo dark:bg-dark-100 px-5'>
@@ -54,14 +68,14 @@ const Header = () => {
           style={{ width: 200 }}
         />
       </Space>
-      <div className='md:flex gap-4  hidden '>
+      <div className='md:flex gap-3  hidden '>
         {leftNavItems.map((item, index) => (
           <NavLink
             key={index}
             to={item.to}
             className={({ isActive }) => {
               return isActive
-                ? ' text-blue-600   hover:bg-gray-300 py-1 px-2 rounded-2xl '
+                ? ' text-blue-600   hover:bg-gray-300 py-1 px-2 rounded-2xl !no-underline '
                 : ' hover:bg-gray-300 py-1 px-2 rounded-2xl text-black no-underline'
             }}
           >
@@ -70,8 +84,16 @@ const Header = () => {
         ))}
       </div>
       <div className='flex items-center gap-2 header-notify'>
+        <div
+          className='w-[30px] h-[30px] flex items-center justify-center rounded-full bg-gray-200 cursor-pointer'
+          onClick={() => {
+            navigate('/message')
+          }}
+        >
+          <FaFacebookMessenger />
+        </div>
         <Popover
-          // placement='topLeft'
+          placement='topLeft'
           destroyPopupOnHide
           content={<Notify />}
           // title="Title"
@@ -80,9 +102,15 @@ const Header = () => {
           onOpenChange={newOpen => {
             setOpenNotify(newOpen)
           }}
+          className='!relative'
         >
-          <div className='py-[3px] px-[4px] rounded-full bg-gray-200 cursor-pointer'>
+          <div className='w-[30px] h-[30px] flex items-center justify-center rounded-full bg-gray-200 cursor-pointer'>
             <IoIosNotifications size={19} />
+          </div>
+          <div className='absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center'>
+            <p className='text-[12px] text-gray-50 '>
+              {notifies.filter(notify => notify.isSeen === false)?.length}
+            </p>
           </div>
         </Popover>
         {isLogin ? (

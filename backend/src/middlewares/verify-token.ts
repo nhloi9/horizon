@@ -26,7 +26,7 @@ export const verifyToken = async (
       throw new Error()
     }
     req.payload = user
-    console.log('[verify-token]', payload)
+    // console.log('[verify-token]', payload)
     next()
   } catch (error) {
     if (error instanceof TokenExpiredError) {

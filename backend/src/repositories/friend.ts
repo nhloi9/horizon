@@ -10,6 +10,24 @@ const createFriendRequest = async (
     data: {
       receiverId,
       senderId
+    },
+    include: {
+      sender: {
+        select: {
+          id: true,
+          firstname: true,
+          lastname: true,
+          avatar: true
+        }
+      },
+      receiver: {
+        select: {
+          id: true,
+          firstname: true,
+          lastname: true,
+          avatar: true
+        }
+      }
     }
   })
   return newFriendRequest
@@ -36,41 +54,29 @@ const findFriendRequest = async (
   return friendRequest
 }
 
-const deleteFriendRequest = async (
-  senderId: number,
-  receiverId: number
-): Promise<any> => {
-  return await prisma.friendRequest.deleteMany({
+const deleteFriendRequest = async (requestId: number): Promise<any> => {
+  return await prisma.friendRequest.delete({
     where: {
-      OR: [
-        {
-          senderId,
-          receiverId
-        },
-        {
-          senderId: receiverId,
-          receiverId: senderId
-        }
-      ]
+      id: requestId
     }
   })
 }
-
-const acceptedFriendRequest = async (
-  senderId: number,
-  receiverId: number
-): Promise<any> => {
-  return await prisma.friendRequest.updateMany({
-    where: { senderId, receiverId },
-    data: { status: 'accepted' }
+const updateFriendRequest = async (requestId: number): Promise<any> => {
+  return await prisma.friendRequest.update({
+    where: {
+      id: requestId
+    },
+    data: {
+      status: 'accepted'
+    }
   })
 }
 
 export {
   createFriendRequest,
+  updateFriendRequest,
   findFriendRequest,
-  deleteFriendRequest,
-  acceptedFriendRequest
+  deleteFriendRequest
 }
 
 export const findAllFriends = async (userId: number): Promise<any> => {
@@ -116,6 +122,39 @@ export const findReceiveRequests = async (receiverId: number): Promise<any> => {
     },
     include: {
       sender: {
+        select: {
+          lastname: true,
+          firstname: true,
+          id: true,
+          avatar: true
+        }
+      }
+    }
+  })
+}
+
+export const findAllRequests = async (userId: number): Promise<any> => {
+  return await prisma.friendRequest.findMany({
+    where: {
+      OR: [
+        {
+          senderId: userId
+        },
+        {
+          receiverId: userId
+        }
+      ]
+    },
+    include: {
+      sender: {
+        select: {
+          lastname: true,
+          firstname: true,
+          id: true,
+          avatar: true
+        }
+      },
+      receiver: {
         select: {
           lastname: true,
           firstname: true,

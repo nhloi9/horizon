@@ -36,7 +36,7 @@ export const uploadFile = async (
       .end(req.file.buffer)
       .on('finish', () => {
         const fileRef = bucket.file(fileName)
-        console.log({ fileRef })
+        // console.log({ fileRef })
         getDownloadURL(fileRef)
           .then(downloadURL => {
             res.status(httpStatus.OK).json(

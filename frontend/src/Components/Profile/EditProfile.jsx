@@ -61,12 +61,16 @@ const EditProfile = ({ open, onCancel, setOpenResetPassword }) => {
   const { user } = useSelector(state => state.auth)
   const [form] = Form.useForm()
   const [selectedCountry, setSelectedCountry] = useState(
-    user.detail?.country
-      ? {
-          value: user.detail.country,
-          label: Country.getCountryByCode(user.detail.country).name
-        }
-      : null
+    // user.detail?.country
+    //   ? {
+    //       value: user.detail.country,
+    //       label: Country.getCountryByCode(user.detail.country).name
+    //     }
+    //   : null
+    {
+      value: 'VN',
+      label: 'Việt Nam'
+    }
   )
   const [birthday, setBirthday] = useState(user.birthday)
 
@@ -144,7 +148,7 @@ const EditProfile = ({ open, onCancel, setOpenResetPassword }) => {
           phone: phone ?? '',
           gender: gender ?? ''
         }}
-        className='max-w-[600px] max-h-[70vh] overflow-y-hidden hover:overflow-y-scroll'
+        className='max-w-[600px] max-h-[70vh] overflow-y-hidden hover:overflow-y-scroll scroll-min'
         // style={{
         //   maxWidth: 600,
         //   maxHeight: '70vh',
@@ -205,7 +209,7 @@ const EditProfile = ({ open, onCancel, setOpenResetPassword }) => {
           <DatePicker
             // defaultValue={new Date()}
             defaultValue={
-              user?.detail.birthday
+              user?.detail?.birthday
                 ? new dayjs(new Date(user.detail.birthday))
                 : null
             }
@@ -234,6 +238,7 @@ const EditProfile = ({ open, onCancel, setOpenResetPassword }) => {
               width: 'calc(50% - 8px)'
             }}
           >
+            <p>country</p>
             <SelectReact
               placeholder='Country'
               value={selectedCountry}
@@ -251,6 +256,7 @@ const EditProfile = ({ open, onCancel, setOpenResetPassword }) => {
               margin: '0 8px'
             }}
           >
+            <p>city</p>
             <SelectReact
               placeholder='city'
               value={selectedState}

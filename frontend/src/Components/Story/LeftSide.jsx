@@ -1,14 +1,14 @@
 import { Avatar } from 'antd'
 import React from 'react'
 
-const LeftSide = ({ storiesData, current, setCurrent }) => {
+const LeftSide = ({ stories, current, setCurrent }) => {
   return (
     <div className='!w-[300px]  pt-[70px] px-2 h-screen hidden md:block hover:overflow-y-scroll overflow-y-hidden bg-gray-50 shadow-md'>
       <h1 className='!font-[900] text-[24px]'>Stories</h1>
       <br />
       <h2>All Stories</h2>
       <div className='flex flex-col gap-3'>
-        {storiesData.map((story, index) => (
+        {stories.map((story, index) => (
           <div
             key={index}
             className={`flex px-1 rounded-md gap-2 items-center py-1 cursor-pointer ${

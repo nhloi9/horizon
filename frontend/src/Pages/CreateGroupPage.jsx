@@ -1,135 +1,222 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Header from '../Components/Layout/Header'
-import { Avatar, Button, Input, Select, Tooltip } from 'antd'
-import { useSelector } from 'react-redux'
+import { Avatar, Button, Form, Input, Select, Tooltip } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
 import { MdOutlinePublic } from 'react-icons/md'
 import { FaLock } from 'react-icons/fa'
 import { MultiSelect } from 'react-multi-select-component'
 import { defaulAvatar } from '../Constants'
+import { createGroupAction } from '../Reduxs/Actions/groupAction'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { groupTypes } from '../Reduxs/Types/groupType'
 
 const CreateGroupPage = () => {
-  const { friends } = useSelector(state => state.friend)
+  const { requests } = useSelector(state => state.friend)
+
   const { user } = useSelector(state => state.auth)
   const [selected, setSelected] = useState([])
+  const dispatch = useDispatch()
+  const { success, groupId } = useSelector(state => state.createGroup)
+  const navigate = useNavigate()
+  let [searchParams, setSearchParams] = useSearchParams()
 
-  // const optionss = [
-  //   { label: 'Grapes 🍇', value: 'grapes' },
-  //   { label: 'Mango 🥭', value: 'mango' },
-  //   { label: 'Strawberry 🍓', value: 'strawberry', disabled: true }
-  // ]
+  const friends = useMemo(() => {
+    const acceptedRequests = requests?.filter(req => req?.status === 'accepted')
+    return acceptedRequests.map(req => {
+      return req?.senderId === user?.id ? req.receiver : req.sender
+    })
+  }, [requests, user?.id])
   const options = friends?.map(friend => ({
     label: friend.firstname + ' ' + friend.lastname,
     value: friend.id
   }))
+
+  const onFinish = value => {
+    dispatch(
+      createGroupAction(
+        value.name,
+        value.privacy,
+        selected.map(item => item.value)
+      )
+    )
+  }
+
+  useEffect(() => {
+    if (success) {
+      navigate('/groups/' + groupId)
+      dispatch({
+        type: groupTypes.CREATE_GROUP_RESET
+      })
+    }
+  }, [success, navigate, dispatch, groupId])
 
   return (
     <div>
       <Header />
       <div className='flex create-group'>
         <div className='w-full flex flex-col justify-between h-screen md:w-[400px] md:border-r-[1px] border-gray-300 pt-[60px] '>
-          <div className='px-3'>
-            <h1 className='text-[23px] my-5 '>Create group</h1>
-            <div className='flex gap-2'>
-              <Avatar
-                size={'large'}
-                className='!border-[1px] !shadow-md border-gray-200'
-                src={user?.avatar?.url}
-              />
-              <div>
-                <h3>{user?.firstname + ' ' + user?.lastname}</h3>
-                <p className='text-gray-500'>Admin</p>
-              </div>
-            </div>
-            <Input placeholder='Group name ' className='!h-[60px] !my-6' />
-            <Select
-              placeholder='Choose privacy'
-              // defaultValue={null}
-              style={{
-                width: '100%'
-              }}
-              className='!h-[60px]'
-              // onChange={handleChange}
-              options={[
-                {
-                  value: 'public',
-                  label: (
-                    <Tooltip title=" Any one can see who's in group and what they post">
-                      <div className='flex items-center gap-2 !h-[50px]'>
-                        <MdOutlinePublic size={18} className='!text-lg' />
-                        <p>Public</p>
-                      </div>
-                    </Tooltip>
-                  )
-                },
-                {
-                  value: 'private',
-                  label: (
-                    <Tooltip title="Only members can see who's in group and what they post">
-                      <div className='flex items-center gap-2 !h-[50px]'>
-                        <FaLock size={17} className='!text-lg !text-gray-700' />
-                        <p>Private</p>
-                      </div>
-                    </Tooltip>
-                  )
-                }
-              ]}
-            />
-            <label className='block mt-6 text-gray-400'>
-              Invite friends( optional)
-            </label>
-            <MultiSelect
-              ItemRenderer={({ checked, option, onClick, disabled }) => (
-                <div
-                  className={`item-renderer ${
-                    disabled ? 'disabled' : ''
-                  } !flex !items-center`}
-                >
-                  <input
-                    type='checkbox'
-                    onChange={onClick}
-                    checked={checked}
-                    tabIndex={-1}
-                    disabled={disabled}
-                  />
-
-                  {option.value ? (
-                    <div className='flex gap-1 items-center'>
-                      <Avatar
-                        src={
-                          friends.find(item => item.id === option.value)?.avatar
-                            ?.url
-                        }
-                      />
-                      <p>{option.label}</p>
-                    </div>
-                  ) : (
-                    <span>{'Slect all friends'}</span>
-                  )}
+          <Form
+            name='basic'
+            style={{
+              width: '100%'
+            }}
+            onFinish={onFinish}
+            // onFinishFailed={onFinishFailed}
+            autoComplete='off'
+            className='flex flex-col justify-between h-screen'
+          >
+            <div className='px-3'>
+              <h1 className='text-[23px] my-5 '>Create group</h1>
+              <div className='flex gap-2 mb-1'>
+                <Avatar
+                  size={'large'}
+                  className='!border-[1px] !shadow-md border-gray-200'
+                  src={user?.avatar?.url}
+                />
+                <div>
+                  <h3>{user?.firstname + ' ' + user?.lastname}</h3>
+                  <p className=' text-sm text-gray-500 -translate-y-1'>Admin</p>
                 </div>
-              )}
-              valueRenderer={(selected, _options) => {
-                return selected.length
-                  ? selected.map(({ label }) => ' ' + label + ',')
-                  : ''
-              }}
-              className=''
-              placeholder='Invite friends( optional)'
-              options={options}
-              value={selected}
-              onChange={setSelected}
-              labelledBy='Select'
-            />
-          </div>
-          <div className='w-full shadow-lg  px-3 border-t-[1px] border-gray-100'>
-            <Button type='primary' className='!my-4 !w-full'>
+              </div>
+              <Form.Item
+                // label="Username"
+                name='name'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input  group name!'
+                  },
+                  {
+                    type: 'string',
+                    min: 2,
+                    max: 30,
+                    message:
+                      'Group name must be at least 2 characters and shorter than 30 characters '
+                  }
+                ]}
+              >
+                <Input className='w-full !h-[60px]' />
+              </Form.Item>
+
+              <Form.Item
+                name='privacy'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please choose privacy!'
+                  }
+                ]}
+              >
+                <Select
+                  placeholder='Choose privacy'
+                  // defaultValue={null}
+                  style={{
+                    width: '100%'
+                  }}
+                  className='!h-[60px]'
+                  // onChange={value => {
+                  //   setPrivacy(value)
+                  // }}
+                  options={[
+                    {
+                      value: 'public',
+                      label: (
+                        <Tooltip title=" Any one can see who's in group and what they post">
+                          <div className='flex items-center gap-2 !h-[50px]'>
+                            <MdOutlinePublic size={18} className='!text-lg' />
+                            <p>Public</p>
+                          </div>
+                        </Tooltip>
+                      )
+                    },
+                    {
+                      value: 'private',
+                      label: (
+                        <Tooltip title="Only members can see who's in group and what they post">
+                          <div className='flex items-center gap-2 !h-[50px]'>
+                            <FaLock
+                              size={17}
+                              className='!text-lg !text-gray-700'
+                            />
+                            <p>Private</p>
+                          </div>
+                        </Tooltip>
+                      )
+                    }
+                  ]}
+                />
+              </Form.Item>
+              <label className='block mt-6 text-gray-400'>
+                Invite friends( optional)
+              </label>
+              <MultiSelect
+                ItemRenderer={({ checked, option, onClick, disabled }) => (
+                  <div
+                    className={`item-renderer ${
+                      disabled ? 'disabled' : ''
+                    } !flex !items-center`}
+                  >
+                    <input
+                      type='checkbox'
+                      onChange={onClick}
+                      checked={checked}
+                      tabIndex={-1}
+                      disabled={disabled}
+                    />
+
+                    {option.value ? (
+                      <div className='flex gap-1 items-center'>
+                        <Avatar
+                          src={
+                            friends.find(item => item.id === option.value)
+                              ?.avatar?.url
+                          }
+                        />
+                        <p>{option.label}</p>
+                      </div>
+                    ) : (
+                      <span>{'Slect all friends'}</span>
+                    )}
+                  </div>
+                )}
+                valueRenderer={(selected, _options) => {
+                  return selected.length
+                    ? selected.map(({ label }, i) =>
+                        i === selected.length - 1
+                          ? ' ' + label
+                          : ' ' + label + ','
+                      )
+                    : ''
+                }}
+                className=''
+                placeholder='Invite friends( optional)'
+                options={options}
+                value={selected}
+                onChange={setSelected}
+                labelledBy='Select'
+              />
+            </div>
+
+            <Form.Item className='!px-2'>
+              <Button type='primary' htmlType='submit' className=' !w-full'>
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+          {/* <div className='w-full shadow-lg  px-3 border-t-[1px] border-gray-100'>
+            <Button
+              type='primary'
+              className='!my-4 !w-full'
+              disabled={!name.trim() || !privacy}
+            >
               Create
             </Button>
-          </div>
+          </div> */}
         </div>
         <div className='hidden md:block px-7 py-7 h-screen pt-[90px]  w-full  bg-gray-100'>
           <div className=' w-full h-full rounded-md shadow-lg bg-white p-4 '>
             <p className='font-bold'>Group preview</p>
-            <div className='w-full h-[calc(100%-30px)] mt-2 overflow-y-scroll'>
+            <div className='w-full h-[calc(100%-30px)] mt-2 border overflow-y-scroll'>
               <GroupPreview />
             </div>
           </div>
@@ -141,7 +228,7 @@ const CreateGroupPage = () => {
 
 const GroupPreview = () => {
   return (
-    <div className='w-full h-full border rounded-md'>
+    <div className='w-full h-full  rounded-md'>
       <img
         src={require('../assets/images/create_group_preview.png')}
         className='w-full'

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import Stories from '../Components/Home/Stories'
 
 const HomePage = () => {
-  const { posts } = useSelector(state => state.homePost)
+  const { posts } = useSelector(state => state.post)
 
   return (
     <div>
@@ -18,7 +18,7 @@ const HomePage = () => {
         <div className='hidden fixed h-screen xl:block left-0 w-[25%] max-w-[300px]'>
           <LeftSide></LeftSide>
         </div>
-        <div className='w-full  max-w-[600px] rounded-xl  '>
+        <div className='w-full  max-w-[600px] rounded-xl min-h-screen   '>
           <Stories />
           {/* <div className='w-[80%] mx-auto'> */}
           <Status />

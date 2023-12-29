@@ -46,7 +46,7 @@ const Intro = ({ userInfo, own }) => {
   }
 
   return (
-    <div className='bg-[#fcf8f8]  px-5 lg:px-16'>
+    <div className='bg-[#fcf8f8] min-h-screen px-5 lg:px-16'>
       <div className='bg-white shadow-sm px-5 pb-5 md:px-7  '>
         <div className='md:flex   md:py-6   justify-between'>
           <div className='flex gap-3'>
@@ -112,7 +112,7 @@ const Intro = ({ userInfo, own }) => {
 
       <br />
       <div className='md:flex'>
-        <div className='hidden md:block md:w-[30%] bg-white px-7 shadow-sm'>
+        <div className='hidden md:block md:w-[30%] bg-white px-7 pb-3 shadow-sm'>
           <Info userInfo={userInfo} />
         </div>
       </div>

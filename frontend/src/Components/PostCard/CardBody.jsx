@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Image as ImageAntd } from 'antd'
+import { IoEyeOutline } from 'react-icons/io5'
+import { IoIosVideocam } from 'react-icons/io'
+import { AiOutlineEye } from 'react-icons/ai'
 // import Slider from 'react-slick'
 // import 'slick-carousel/slick/slick.css'
 // import 'slick-carousel/slick/slick-theme.css'
@@ -47,16 +50,48 @@ const CardBody = ({ post }) => {
         )}
       </div>
       <div className='backdrop-contrast-[0.9] shadow-md mt-3 '>
-        <ImageAntd.PreviewGroup>
+        <ImageAntd.PreviewGroup
+          preview={{
+            toolbarRender: (a, { current }) => {
+              if (post.files && post.files[current]?.thumbnail) return <></>
+              else return a
+            },
+            destroyOnClose: true,
+
+            imageRender: (a, { current }, c) => {
+              if (post.files && post.files[current]?.thumbnail)
+                return (
+                  // <div className='w-[80%] h-[80%]   bg-gray-900 p-1'>
+                  <video
+                    disablePictureInPicture
+                    // muted
+                    controls
+                    src={post.files[current].url}
+                    className='object-contain max-w-[80%] max-h-[80%] rounded-md'
+                  />
+                  // </div>
+                )
+              else return a
+            }
+          }}
+        >
           {/* <div className='dkkd'> */}
-          {post.files.length === 1 && (
-            <SingleImage image={post.files[0]} alt='' />
+          {post.files?.length === 1 && (
+            // <ImageAntd
+            //   src={post.files[0]?.thumbnail ?? post.files[0]?.url}
+            //   alt=''
+            //   className={`object-contain`}
+            //   height={'500px'}
+            // />
+            <div className='w-full h-[500px]'>
+              <CustomImage image={post.files[0]} />
+            </div>
           )}
           {post.files.length === 2 && (
             <div className='w-full h-[400px] sm:h-[600px] grid grid-cols-2 gap-1  divide-x-[1px]'>
               {post.files.map((file, index, files) => (
                 <div className=' w-full h-full  shadow-md '>
-                  <CustomImage url={file.url} />
+                  <CustomImage image={file} />
                 </div>
               ))}
             </div>
@@ -64,22 +99,19 @@ const CardBody = ({ post }) => {
 
           {post.files.length === 3 && (
             <div className='w-full h-[400px] sm:h-[600px] grid grid-rows-2 grid-flow-col gap-1  '>
-              <div class='row-span-2 bg-gray-50 shadow-md'>
+              <div className='row-span-2 bg-gray-50 shadow-md'>
                 <CustomImage
-                  list={post.files.map(file => file.url)}
-                  url={post.files[0].url}
+                  // list={post.files.map(file => file.url)}
+                  image={post.files[0]}
                 />
               </div>
               <div class='col-span-1 bg-red-300'>
-                <CustomImage
-                  list={post.files.map(file => file.url)}
-                  url={post.files[1].url}
-                />
+                <CustomImage image={post.files[1]} />
               </div>
               <div class='row-span-1 col-span-1 bg-black ...'>
                 <CustomImage
                   list={post.files.map(file => file.url)}
-                  url={post.files[2].url}
+                  image={post.files[2]}
                 />
               </div>
             </div>
@@ -89,7 +121,7 @@ const CardBody = ({ post }) => {
             <div className='w-full h-[400px] sm:h-[600px] flex flex-wrap gap-1 '>
               {post.files.map((file, index, files) => (
                 <div className=' w-[calc(50%-2px)] h-[calc(50%-2px)] shadow-md '>
-                  <CustomImage url={file.url} />
+                  <CustomImage key={index} image={file} />
                 </div>
               ))}
             </div>
@@ -103,10 +135,12 @@ const CardBody = ({ post }) => {
                     index === 3 ? 'relative' : ''
                   }  ${index > 3 && 'hidden'}`}
                 >
-                  <CustomImage url={file.url} />
+                  <CustomImage image={file} />
                   {index === 3 && (
-                    <div className='absolute top-[50%] left-[50%] cursor-pointer '>
-                      <h1 className='text-lg'>+ {post.files.length - 4}</h1>
+                    <div className='z-[0] absolute top-[50%] left-[50%] cursor-pointer -translate-x-[50%] -translate-y-[50%] '>
+                      <h1 className='text-[22px]  font-[600]'>
+                        + {post.files.length - 4}
+                      </h1>
                     </div>
                   )}
                 </div>
@@ -154,12 +188,40 @@ const SingleImage = ({ image }) => {
   )
 }
 
-const CustomImage = ({ url }) => (
+const CustomImage = ({ image }) => (
   // <ImageAntd.PreviewGroup items={list}>
-  <ImageAntd
-    className='!w-full !h-full !object-cover shadow-[0_0_1px]'
-    src={url}
-  />
+  <div className=' w-full h-full relative'>
+    <ImageAntd
+      preview={{
+        destroyOnClose: true,
+        mask: <AiOutlineEye />
+        // ...(image.thumbnail && {
+        //   imageRender: () => (
+        //     <div className='w-[70%] h-[70%] border bg-gray-700 p-1'>
+        //       <video
+        //         disablePictureInPicture
+        //         // muted
+        //         controls
+        //         src={image.url}
+        //         className='w-full h-full object-contain'
+        //       />
+        //     </div>
+        //   ),
+        //   toolbarRender: () => null
+        // })
+      }}
+      src={image.thumbnail ?? image.url}
+      alt=''
+      height={'100%'}
+      className={` block w-full h-full object-cover`}
+    />
+    {image.thumbnail && (
+      <IoIosVideocam
+        className='!absolute !top-2 !left-2 z-0 !text-gray-700 '
+        size={24}
+      />
+    )}
+  </div>
   // </ImageAntd.PreviewGroup>
 )
 export default CardBody

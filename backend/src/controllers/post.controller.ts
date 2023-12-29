@@ -15,12 +15,52 @@ export const createPost = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { text, files } = req.body
+  const { text, files, feel, location, tags, groupId } = req.body
+  const userId = (req.payload as any).id
   try {
-    const post = await postRepo.createPost(
-      { userId: (req.payload as any).id, text },
-      files
+    const group =
+      groupId !== undefined
+        ? await prisma.group.findUnique({ where: { id: groupId } })
+        : null
+
+    const post = await postRepo.createPost({
+      userId,
+      text,
+      feel,
+      location,
+      files,
+      tags,
+      groupId,
+      ...(groupId !== undefined && {
+        accepted: group?.adminId === userId || group?.requireApproval === false
+      })
+    })
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: { post }
+      })
     )
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updatePost = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  const { text, files, feel, location, tags } = req.body
+  try {
+    const post = await postRepo.updatePost({
+      postId: Number(req.params.id),
+      userId: (req.payload as any).id,
+      text,
+      feel,
+      location,
+      files,
+      tags
+    })
     res.status(httpStatus.OK).json(
       getApiResponse({
         data: { post }
@@ -40,18 +80,15 @@ export const getHomePosts = async (
     const { oldPosts } = req.body
     let posts = await postRepo.getPosts(oldPosts)
     posts = posts.map((post: any, index: number) => {
-      const numberComments = post.comments?.length
       return {
-        ...post,
-        comments: undefined,
-        numberComments,
+        ...post
 
-        ...(numberComments > 5 && {
-          sampleComment: _.sampleSize(
-            post.comments,
-            Math.floor(Math.random() * 4)
-          )
-        })
+        // ...(numberComments > 5 && {
+        //   sampleComment: _.sampleSize(
+        //     post.comments,
+        //     Math.floor(Math.random() * 4)
+        //   )
+        // })
       }
     })
     res.status(httpStatus.OK).json(

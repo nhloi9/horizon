@@ -16,6 +16,7 @@ import { commentRepo } from '../repositories'
 import { getApiResponse } from '../utils'
 // import Spellchecker from 'hunspell-spellchecker'
 import type { RequestPayload } from '../types'
+import { prisma } from '../database/postgres'
 
 // const spellchecker = new Spellchecker()
 // spellchecker.suggest('hello')
@@ -99,4 +100,62 @@ function analysisSentiment (content: string = '') {
   const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn')
   const analysis = analyzer.getSentiment(filteredContent)
   return analysis
+}
+
+export const updateComment = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { content } = req.body
+
+  try {
+    const comment = await prisma.comment.update({
+      where: {
+        id: Number(id),
+        senderId: (req.payload as any).id
+      },
+      data: {
+        content
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        }
+      }
+    })
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: { comment }
+      })
+    )
+  } catch (error) {
+    next(error)
+  }
 }

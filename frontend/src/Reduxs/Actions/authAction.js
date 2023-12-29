@@ -3,15 +3,16 @@
 import {getApi, postApi, putApi} from '../../network/api';
 import {authTypes} from '../Types/authType';
 import {globalTypes} from '../Types/globalType';
+import {groupTypes} from '../Types/groupType';
 
 export const checkAuthAction = () => async (dispatch, getState) => {
 	try {
 		dispatch({type: globalTypes.ALERT, payload: {loading: true}});
 		const {
-			data: {user},
+			data: {user, socketToken},
 		} = await getApi('/users');
 		dispatch({type: globalTypes.ALERT, payload: {loading: false}});
-		dispatch({type: authTypes.USER, payload: user});
+		dispatch({type: authTypes.ALL, payload: {user, socketToken}});
 	} catch (error) {
 		dispatch({type: globalTypes.ALERT, payload: {loading: false}});
 	}
@@ -24,9 +25,12 @@ export const siginAction =
 			dispatch({type: globalTypes.ALERT, payload: {loading: true}});
 
 			const {
-				data: {user},
+				data: {user, socketToken},
 			} = await postApi('/users/login', {email, password});
-			dispatch({type: authTypes.USER, payload: user});
+			dispatch({
+				type: authTypes.ALL,
+				payload: {user, socketToken},
+			});
 			dispatch({
 				type: globalTypes.ALERT,
 				payload: {loading: false, success: 'Welcome back!' + user?.firstname},
@@ -130,7 +134,7 @@ export const updateProfileAction = (data) => async (dispatch, getState) => {
 		const {
 			data: {user},
 		} = await putApi(`users/profile`, data);
-		dispatch({type: authTypes.USER, payload: user});
+		dispatch({type: authTypes.USER, payload: {user}});
 		dispatch({
 			type: globalTypes.ALERT,
 			payload: {success: 'Updated profile successfully'},

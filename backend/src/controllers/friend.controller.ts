@@ -1,18 +1,83 @@
 import { type Response, type NextFunction } from 'express'
 import httpStatus from 'http-status'
 
-import { friendRepo, userRepo } from '../repositories'
+import { friendRepo, notifyRepo, userRepo } from '../repositories'
 import { messages } from '../constants'
 import type { RequestPayload } from '../types'
 import { getApiResponse } from '../utils'
 
-export const addRequestFriend = async (
+// export const getAllFriends = async (
+//   req: RequestPayload,
+//   res: Response,
+//   next: NextFunction
+// ): Promise<any> => {
+//   try {
+//     const userId = (req.payload as any).id
+//     const friendsRequest = await friendRepo.findAllFriends(userId)
+//     const friendsId = friendsRequest.map((request: any) =>
+//       request.senderId === userId ? request.receiverId : request.senderId
+//     )
+//     const friends = await userRepo.findUsers({ id: { in: friendsId } })
+//     return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+// export const getReceiveRequests = async (
+//   req: RequestPayload,
+//   res: Response,
+//   next: NextFunction
+// ): Promise<any> => {
+//   try {
+//     const userId = (req.payload as any).id
+//     const friendsRequest = await friendRepo.findReceiveRequests(userId)
+//     const friends = friendsRequest.map((request: any) => request.sender)
+//     return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+// export const getSendRequests = async (
+//   req: RequestPayload,
+//   res: Response,
+//   next: NextFunction
+// ): Promise<any> => {
+//   try {
+//     const userId = (req.payload as any).id
+//     const friendsRequest = await friendRepo.findSendRequests(userId)
+//     const friends = friendsRequest.map((request: any) => request.receiver)
+//     return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+export const getAllRequests = async (
   req: RequestPayload,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const receiverId = req.params.other
+    const userId = (req.payload as any).id
+    const requests = await friendRepo.findAllRequests(userId)
+
+    return res
+      .status(httpStatus.OK)
+      .json(getApiResponse({ data: { requests } }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createRequestFriend = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { receiverId } = req.body
     const senderId = (req.payload as any).id
     const receiver = await userRepo.findUser({
       id: Number(receiverId)
@@ -38,129 +103,58 @@ export const addRequestFriend = async (
           )
         )
     }
-    await friendRepo.createFriendRequest(senderId, Number(receiverId))
+    const request = await friendRepo.createFriendRequest(
+      senderId,
+      Number(receiverId)
+    )
+    await notifyRepo
+      .createNotify({
+        notifyData: {
+          text: 'sent you a friend request',
+          url: `http://localhost:3000/profile/${senderId as string}`,
+          type: 'createRequestFriend'
+        },
+        senderId: (req.payload as any).id,
+        receiverId
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    res.status(httpStatus.OK).json(getApiResponse({ data: { request } }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteRequestFriend = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { id } = req.params
+    await friendRepo.deleteFriendRequest(Number(id))
+
     res
       .status(httpStatus.OK)
-      .json(
-        getApiResponse(
-          messages.FRIEND_REQUEST_SUCCESS,
-          res,
-          'FRIEND_REQUEST_SUCCESS'
-        )
-      )
+      .json(getApiResponse({ msg: 'Friend request delete success' }))
   } catch (error) {
     next(error)
   }
 }
 
-export const cancelFriendRequest = async (
-  req: RequestPayload,
-  res: Response
-): Promise<any> => {
-  const { count } = await friendRepo.deleteFriendRequest(
-    (req.payload as any).id,
-    Number(req.params.other)
-  )
-  if (count === 0) {
-    return res
-      .status(httpStatus.NOT_FOUND)
-      .json(
-        getApiResponse(
-          messages.FRIEND_REQUEST_NOT_FOUND,
-          res,
-          'FRIEND_REQUEST_NOT_FOUND'
-        )
-      )
-  }
-  return res
-    .status(httpStatus.OK)
-    .json(
-      getApiResponse(
-        messages.FRIEND_REQUEST_DELETE_SUCCESS,
-        res,
-        'FRIEND_REQUEST_DELETE_SUCCESS'
-      )
-    )
-}
-
-export const acceptFriendRequest = async (
+export const updateRequestFriend = async (
   req: RequestPayload,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { count } = await friendRepo.acceptedFriendRequest(
-      Number(req.params.other),
-      (req.payload as any).id
-    )
-    if (count === 0) {
-      return res
-        .status(httpStatus.NOT_FOUND)
-        .json(
-          getApiResponse(
-            messages.FRIEND_REQUEST_NOT_FOUND,
-            res,
-            'FRIEND_REQUEST_NOT_FOUND'
-          )
-        )
-    }
-    return res
+    const { id } = req.params
+    await friendRepo.updateFriendRequest(Number(id))
+
+    res
       .status(httpStatus.OK)
-      .json(
-        getApiResponse(
-          messages.FRIEND_REQUEST_ACCEPT_SUCCESS,
-          res,
-          'FRIEND_REQUEST_ACCEPT_SUCCESS'
-        )
-      )
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const getAllFriends = async (
-  req: RequestPayload,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try {
-    const userId = (req.payload as any).id
-    const friendsRequest = await friendRepo.findAllFriends(userId)
-    const friendsId = friendsRequest.map((request: any) =>
-      request.senderId === userId ? request.receiverId : request.senderId
-    )
-    const friends = await userRepo.findUsers({ id: { in: friendsId } })
-    return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const getReceiveRequests = async (
-  req: RequestPayload,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try {
-    const userId = (req.payload as any).id
-    const friendsRequest = await friendRepo.findReceiveRequests(userId)
-    const friends = friendsRequest.map((request: any) => request.sender)
-    return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const getSendRequests = async (
-  req: RequestPayload,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try {
-    const userId = (req.payload as any).id
-    const friendsRequest = await friendRepo.findSendRequests(userId)
-    const friends = friendsRequest.map((request: any) => request.receiver)
-    return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
+      .json(getApiResponse({ msg: 'Friend request accepted success' }))
   } catch (error) {
     next(error)
   }

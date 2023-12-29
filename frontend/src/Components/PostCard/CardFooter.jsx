@@ -23,7 +23,7 @@ const CardFooter = ({ post, setIsModalOpen }) => {
   )
 
   const handleLilePost = () => {
-    dispatch(likePost(post.id))
+    dispatch(reactPost(post.id, 1))
   }
 
   const handleReact = react => {
@@ -60,7 +60,8 @@ const CardFooter = ({ post, setIsModalOpen }) => {
                   src={react.icon}
                   alt=''
                   className={`w-[25px] h-[25px] rounded-full hover:scale-125  hover:animate-none cursor-pointer ${
-                    index % 2 === 0 ? 'animate-spin' : 'animate-bounce'
+                    // index % 2 === 0 ? 'animate-spin' : 'animate-bounce'
+                    ''
                   }`}
                   onClick={() => {
                     handleReact(react)
@@ -78,17 +79,19 @@ const CardFooter = ({ post, setIsModalOpen }) => {
               }))
             }}
           >
-            <a
-              href='m'
-              onClick={e => e.preventDefault()}
-              className='text-black no-underline hover:underline'
-            >
-              <p className='text-sm'>{post?.reacts?.length ?? 0} reacts</p>
-            </a>
+            <div className='flex flex-col items-center'>
+              <a
+                href='m'
+                onClick={e => e.preventDefault()}
+                className='text-black no-underline hover:underline'
+              >
+                <p className='text-sm'>{post?.reacts?.length ?? 0} reacts</p>
+              </a>
+            </div>
           </Dropdown>
         </div>
 
-        <div className='flex flex-col'>
+        <div className='flex flex-col items-center'>
           <Tooltip
             title='comment'
             onClick={() => {
@@ -97,9 +100,9 @@ const CardFooter = ({ post, setIsModalOpen }) => {
           >
             <BsChat size={19} className='cursor-pointer' />
           </Tooltip>
-          <p className='text-sm'>{post?.numberComments ?? 0} comments</p>
+          <p className='text-sm'>{post?.comments?.length ?? 0} comments</p>
         </div>
-        <div>
+        <div className='flex flex-col items-center'>
           <Tooltip title='share'>
             <BsSend size={19} className='cursor-pointer' />
           </Tooltip>

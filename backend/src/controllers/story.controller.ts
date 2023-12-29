@@ -1,11 +1,7 @@
 import { type Response, type NextFunction } from 'express'
 import httpStatus from 'http-status'
-// import tf from '@tensorflow/tfjs-node'
-// import use from '@tensorflow-models/universal-sentence-encoder';
 
-import _ from 'lodash'
-
-import { postRepo, storyRepo } from '../repositories'
+import { friendRepo, storyRepo } from '../repositories'
 import type { RequestPayload } from '../types'
 import { getApiResponse } from '../utils'
 import { prisma } from '../database/postgres'
@@ -18,11 +14,9 @@ export const createStory = async (
   const { mutedOriginal, song, file } = req.body
   try {
     const story = await storyRepo.createStory(
-      {
-        userId: (req.payload as any).id,
-        song,
-        mutedOriginal
-      },
+      mutedOriginal,
+      song,
+      (req.payload as any).id,
       file
     )
     res.status(httpStatus.OK).json(
@@ -35,33 +29,22 @@ export const createStory = async (
   }
 }
 
-export const getHomePosts = async (
+export const getHomeStories = async (
   req: RequestPayload,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { oldPosts } = req.body
-    let posts = await postRepo.getPosts(oldPosts)
-    posts = posts.map((post: any, index: number) => {
-      const numberComments = post.comments?.length
-      return {
-        ...post,
-        comments: undefined,
-        numberComments,
-
-        ...(numberComments > 5 && {
-          sampleComment: _.sampleSize(
-            post.comments,
-            Math.floor(Math.random() * 4)
-          )
-        })
-      }
-    })
+    const userId = (req.payload as any).id
+    const friends = await friendRepo.findAllFriends(userId)
+    const friendsId = friends.map((request: any) =>
+      request.senderId === userId ? request.receiverId : request.senderId
+    )
+    const stories = await storyRepo.getHomeStories(friendsId, userId)
     res.status(httpStatus.OK).json(
       getApiResponse({
         data: {
-          posts: _.sampleSize(posts, 10)
+          stories
         }
       })
     )
@@ -70,19 +53,19 @@ export const getHomePosts = async (
   }
 }
 
-export const reactPost = async (
+export const reactStory = async (
   req: RequestPayload,
   res: Response,
   next: NextFunction
 ) => {
   const { reactId } = req.body
-  const postId = Number(req.params.id)
+  const storyId = Number(req.params.id)
   const userId = (req.payload as any).id
   try {
-    await prisma.postUserReact.upsert({
+    await prisma.reactStory.upsert({
       where: {
-        postId_userId: {
-          postId,
+        storyId_userId: {
+          storyId,
           userId
         }
       },
@@ -91,37 +74,50 @@ export const reactPost = async (
       },
       create: {
         reactId,
-        postId,
+        storyId,
         userId
       }
     })
-    res.status(httpStatus.OK).json({ msg: 'react post successfully' })
+    res.status(httpStatus.OK).json({ msg: 'react story successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const removeReactPost = async (
+export const commentStory = async (
   req: RequestPayload,
   res: Response,
   next: NextFunction
 ) => {
-  const postId = Number(req.params.id)
-  const userId = (req.payload as any).id
   try {
-    await prisma.postUserReact.deleteMany({
-      where: {
-        postId,
-        userId
+    const { content } = req.body
+    const storyId = Number(req.params.id)
+    const comment = await prisma.commentStory.create({
+      data: {
+        userId: (req.payload as any).id,
+        storyId,
+        content
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        }
       }
     })
 
-    res.status(httpStatus.OK).json({ msg: 'react post successfully' })
+    res.status(httpStatus.OK).json(getApiResponse({ data: { comment } }))
   } catch (error) {
     next(error)
   }
 }
-
-// function getPostsByFriend (userId: number) {}
-// function getPostsByLike (userId: number) {}
-// function getPostsBy

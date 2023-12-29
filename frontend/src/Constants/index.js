@@ -49,4 +49,8 @@ export const reacts = [
 	},
 ];
 
+export const tomtomApiKey = 'UB1JyOMM8IzEGrYwP2gNjM7mKxP07gaC';
 export const defaulAvatar = require('../assets/images/defaut_avatar.jpg');
+
+export const defaultVideoThumbnail =
+	'https://firebasestorage.googleapis.com/v0/b/netflix-fba01.appspot.com/o/video_thumbnail6891.jpg?alt=media&token=0e4d5f0e-9a57-491e-a5a0-f8eab55c242e';

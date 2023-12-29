@@ -3,7 +3,7 @@ import axios from 'axios'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { FaPause, FaPlay, FaVolumeDown, FaVolumeMute } from 'react-icons/fa'
 import ReactPlayer from 'react-player'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FiPlusCircle } from 'react-icons/fi'
 import { LuMusic } from 'react-icons/lu'
 import { IoMdCloseCircleOutline } from 'react-icons/io'
@@ -12,6 +12,9 @@ import { HiOutlineRefresh } from 'react-icons/hi'
 import { toast } from 'react-hot-toast'
 import { CgPushChevronRight, CgPushChevronUp } from 'react-icons/cg'
 import { upload } from '../../utils/imageUpload'
+import { postApi } from '../../network/api'
+import { globalTypes } from '../../Reduxs/Types/globalType'
+import { useNavigate } from 'react-router-dom'
 
 const request = axios.create({
   baseURL: 'https://deezerdevs-deezer.p.rapidapi.com/',
@@ -23,6 +26,8 @@ const request = axios.create({
 })
 
 const CreateStory = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { user } = useSelector(state => state.auth)
   const [myvideo, setMyvideo] = useState(null)
   const myvideoRef = useRef()
@@ -33,6 +38,7 @@ const CreateStory = () => {
   let audioRef = useRef(null)
   const [muted, setMuted] = useState(false)
   const [percent, setPercent] = useState(0)
+  const [texts, setTexts] = useState([])
 
   const handleSelectVideo = e => {
     try {
@@ -95,15 +101,53 @@ const CreateStory = () => {
 
   const handlePostStory = async () => {
     try {
+      dispatch({
+        type: globalTypes.ALERT,
+        payload: {
+          loading: true
+        }
+      })
       const [file] = await upload([myvideo])
-    } catch (error) {}
+
+      const {
+        data: { story }
+      } = await postApi('/stories', {
+        file,
+        mutedOriginal: muted,
+        song: selectSong
+      })
+      dispatch({
+        type: globalTypes.ALERT,
+        payload: {
+          success: 'Create story successfully'
+        }
+      })
+      navigate('/')
+    } catch (error) {
+      dispatch({
+        type: globalTypes.ALERT,
+        payload: {
+          error
+        }
+      })
+    }
   }
 
-  // useEffect(() => {
-  //   if (myvideo) {
-  //     console.log(myvideoRef.current?.duration)
-  //   }
-  // }, [myvideo])
+  useEffect(() => {
+    setMuted(false)
+  }, [myvideo])
+
+  useEffect(() => {
+    if (!selectSong) {
+      setMuted(false)
+    }
+  }, [selectSong])
+
+  useEffect(() => {
+    if (selectSong && playMyvieo) {
+      audioRef.current?.play()
+    }
+  }, [selectSong, playMyvieo])
 
   return (
     <div className='flex create-story'>
@@ -123,9 +167,9 @@ const CreateStory = () => {
           <h1 className='!font-[900] text-[24px] my-4'>Your Story</h1>
 
           <div
-            className={`flex px-1 rounded-md gap-2 items-center py-1 cursor-pointer`}
+            className={`flex px-1 rounded-md gap-2 items-center py-1 mb-2 cursor-pointer`}
           >
-            <div className='rounded-full border-[3px] border-blue-600 shadow mb-4'>
+            <div className='!my-auto rounded-full border-[3px] border-blue-600 shadow mb-4'>
               <div className='rounded-full border-[3px] border-gray-100 shadow'>
                 <Avatar
                   size={'large'}
@@ -134,17 +178,80 @@ const CreateStory = () => {
                 />
               </div>
             </div>
-            <div>
-              <h1 className='text-lg text-gray-500'>
+            <div className='flex flex-col justify-center'>
+              <h1 className='text-[17px] text-gray-500'>
                 {user?.firstname + ' ' + user?.lastname}
               </h1>
+              <p>Admin</p>
             </div>
           </div>
         </div>
       </div>
       <div className='w-full lg:w-[calc(100vw-300px)] bg-gray-100 h-screen pt-[60px] flex  justify-center '>
         <div className='w-[49%] flex flex-col items-center  '>
-          <div className='relative w-[220px] mt-8'>
+          <div className='relative w-[220px] h-[330px] mt-8'>
+            {
+              //   input text to story
+              myvideo && (
+                <div className='z-20 absolute w-full px-1 h-[260px] top-[50px] bg-transparent  '>
+                  <Tooltip color='cyan' title='Add text'>
+                    <div
+                      className='rounded-md w-[190px] h-[220px]  relative cursor-pointer text-white hover:bg-[#00000078] '
+                      onClick={e => {
+                        console.log(3)
+                        const contentedTexts = texts.filter(
+                          text =>
+                            document.getElementById(text.id) &&
+                            document.getElementById(text.id)?.innerText &&
+                            document.getElementById(text.id)?.innerText?.trim()
+                              .length > 0
+                        )
+                        setTexts(contentedTexts)
+                        console.log(
+                          e.clientX,
+                          e.clientY,
+                          e.target.getBoundingClientRect().top
+                        )
+                        const newText = {
+                          clientX:
+                            e.clientX - e.target.getBoundingClientRect().left,
+                          clientY:
+                            e.clientY - e.target.getBoundingClientRect().top,
+                          id: Math.random().toString()
+                        }
+                        setTexts(pre => [...pre, newText])
+                        setTimeout(() => {
+                          document.getElementById(newText.id) &&
+                            document.getElementById(newText.id)?.focus()
+                        }, 100)
+                      }}
+                    >
+                      {texts.map(text => (
+                        <span
+                          key={text.id}
+                          contentEditable
+                          onClick={e => {
+                            e.stopPropagation()
+                          }}
+                          style={{
+                            top: `${text.clientY}px`,
+
+                            maxWidth: `${200 - text.clientX}px`,
+                            maxHeight: `${200 - text.clientY}px`,
+                            // width: `min-`,
+                            left: `${text.clientX}px`,
+                            textShadow: '1px 1px #FF0000'
+                          }}
+                          type='text'
+                          id={text.id}
+                          className={`drop-shadow-2xl font-sevil text-[14px] italic absolute outline-none min-h-[15px] px-[1px]  min-w-[10px] hover:overflow-y-scroll scroll-min  overflow-hidden   `}
+                        />
+                      ))}
+                    </div>
+                  </Tooltip>
+                </div>
+              )
+            }
             {myvideo && (
               <div className='w-full px-3 absolute  -top-1 left-0 shadow-lg'>
                 <Progress
@@ -178,27 +285,28 @@ const CreateStory = () => {
                       className='!text-white shadow-lg cursor-pointer !font-[800]'
                     />
                   </Tooltip>
-                  {muted ? (
-                    <Tooltip color='blue' title='Turn on the original sound'>
-                      <FaVolumeMute
-                        onClick={() => {
-                          setMuted(false)
-                        }}
-                        size={24}
-                        className='!text-gray-50 shadow-lg cursor-pointer !font-[800] '
-                      />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip color='red' title='Turn off the original sound'>
-                      <FaVolumeDown
-                        onClick={() => {
-                          setMuted(true)
-                        }}
-                        size={24}
-                        className='!text-gray-50 shadow-lg cursor-pointer !font-[800] '
-                      />
-                    </Tooltip>
-                  )}
+                  {selectSong &&
+                    (muted ? (
+                      <Tooltip color='blue' title='Turn on the original sound'>
+                        <FaVolumeMute
+                          onClick={() => {
+                            setMuted(false)
+                          }}
+                          size={24}
+                          className='!text-gray-50 shadow-lg cursor-pointer !font-[800] '
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip color='red' title='Turn off the original sound'>
+                        <FaVolumeDown
+                          onClick={() => {
+                            setMuted(true)
+                          }}
+                          size={24}
+                          className='!text-gray-50 shadow-lg cursor-pointer !font-[800] '
+                        />
+                      </Tooltip>
+                    ))}
 
                   {playMyvieo ? (
                     <FaPause
@@ -359,7 +467,6 @@ const SongCard = ({
   // setCurrentSong,
   // play
 }) => {
-  console.log(song)
   const songRef = useRef()
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -401,7 +508,7 @@ const SongCard = ({
         crossOrigin='anonymous'
         src={song?.preview}
       />
-      <div className=' flex gap-1  relative'>
+      <div className=' flex gap-1 items-center  relative'>
         <img
           crossOrigin='anonymous'
           src={song.artist?.picture_medium}
@@ -436,12 +543,20 @@ const SongCard = ({
             )
           </div>
         )}
-        <div>
+        <div className='flex flex-col'>
           <p className='text-gray-700 text-sm font-[600]'>
-            {song?.title_short ?? 'Song'}
+            {song?.title_short
+              ? song?.title_short?.length > 25
+                ? song?.title_short?.slice(0, 25) + '...'
+                : song?.title_short
+              : 'Song'}
           </p>
           <p className='text-sm text-gray-500'>
-            {song?.artist?.name ?? 'Artist'}
+            {song?.artist?.name
+              ? song?.artist?.name?.length > 25
+                ? song?.artist?.name?.slice(0, 25) + '...'
+                : song?.artist?.name
+              : 'Artist'}
           </p>
         </div>
       </div>

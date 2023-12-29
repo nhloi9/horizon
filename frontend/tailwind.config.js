@@ -11,6 +11,8 @@ module.exports = {
 			fontFamily: {
 				sans: ['"Work Sans"', ...defaultTheme.fontFamily.sans],
 				robo: ['"Roboto Condensed"', 'sans-serif'],
+				rubik: ['"Rubik Doodle Shadow"', 'sans-serif'],
+				sevil: ['"Sevillana"', 'sans-serif'],
 			},
 			colors: {
 				dark: {

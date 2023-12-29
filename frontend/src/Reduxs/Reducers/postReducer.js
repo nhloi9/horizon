@@ -2,18 +2,15 @@ import {createReducer} from '@reduxjs/toolkit';
 import {postTypes} from '../Types/postType';
 import {addOrUpdateToArray, updateToArray} from '../Types/globalType';
 
-export const homePostReducer = createReducer(
+export const postReducer = createReducer(
 	{posts: [], activePost: null},
 	(builder) => {
 		builder
 			.addCase(postTypes.GET_HOME_POST_SUCCESS, (state, action) => {
 				state.posts = [...state.posts, ...action.payload];
 			})
-			.addCase(postTypes.HOME_POST, (state, action) => {
+			.addCase(postTypes.POST, (state, action) => {
 				state.posts = updateToArray(state.posts, action.payload);
-			})
-			.addCase(postTypes.ACTIVE_POST, (state, action) => {
-				state.activePost = action.payload;
 			});
 	}
 );

@@ -60,7 +60,7 @@ const ProfilePage = () => {
       <Header />
       {loading && <Facebook />}
       {!loading && userInfo && (
-        <div>
+        <div className='min-h-screen '>
           <div className='w-full h-[120px] md:h-[350px] bg-[#e4d8d8] relative'>
             {coverImage && (
               <img
@@ -89,6 +89,7 @@ const ProfilePage = () => {
               id='input-cover-image'
               className='hidden'
               onChange={handleChangeCoverImage}
+              accept='image/png, image/gif, image/jpeg'
             />
           </div>
           {userInfo && (
@@ -102,7 +103,7 @@ const ProfilePage = () => {
         onOk={confirm}
         onCancel={() => {
           setShowUpdateCoverImage(false)
-          setCoverImage(userInfo?.detail.coverImage.url)
+          setCoverImage(userInfo?.detail?.coverImage?.url)
         }}
         maskClosable={false}
       ></Modal>

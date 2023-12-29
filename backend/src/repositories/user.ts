@@ -5,6 +5,14 @@ const createUser = async ({ userData, avatar }: any): Promise<any> => {
   const newUser = await prisma.user.create({
     data: {
       ...userData,
+      fullname: (
+        (userData.firstname as string) +
+        ' ' +
+        (userData.lastname as string)
+      )
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase(),
       ...(avatar !== undefined && {
         avatar: {
           create: avatar
@@ -66,7 +74,14 @@ const updateProfile = async (userId: number, data: any): Promise<any> => {
   const { firstname, lastname, ...detail } = data
   await prisma.user.update({
     where: { id: userId },
-    data: { firstname, lastname }
+    data: {
+      firstname,
+      lastname,
+      fullname: ((firstname as string) + ' ' + (lastname as string))
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+    }
   })
 
   if (Object.keys(detail).length !== 0) {

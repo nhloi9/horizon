@@ -109,11 +109,14 @@ const ForgetPasswordPage = () => {
                 email: email.value,
                 code
               })
-                .then(({ data: { user } }) => {
+                .then(({ data: { user, socketToken } }) => {
                   dispatch({
                     type: authTypes.LOGOUT_SUCCESS
                   })
-                  dispatch({ type: authTypes.USER, payload: user })
+                  dispatch({
+                    type: authTypes.ALL,
+                    payload: { user, socketToken }
+                  })
                   dispatch({
                     type: globalTypes.ALERT,
                     payload: {
@@ -193,7 +196,7 @@ const VerifyCode = ({ setStep, email, setCode }) => {
   useEffect(() => {
     window.timeout = setTimeout(() => {
       if (time > 0) {
-        setTime(time - 1)
+        setTime(time => time - 1)
       } else {
         clearTimeout(window.timeout)
       }
