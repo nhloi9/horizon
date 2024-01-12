@@ -1,0 +1,222 @@
+"filename", "language", "JSON with Comments", "Properties", "JavaScript", "Markdown", "Log", "JavaScript JSX", "TypeScript", "CSS", "JSON", "Prisma", "SQL", "HTML", "YAML", "comment", "blank", "total"
+"d:\Workspace\own\horizon\backend\.env", "Properties", 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 25
+"d:\Workspace\own\horizon\backend\.eslintrc.json", "JSON with Comments", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"d:\Workspace\own\horizon\backend\.prettierrc", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 9
+"d:\Workspace\own\horizon\backend\compose.yaml", "YAML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 7, 43
+"d:\Workspace\own\horizon\backend\package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 98, 0, 0, 0, 0, 0, 1, 99
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231218080236_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 263, 0, 0, 89, 111, 463
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231218080343_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 7, 1, 9
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231218082343_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231218151707_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2, 6
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231218151812_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2, 6
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231226044001_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231226154808_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 23, 13, 55
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231226160044_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231226185125_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231228032550_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231228032936_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2, 6
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231228050722_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 8, 2, 13
+"d:\Workspace\own\horizon\backend\prisma\migrations\20231228164910_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 7, 1, 10
+"d:\Workspace\own\horizon\backend\prisma\migrations\20240102095942_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 2, 3, 14
+"d:\Workspace\own\horizon\backend\prisma\migrations\20240103174229_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\migrations\20240104124214_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 3, 4, 15
+"d:\Workspace\own\horizon\backend\prisma\migrations\20240105082958_\migration.sql", "SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3
+"d:\Workspace\own\horizon\backend\prisma\schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 0, 0, 0, 345, 0, 0, 0, 8, 91, 444
+"d:\Workspace\own\horizon\backend\src\configs\client_secret_466643461195-4kft3d9baa6dvck6ikacs6ftrdunqdch.apps.googleusercontent.com.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 1, 17
+"d:\Workspace\own\horizon\backend\src\configs\event-emitter.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"d:\Workspace\own\horizon\backend\src\configs\express.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 33, 16, 117
+"d:\Workspace\own\horizon\backend\src\configs\firebase-adminsdk.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 1, 14
+"d:\Workspace\own\horizon\backend\src\configs\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 1, 5
+"d:\Workspace\own\horizon\backend\src\configs\peer.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"d:\Workspace\own\horizon\backend\src\configs\socket.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 1, 3, 12
+"d:\Workspace\own\horizon\backend\src\configs\vars.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 9, 60
+"d:\Workspace\own\horizon\backend\src\constants\env.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"d:\Workspace\own\horizon\backend\src\constants\event-emitter.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"d:\Workspace\own\horizon\backend\src\constants\file-validation.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"d:\Workspace\own\horizon\backend\src\constants\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"d:\Workspace\own\horizon\backend\src\constants\locales\en.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 1, 19
+"d:\Workspace\own\horizon\backend\src\constants\locales\vi.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 1, 19
+"d:\Workspace\own\horizon\backend\src\constants\message.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 2, 4, 87
+"d:\Workspace\own\horizon\backend\src\constants\validation-messages.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\backend\src\controllers\auth.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 10, 7, 103
+"d:\Workspace\own\horizon\backend\src\controllers\comment.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 229, 0, 0, 0, 0, 0, 0, 18, 18, 265
+"d:\Workspace\own\horizon\backend\src\controllers\conversation.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 194, 0, 0, 0, 0, 0, 0, 20, 8, 222
+"d:\Workspace\own\horizon\backend\src\controllers\file.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 32, 7, 125
+"d:\Workspace\own\horizon\backend\src\controllers\friend.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 186, 0, 0, 0, 0, 0, 0, 0, 13, 199
+"d:\Workspace\own\horizon\backend\src\controllers\group.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 475, 0, 0, 0, 0, 0, 0, 59, 30, 564
+"d:\Workspace\own\horizon\backend\src\controllers\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 1, 1, 13
+"d:\Workspace\own\horizon\backend\src\controllers\message.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 130, 0, 0, 0, 0, 0, 0, 1, 7, 138
+"d:\Workspace\own\horizon\backend\src\controllers\notify.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 91, 0, 0, 0, 0, 0, 0, 6, 5, 102
+"d:\Workspace\own\horizon\backend\src\controllers\post.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 361, 0, 0, 0, 0, 0, 0, 41, 20, 422
+"d:\Workspace\own\horizon\backend\src\controllers\react.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 3, 27
+"d:\Workspace\own\horizon\backend\src\controllers\story.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 118, 0, 0, 0, 0, 0, 0, 0, 7, 125
+"d:\Workspace\own\horizon\backend\src\controllers\user.controller.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 761, 0, 0, 0, 0, 0, 0, 46, 54, 861
+"d:\Workspace\own\horizon\backend\src\database\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 1, 3, 15
+"d:\Workspace\own\horizon\backend\src\database\postgres.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 28, 7, 43
+"d:\Workspace\own\horizon\backend\src\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 2, 7
+"d:\Workspace\own\horizon\backend\src\mail\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Workspace\own\horizon\backend\src\mail\user.mail.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\backend\src\middlewares\api-error.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 5, 45
+"d:\Workspace\own\horizon\backend\src\middlewares\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 3
+"d:\Workspace\own\horizon\backend\src\middlewares\verify-token.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 1, 3, 42
+"d:\Workspace\own\horizon\backend\src\repositories\comment.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 120, 0, 0, 0, 0, 0, 0, 0, 3, 123
+"d:\Workspace\own\horizon\backend\src\repositories\file.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 19, 6, 39
+"d:\Workspace\own\horizon\backend\src\repositories\friend.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 158, 0, 0, 0, 0, 0, 0, 1, 9, 168
+"d:\Workspace\own\horizon\backend\src\repositories\group.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 130, 0, 0, 0, 0, 0, 0, 0, 4, 134
+"d:\Workspace\own\horizon\backend\src\repositories\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\Workspace\own\horizon\backend\src\repositories\message.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, 0, 2, 48
+"d:\Workspace\own\horizon\backend\src\repositories\notify.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 3, 51
+"d:\Workspace\own\horizon\backend\src\repositories\post.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 194, 0, 0, 0, 0, 0, 0, 68, 9, 271
+"d:\Workspace\own\horizon\backend\src\repositories\story.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 139, 0, 0, 0, 0, 0, 0, 12, 5, 156
+"d:\Workspace\own\horizon\backend\src\repositories\user.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 105, 0, 0, 0, 0, 0, 0, 2, 8, 115
+"d:\Workspace\own\horizon\backend\src\routers\v1\auth.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 5, 11
+"d:\Workspace\own\horizon\backend\src\routers\v1\comment.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 5, 4, 24
+"d:\Workspace\own\horizon\backend\src\routers\v1\conversation.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 6, 17
+"d:\Workspace\own\horizon\backend\src\routers\v1\file.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 1, 6, 17
+"d:\Workspace\own\horizon\backend\src\routers\v1\friend-request.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 3, 6, 24
+"d:\Workspace\own\horizon\backend\src\routers\v1\group.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 1, 10, 40
+"d:\Workspace\own\horizon\backend\src\routers\v1\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 15, 6, 59
+"d:\Workspace\own\horizon\backend\src\routers\v1\message.route .ts", "TypeScript", 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 5, 15
+"d:\Workspace\own\horizon\backend\src\routers\v1\notify.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 1, 5, 13
+"d:\Workspace\own\horizon\backend\src\routers\v1\post.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 6, 23
+"d:\Workspace\own\horizon\backend\src\routers\v1\react.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5, 10
+"d:\Workspace\own\horizon\backend\src\routers\v1\socket.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 145, 0, 0, 0, 0, 0, 0, 13, 22, 180
+"d:\Workspace\own\horizon\backend\src\routers\v1\story.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 5, 22
+"d:\Workspace\own\horizon\backend\src\routers\v1\user.route.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 12, 75
+"d:\Workspace\own\horizon\backend\src\types\API-error.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 4, 49
+"d:\Workspace\own\horizon\backend\src\types\User.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\backend\src\types\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"d:\Workspace\own\horizon\backend\src\types\mongo.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"d:\Workspace\own\horizon\backend\src\types\request.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 2, 7
+"d:\Workspace\own\horizon\backend\src\types\response.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\backend\src\utils\firebase.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 3, 12
+"d:\Workspace\own\horizon\backend\src\utils\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"d:\Workspace\own\horizon\backend\src\utils\multer.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 2, 24
+"d:\Workspace\own\horizon\backend\src\utils\omit.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 1, 3, 22
+"d:\Workspace\own\horizon\backend\src\utils\response.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 3, 19
+"d:\Workspace\own\horizon\backend\src\utils\script.js", "JavaScript", 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 13
+"d:\Workspace\own\horizon\backend\src\utils\token.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\backend\src\validations\comment.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 6, 5, 32
+"d:\Workspace\own\horizon\backend\src\validations\group.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 1, 7, 38
+"d:\Workspace\own\horizon\backend\src\validations\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\backend\src\validations\message.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 6, 5, 31
+"d:\Workspace\own\horizon\backend\src\validations\post.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 4, 26
+"d:\Workspace\own\horizon\backend\src\validations\story.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 5, 30
+"d:\Workspace\own\horizon\backend\src\validations\user.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 0, 0, 0, 11, 98
+"d:\Workspace\own\horizon\backend\src\validations\validate.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 4, 22
+"d:\Workspace\own\horizon\backend\tsconfig.json", "JSON with Comments", 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 9, 110
+"d:\Workspace\own\horizon\backend\yarn-error.log", "Log", 0, 0, 0, 0, 5396, 0, 0, 0, 0, 0, 0, 0, 0, 0, 842, 6238
+"d:\Workspace\own\horizon\frontend\README.md", "Markdown", 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 71
+"d:\Workspace\own\horizon\frontend\package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 1, 84
+"d:\Workspace\own\horizon\frontend\postcss.config.js", "JavaScript", 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7
+"d:\Workspace\own\horizon\frontend\public\i18n\en.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 1, 16
+"d:\Workspace\own\horizon\frontend\public\i18n\vi.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 1, 16
+"d:\Workspace\own\horizon\frontend\public\index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 23, 1, 59
+"d:\Workspace\own\horizon\frontend\public\manifest.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 1, 16
+"d:\Workspace\own\horizon\frontend\src\App.js", "JavaScript", 0, 0, 220, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 24, 253
+"d:\Workspace\own\horizon\frontend\src\App.test.js", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 9
+"d:\Workspace\own\horizon\frontend\src\Components\Alert\Alert.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 4, 6, 75
+"d:\Workspace\own\horizon\frontend\src\Components\Friend\AddFriend.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 0, 39, 5, 130
+"d:\Workspace\own\horizon\frontend\src\Components\Friend\FriendCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 3, 24
+"d:\Workspace\own\horizon\frontend\src\Components\Friend\FriendHome.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 0, 0, 0, 0, 8, 112
+"d:\Workspace\own\horizon\frontend\src\Components\Friend\FriendRequest.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 7, 67
+"d:\Workspace\own\horizon\frontend\src\Components\Group\GroupCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\Workspace\own\horizon\frontend\src\Components\Group\GroupDetail.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 1078, 0, 0, 0, 0, 0, 0, 0, 43, 57, 1178
+"d:\Workspace\own\horizon\frontend\src\Components\Group\GroupFeed.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14
+"d:\Workspace\own\horizon\frontend\src\Components\Group\Invite.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\Workspace\own\horizon\frontend\src\Components\Group\LeftSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 117, 0, 0, 0, 0, 0, 0, 0, 0, 8, 125
+"d:\Workspace\own\horizon\frontend\src\Components\Home\CreatePost.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 925, 0, 0, 0, 0, 0, 0, 0, 81, 49, 1055
+"d:\Workspace\own\horizon\frontend\src\Components\Home\EmojiSelect.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 61, 6, 117
+"d:\Workspace\own\horizon\frontend\src\Components\Home\LeftSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 149, 0, 0, 0, 0, 0, 0, 0, 4, 11, 164
+"d:\Workspace\own\horizon\frontend\src\Components\Home\Posts.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 8, 3, 23
+"d:\Workspace\own\horizon\frontend\src\Components\Home\RightSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 7, 57
+"d:\Workspace\own\horizon\frontend\src\Components\Home\SentismentSelect.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\Workspace\own\horizon\frontend\src\Components\Home\Status.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 8, 8, 110
+"d:\Workspace\own\horizon\frontend\src\Components\Home\Stories.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 7, 3, 82
+"d:\Workspace\own\horizon\frontend\src\Components\Home\UserCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 3, 21
+"d:\Workspace\own\horizon\frontend\src\Components\Layout\Header.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 0, 0, 5, 9, 166
+"d:\Workspace\own\horizon\frontend\src\Components\Layout\Notify.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 212, 0, 0, 0, 0, 0, 0, 0, 24, 10, 246
+"d:\Workspace\own\horizon\frontend\src\Components\Message\CallModal.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 211, 0, 0, 0, 0, 0, 0, 0, 76, 27, 314
+"d:\Workspace\own\horizon\frontend\src\Components\Message\LeftSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 382, 0, 0, 0, 0, 0, 0, 0, 52, 21, 455
+"d:\Workspace\own\horizon\frontend\src\Components\Message\RightSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 519, 0, 0, 0, 0, 0, 0, 0, 118, 32, 669
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\CardBody.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 261, 0, 0, 0, 0, 0, 0, 0, 57, 19, 337
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\CardFooter.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 111, 0, 0, 0, 0, 0, 0, 0, 0, 9, 120
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\CardHeader.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 162, 0, 0, 0, 0, 0, 0, 0, 1, 7, 170
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\CommentCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 264, 0, 0, 0, 0, 0, 0, 0, 47, 14, 325
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\CommentDisplay.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 3, 37
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\Comments.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 6, 67
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\InputComment.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 7, 6, 97
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\Photo.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\PostCard.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 35, 7, 92
+"d:\Workspace\own\horizon\frontend\src\Components\PostCard\PostModal.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 5, 49
+"d:\Workspace\own\horizon\frontend\src\Components\Profile\ChangePassword.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 213, 0, 0, 0, 0, 0, 0, 0, 1, 12, 226
+"d:\Workspace\own\horizon\frontend\src\Components\Profile\EditProfile.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 285, 0, 0, 0, 0, 0, 0, 0, 23, 14, 322
+"d:\Workspace\own\horizon\frontend\src\Components\Profile\Intro.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 276, 0, 0, 0, 0, 0, 0, 0, 3, 17, 296
+"d:\Workspace\own\horizon\frontend\src\Components\Protect\Protected.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20
+"d:\Workspace\own\horizon\frontend\src\Components\Story\CreateStory.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 554, 0, 0, 0, 0, 0, 0, 0, 14, 28, 596
+"d:\Workspace\own\horizon\frontend\src\Components\Story\LeftSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 3, 44
+"d:\Workspace\own\horizon\frontend\src\Components\Story\RightSide.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 378, 0, 0, 0, 0, 0, 0, 0, 20, 19, 417
+"d:\Workspace\own\horizon\frontend\src\Constants\index.js", "JavaScript", 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 57
+"d:\Workspace\own\horizon\frontend\src\Pages\ActivationPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 5, 4, 33
+"d:\Workspace\own\horizon\frontend\src\Pages\AdminPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 3, 13
+"d:\Workspace\own\horizon\frontend\src\Pages\CreateGroupPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 248, 0, 0, 0, 0, 0, 0, 0, 15, 12, 275
+"d:\Workspace\own\horizon\frontend\src\Pages\CreateLocation.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 49, 28, 205
+"d:\Workspace\own\horizon\frontend\src\Pages\CreateStoryPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\frontend\src\Pages\DetailGroupPage.js", "JavaScript", 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 20
+"d:\Workspace\own\horizon\frontend\src\Pages\ForgetPasswordPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 296, 0, 0, 0, 0, 0, 0, 0, 4, 11, 311
+"d:\Workspace\own\horizon\frontend\src\Pages\FriendHomePage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\frontend\src\Pages\FriendRequestPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\frontend\src\Pages\GroupFeedPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\frontend\src\Pages\HomePage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 4, 6, 53
+"d:\Workspace\own\horizon\frontend\src\Pages\MessagePage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 3, 21
+"d:\Workspace\own\horizon\frontend\src\Pages\NoPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"d:\Workspace\own\horizon\frontend\src\Pages\PhotoPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 3, 13
+"d:\Workspace\own\horizon\frontend\src\Pages\ProfilePage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 0, 0, 0, 0, 11, 136
+"d:\Workspace\own\horizon\frontend\src\Pages\SignUp.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 219, 0, 0, 0, 0, 0, 0, 0, 35, 11, 265
+"d:\Workspace\own\horizon\frontend\src\Pages\Signin.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 173, 0, 0, 0, 0, 0, 0, 0, 16, 11, 200
+"d:\Workspace\own\horizon\frontend\src\Pages\StoriesPage.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 4, 37
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\authAction.js", "JavaScript", 0, 0, 135, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13, 149
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\conversationAction .js", "JavaScript", 0, 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 8, 82
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\friendAction.js", "JavaScript", 0, 0, 74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 8, 118
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\groupAction.js", "JavaScript", 0, 0, 85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 95
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\notifyAction .js", "JavaScript", 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 28
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\postAction.js", "JavaScript", 0, 0, 286, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 30, 424
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Actions\storyAction.js", "JavaScript", 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 66
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Middleware\socket.js", "JavaScript", 0, 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 143, 35, 273
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\alertReducer.js", "JavaScript", 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\authReducer.js", "JavaScript", 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 38
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\callReducer.js", "JavaScript", 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\conversationReducer.js", "JavaScript", 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 33
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\friendReducer.js", "JavaScript", 0, 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 3, 50
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\groupReducer.js", "JavaScript", 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 6, 52
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\notifyReducer.js", "JavaScript", 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 38
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\onlineReducer.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 16
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\postReducer.js", "JavaScript", 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 4, 49
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\signinReducer.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 14
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\storyReducer.js", "JavaScript", 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 17
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Reducers\themeReducer.js", "JavaScript", 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 20
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Store.js", "JavaScript", 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 4, 53
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\authType.js", "JavaScript", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 15
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\callType.js", "JavaScript", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\conversationType.js", "JavaScript", 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 11
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\friendType.js", "JavaScript", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 12
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\globalType.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\groupType.js", "JavaScript", 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\notifyType.js", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\onlineType.js", "JavaScript", 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\postType.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\storyType.js", "JavaScript", 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9
+"d:\Workspace\own\horizon\frontend\src\Reduxs\Types\themeType.js", "JavaScript", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"d:\Workspace\own\horizon\frontend\src\assets\cardData.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 2, 39
+"d:\Workspace\own\horizon\frontend\src\i18n.js", "JavaScript", 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 20
+"d:\Workspace\own\horizon\frontend\src\index.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 186, 0, 0, 0, 0, 0, 27, 28, 241
+"d:\Workspace\own\horizon\frontend\src\index.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 22
+"d:\Workspace\own\horizon\frontend\src\network\api.js", "JavaScript", 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 83
+"d:\Workspace\own\horizon\frontend\src\network\services\authService.js", "JavaScript", 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"d:\Workspace\own\horizon\frontend\src\reportWebVitals.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 14
+"d:\Workspace\own\horizon\frontend\src\setupTests.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 6
+"d:\Workspace\own\horizon\frontend\src\socket.js", "JavaScript", 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 40
+"d:\Workspace\own\horizon\frontend\src\utils\conversation.js", "JavaScript", 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 45
+"d:\Workspace\own\horizon\frontend\src\utils\imageUpload.js", "JavaScript", 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 30
+"d:\Workspace\own\horizon\frontend\tailwind.config.js", "JavaScript", 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 30
+"Total", "-", 40, 16, 1758, 38, 5396, 8647, 4838, 186, 299, 345, 318, 35, 36, 2035, 2457, 26444

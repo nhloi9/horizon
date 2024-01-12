@@ -4,12 +4,11 @@ import path from 'path'
 import { getDownloadURL } from 'firebase-admin/storage'
 
 import { bucket } from '../utils/firebase'
+import { getLinkPreview } from 'link-preview-js'
 
 import { getApiResponse } from '../utils'
 import { messages } from '../constants'
-// import { fileRepo } from '../repositories'
 import type { RequestPayload } from '../types'
-import { error } from 'console'
 
 export const uploadFile = async (
   req: RequestPayload,
@@ -67,6 +66,36 @@ export const uploadFile = async (
     //   action: 'read',
     //   expires: Date.now() + 1000 * 60 * 60 * 24 * 60
     // })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getPreviewLink = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { link } = req.query
+
+    const previewData: any = await getLinkPreview(link as string, {
+      headers: {
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    })
+    const { title, images } = previewData
+    res.status(200).json(
+      getApiResponse({
+        data: {
+          preview: {
+            title,
+            image: images[0],
+            link
+          }
+        }
+      })
+    )
   } catch (error) {
     next(error)
   }

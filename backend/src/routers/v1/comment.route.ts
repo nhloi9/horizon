@@ -16,4 +16,8 @@ router
 //   .post(verifyToken, validation.reactPost, controller.reactPost)
 //   .delete(verifyToken, controller.removeReactPost)
 router.route('/:id').put(verifyToken, controller.updateComment)
+router
+  .route('/:id/react')
+  .post(verifyToken, controller.reactComment)
+  .delete(verifyToken, controller.deleteReactComment)
 export default router

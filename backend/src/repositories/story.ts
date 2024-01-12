@@ -4,7 +4,8 @@ const createStory = async (
   mutedOriginal: boolean,
   song: object,
   userId: number,
-  file?: any
+  file: any,
+  texts?: any
 ): Promise<any> => {
   const story = await prisma.story.create({
     data: {
@@ -17,19 +18,12 @@ const createStory = async (
       },
       video: {
         create: file
+      },
+      texts: {
+        create: texts
       }
     },
     include: {
-      user: {
-        select: {
-          id: true,
-          firstname: true,
-          lastname: true,
-          avatar: {
-            select: { name: true, url: true }
-          }
-        }
-      },
       video: {
         select: {
           id: true,
@@ -37,7 +31,9 @@ const createStory = async (
           url: true
         }
       },
-      views: {
+      texts: true,
+
+      user: {
         select: {
           id: true,
           firstname: true,
@@ -51,7 +47,58 @@ const createStory = async (
           }
         }
       },
-      comments: true
+      views: {
+        select: {
+          id: true
+          // firstname: true,
+          // lastname: true,
+          // avatar: {
+          //   select: {
+          //     id: true,
+          //     name: true,
+          //     url: true
+          //   }
+          // }
+        }
+      },
+      comments: {
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              avatar: {
+                select: {
+                  id: true,
+                  name: true,
+                  url: true
+                }
+              }
+            }
+          }
+        }
+      },
+      reacts: {
+        include: {
+          react: true,
+          user: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              avatar: {
+                select: {
+                  id: true,
+                  name: true,
+                  url: true
+                }
+              }
+            }
+          }
+        }
+      }
     }
   })
   return story
@@ -75,6 +122,8 @@ const getHomeStories = async (
           url: true
         }
       },
+      texts: true,
+
       user: {
         select: {
           id: true,

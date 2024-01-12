@@ -11,10 +11,22 @@ router
   .post(validation.createPost, verifyToken, controller.createPost)
 
 router.get('/home', verifyToken, controller.getHomePosts)
+router.get('/save', verifyToken, controller.getSavePosts)
+
+router.get('/user/:id', verifyToken, controller.getUserPosts)
+router.get('/group/feed', verifyToken, controller.groupFeedPosts)
+
+router.get('/group/:id', verifyToken, controller.getGroupPosts)
 router
   .route('/:id/react')
   .post(verifyToken, validation.reactPost, controller.reactPost)
   .delete(verifyToken, controller.removeReactPost)
 
-router.route('/:id').put(verifyToken, controller.updatePost)
+router.route('/:id/save').post(verifyToken, controller.savePost)
+router.route('/:id/un-save').post(verifyToken, controller.unsavePost)
+
+router
+  .route('/:id')
+  .put(verifyToken, controller.updatePost)
+  .get(verifyToken, controller.getSinglePost)
 export default router

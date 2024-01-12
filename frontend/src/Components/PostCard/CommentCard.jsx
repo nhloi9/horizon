@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { BsHeart, BsHeartFill } from 'react-icons/bs'
 import moment from 'moment'
-import { BiDislike, BiLike } from 'react-icons/bi'
+import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from 'react-icons/bi'
 import InputComment from './InputComment'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,7 +9,11 @@ import { Avatar, Button, Dropdown, Tooltip } from 'antd'
 import { AiOutlineMore } from 'react-icons/ai'
 import { CiEdit } from 'react-icons/ci'
 import { MdDeleteOutline } from 'react-icons/md'
-import { updateComment } from '../../Reduxs/Actions/postAction'
+import {
+  reactComment,
+  unReactComment,
+  updateComment
+} from '../../Reduxs/Actions/postAction'
 
 // import EditIcon from '@mui/icons-material/Edit'
 // import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -32,6 +36,10 @@ const CommentCard = ({ comment, post }) => {
   const [readMore, setReadMore] = useState(false)
   const [isLike, setIsLike] = useState(false)
 
+  const myReact = useMemo(() => {
+    return comment?.reacts?.find(item => item?.userId === user?.id)
+  }, [comment, user?.id])
+
   //update comment
   const handleUpdateComment = () => {
     if (
@@ -50,16 +58,15 @@ const CommentCard = ({ comment, post }) => {
     }
   }
 
-  //like comment
-  const handleLikeComment = () => {
-    setIsLike(true)
-    // dispatch(likeComment(comment, post))
+  //react comment
+  const handleReactComment = type => {
+    dispatch(reactComment(comment, post?.id, type))
   }
 
-  //unlike comment
-  const handleUnlikeComment = () => {
-    setIsLike(false)
-    // dispatch(unlikeComment(comment, post))
+  // unreact comment
+
+  const handleUnReactComment = () => {
+    dispatch(unReactComment(comment, post?.id))
   }
 
   // delete comment
@@ -79,10 +86,20 @@ const CommentCard = ({ comment, post }) => {
       } group ${comment.updating ? 'opacity-40 pointer-events-none' : ''}`}
     >
       <div className='flex gap-1'>
-        <Avatar src={comment.sender?.avatar?.url} size='small' />
+        <Avatar
+          src={comment.sender?.avatar?.url}
+          size='small'
+          className='!cursor-pointer'
+          onClick={() => navigate('/profile/' + comment.sender?.id)}
+        />
         <p className=' translate-y-[-3px] font-[500]  capitalize'>
-          {comment.sender?.firstname + ' ' + comment.sender?.lastname}
-          <span className='text-gray-400 text-[13px] font-[300]'>
+          <span
+            className='cursor-pointer'
+            onClick={() => navigate('/profile/' + comment.sender?.id)}
+          >
+            {comment.sender?.firstname + ' ' + comment.sender?.lastname}
+          </span>
+          <span className='text-gray-400 text-[13px] font-[300] '>
             {' '}
             {moment(comment.createdAt).fromNow()}
           </span>
@@ -155,16 +172,51 @@ const CommentCard = ({ comment, post }) => {
             </p>
             <div className='flex items-center gap-7 text-[12px] mt-1'>
               <div className='flex gap-1 items-center'>
-                <Tooltip title='Like' placement='bottomRight'>
-                  <BiLike className='!cursor-pointer' />
-                </Tooltip>
-                <span className='text-sm text-gray-400'>12</span>
+                {myReact?.type === 'like' ? (
+                  <BiSolidLike
+                    className='!cursor-pointer'
+                    onClick={handleUnReactComment}
+                  />
+                ) : (
+                  <Tooltip title='Like' placement='bottomRight'>
+                    <BiLike
+                      className='!cursor-pointer'
+                      onClick={() => {
+                        handleReactComment('like')
+                      }}
+                    />
+                  </Tooltip>
+                )}
+                <span className='text-sm text-gray-400'>
+                  {comment?.reacts?.filter(item => item?.type === 'like')
+                    ?.length > 0 &&
+                    comment?.reacts?.filter(item => item?.type === 'like')
+                      ?.length}
+                </span>
               </div>
               <div className='flex gap-1 items-center'>
-                <Tooltip title='Dislike' placement='bottomLeft'>
-                  <BiDislike className='!cursor-pointer' />
-                </Tooltip>
-                <span className='text-sm text-gray-400'>12</span>
+                {myReact?.type === 'dislike' ? (
+                  <BiSolidDislike
+                    className='!cursor-pointer'
+                    onClick={handleUnReactComment}
+                  />
+                ) : (
+                  <Tooltip title='Dislike' placement='bottomLeft'>
+                    <BiDislike
+                      className='!cursor-pointer'
+                      onClick={() => {
+                        handleReactComment('dislike')
+                      }}
+                    />
+                  </Tooltip>
+                )}
+                <span className='text-sm text-gray-400'>
+                  {' '}
+                  {comment?.reacts?.filter(item => item?.type === 'dislike')
+                    ?.length > 0 &&
+                    comment?.reacts?.filter(item => item?.type === 'dislike')
+                      ?.length}
+                </span>
               </div>
 
               <p className='font-[500]'>

@@ -1,10 +1,12 @@
 import { type Response, type NextFunction } from 'express'
 import httpStatus from 'http-status'
 
-import { groupRepo, notifyRepo } from '../repositories'
+import { groupRepo, notifyRepo, postRepo } from '../repositories'
 import type { RequestPayload } from '../types'
 import { getApiResponse } from '../utils'
 import { prisma } from '../database/postgres'
+import { checkIsAdmin, checkIsMember } from '../repositories/group'
+import { get } from 'lodash'
 
 export const createGroup = async (
   req: RequestPayload,
@@ -402,6 +404,7 @@ export const getPendingPosts = async (
   next: NextFunction
 ) => {
   try {
+    const userId = (req.payload as any).id
     const groupId = Number(req.params.id)
 
     const group = await prisma.group.findUnique({
@@ -419,12 +422,27 @@ export const getPendingPosts = async (
         })
       )
     }
-    const posts = await prisma.post.findMany({
+    const posts: any = await prisma.post.findMany({
       where: {
         groupId,
         accepted: false
       },
       include: {
+        shareBys: {
+          select: {
+            createdAt: true,
+
+            id: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: true
+              }
+            }
+          }
+        },
         files: true,
         user: {
           select: {
@@ -437,7 +455,14 @@ export const getPendingPosts = async (
         reacts: {
           include: {
             react: true,
-            user: true
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: true
+              }
+            }
           }
         },
         comments: {
@@ -461,8 +486,21 @@ export const getPendingPosts = async (
                   select: { name: true, url: true }
                 }
               }
+            },
+            reacts: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstname: true,
+                    lastname: true,
+                    avatar: true
+                  }
+                }
+              }
             }
           },
+
           orderBy: {
             createdAt: 'desc'
           }
@@ -474,9 +512,28 @@ export const getPendingPosts = async (
             lastname: true,
             avatar: true
           }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            privacy: true,
+            image: true,
+            adminId: true
+          }
         }
+      },
+      orderBy: {
+        updatedAt: 'desc'
       }
     })
+    for (const post of posts) {
+      if (post?.shareId !== null) {
+        const share = await postRepo.getSinglePost(userId, post.shareId)
+        post.share = share
+      }
+    }
 
     res.status(200).json(getApiResponse({ data: { posts } }))
   } catch (error) {
@@ -557,6 +614,42 @@ export const declinePosts = async (
     })
 
     res.status(200).json(getApiResponse({ msg: 'Decline posts successfully' }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getAllFilesOfGroup = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const groupId = Number(req.params.id)
+    const userId = (req.payload as any).id
+
+    const group = await prisma.group.findUnique({
+      where: {
+        id: groupId
+      }
+    })
+    if (group === null) {
+      return res.status(400).json(getApiResponse({ msg: ' group not found' }))
+    }
+
+    const posts = await postRepo.getAllPostsOfGroup(userId, groupId)
+    const files = await prisma.file.findMany({
+      where: {
+        postId: {
+          in: posts.map((post: any) => post.id)
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    res.status(httpStatus.OK).json(getApiResponse({ data: { files } }))
   } catch (error) {
     next(error)
   }

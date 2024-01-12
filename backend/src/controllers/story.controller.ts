@@ -11,13 +11,14 @@ export const createStory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { mutedOriginal, song, file } = req.body
+  const { mutedOriginal, song, file, texts } = req.body
   try {
     const story = await storyRepo.createStory(
       mutedOriginal,
       song,
       (req.payload as any).id,
-      file
+      file,
+      texts
     )
     res.status(httpStatus.OK).json(
       getApiResponse({
@@ -37,10 +38,179 @@ export const getHomeStories = async (
   try {
     const userId = (req.payload as any).id
     const friends = await friendRepo.findAllFriends(userId)
-    const friendsId = friends.map((request: any) =>
-      request.senderId === userId ? request.receiverId : request.senderId
-    )
-    const stories = await storyRepo.getHomeStories(friendsId, userId)
+    const myStories = await prisma.story.findMany({
+      where: { userId },
+
+      include: {
+        video: {
+          select: {
+            id: true,
+            name: true,
+            url: true
+          }
+        },
+        texts: true,
+
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        },
+        views: {
+          select: {
+            id: true
+            // firstname: true,
+            // lastname: true,
+            // avatar: {
+            //   select: {
+            //     id: true,
+            //     name: true,
+            //     url: true
+            //   }
+            // }
+          }
+        },
+        comments: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        reacts: {
+          include: {
+            react: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+    const friendsStories = await prisma.story.findMany({
+      where: {
+        userId: {
+          in: friends.map((friend: any) => friend.id)
+        }
+      },
+
+      include: {
+        video: {
+          select: {
+            id: true,
+            name: true,
+            url: true
+          }
+        },
+        texts: true,
+
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        },
+        views: {
+          select: {
+            id: true
+            // firstname: true,
+            // lastname: true,
+            // avatar: {
+            //   select: {
+            //     id: true,
+            //     name: true,
+            //     url: true
+            //   }
+            // }
+          }
+        },
+        comments: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        reacts: {
+          include: {
+            react: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+    const stories = [...myStories, ...friendsStories]
     res.status(httpStatus.OK).json(
       getApiResponse({
         data: {

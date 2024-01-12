@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 
 const StoriesPage = () => {
   const navigate = useNavigate()
-  const { stories } = useSelector(state => state.stories)
+  const { stories, type } = useSelector(state => state.stories)
   const { state } = useLocation()
   const [current, setCurrent] = useState(state?.current)
   useEffect(() => {
@@ -20,12 +20,18 @@ const StoriesPage = () => {
     <div>
       <Header />
       <div className='flex'>
-        <LeftSide stories={stories} current={current} setCurrent={setCurrent} />
+        <LeftSide
+          stories={stories}
+          type={type}
+          current={current}
+          setCurrent={setCurrent}
+        />
         {
           <RightSide
             current={current}
             setCurrent={setCurrent}
             stories={stories}
+            type={type}
           />
         }
       </div>

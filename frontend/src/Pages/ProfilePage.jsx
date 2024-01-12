@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Facebook } from 'react-content-loader'
@@ -11,6 +11,9 @@ import { Modal } from 'antd'
 import { updateCoverImageAction } from '../Reduxs/Actions/authAction'
 import toast from 'react-hot-toast'
 import { upload } from '../utils/imageUpload'
+import { postTypes } from '../Reduxs/Types/postType'
+import { storyTypes } from '../Reduxs/Types/storyType'
+import { getProfileStoriesAction } from '../Reduxs/Actions/storyAction'
 
 const ProfilePage = () => {
   const dispatch = useDispatch()
@@ -20,6 +23,22 @@ const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState(null)
   const [coverImage, setCoverImage] = useState(null)
   const [showUpdateCoverImage, setShowUpdateCoverImage] = useState(false)
+  const { requests } = useSelector(state => state.friend)
+  const [files, setFiles] = useState([])
+  const myFriends = useMemo(() => {
+    const acceptedRequests = requests?.filter(req => req?.status === 'accepted')
+    return acceptedRequests.map(req => {
+      return req?.senderId === me.id ? req.receiver : req.sender
+    })
+  }, [requests, me?.id])
+
+  const [friends, setFriends] = useState([])
+
+  const myRequest = useMemo(() => {
+    return requests?.find(
+      item => item?.senderId === me?.id || item?.receiverId === me?.id
+    )
+  }, [requests, me?.id])
 
   const handleChangeCoverImage = e => {
     setCoverImage(e.target.files[0])
@@ -45,22 +64,55 @@ const ProfilePage = () => {
       getApi('/users/info/' + id)
         .then(data => {
           setUserInfo(data.data.user)
+          setFriends(data?.data?.user?.friends ?? [])
           setLoading(false)
         })
         .catch(err => {})
-    } else setUserInfo(me)
+    } else {
+      setUserInfo(me)
+    }
   }, [me, id])
+
+  useEffect(() => {
+    if (id === me?.id.toString()) {
+      setFriends(myFriends)
+    }
+  }, [myFriends, id, me?.id])
 
   useEffect(() => {
     if (userInfo) setCoverImage(userInfo?.detail?.coverImage?.url)
   }, [userInfo])
 
+  console.log({ requests, myRequest })
+  useEffect(() => {
+    if (id) {
+      getApi('/posts/user/' + id)
+        .then(({ data: { posts } }) => {
+          dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: posts })
+        })
+        .catch(err => {})
+      getApi('/users/' + id + '/files')
+        .then(({ data: { files } }) => {
+          setFiles(files)
+        })
+        .catch(err => {
+          setFiles([])
+        })
+    }
+    return () =>
+      dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: [] })
+  }, [id, dispatch, myRequest?.status])
+  useEffect(() => {
+    if (id) {
+      dispatch(getProfileStoriesAction(id))
+    }
+  }, [id, dispatch])
   return (
     <div>
       <Header />
       {loading && <Facebook />}
       {!loading && userInfo && (
-        <div className='min-h-screen '>
+        <div className='min-h-screen bg-[#fcf8f8]  '>
           <div className='w-full h-[120px] md:h-[350px] bg-[#e4d8d8] relative'>
             {coverImage && (
               <img
@@ -93,7 +145,12 @@ const ProfilePage = () => {
             />
           </div>
           {userInfo && (
-            <Intro userInfo={userInfo} own={id === me.id.toString()} />
+            <Intro
+              friends={friends}
+              userInfo={userInfo}
+              own={id === me.id.toString()}
+              files={files}
+            />
           )}
         </div>
       )}

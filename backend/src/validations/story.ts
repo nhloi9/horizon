@@ -6,7 +6,8 @@ const createStory: schema = {
   body: Joi.object({
     mutedOriginal: Joi.boolean().required(),
     song: Joi.object(),
-    file: Joi.object().required()
+    file: Joi.object().required(),
+    texts: Joi.array().items(Joi.object())
   })
 }
 

@@ -12,5 +12,11 @@ export const storyReducer = createReducer({stories: []}, (builder) => {
 		})
 		.addCase(storyTypes.REACT_STORY_SUCCESS, (state, action) => {
 			state.stories = updateToArray(state.stories, action.payload);
+		})
+		.addCase(storyTypes.CREATE_STORY_SUCCESS, (state, action) => {
+			state.stories = [action.payload, ...state.stories];
+		})
+		.addCase(storyTypes.STORY_PROFILE, (state, action) => {
+			state.type = action.payload;
 		});
 });

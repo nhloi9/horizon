@@ -1,7 +1,7 @@
 import React from 'react'
 import PostCard from '../PostCard/PostCard'
 
-const Posts = ({ posts }) => {
+const Posts = ({ posts, type }) => {
   return (
     <div>
       {/* <div className='bg-white h-10 w-full'> */}
@@ -13,7 +13,7 @@ const Posts = ({ posts }) => {
       /> */}
       {/* </div> */}
       {posts.map(post => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} type={type} />
       ))}
     </div>
   )

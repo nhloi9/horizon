@@ -22,12 +22,13 @@ export const getApi = async (url, params = {}) => {
 		);
 		return response.data;
 	} catch (error) {
-		if (error.response)
+		if (error.response) {
 			return Promise.reject(
 				error.response.data?.msg && typeof error.response.data?.msg === 'string'
 					? error.response.data?.msg
 					: 'Something went wrong'
 			);
+		}
 		return await Promise.reject(error.message);
 	}
 };
@@ -37,12 +38,13 @@ export const postApi = async (url, data = {}) => {
 		const response = await axios.post(url, omitObject(data));
 		return response.data;
 	} catch (error) {
-		if (error.response)
+		if (error.response) {
 			return Promise.reject(
 				error.response.data?.msg && typeof error.response.data?.msg === 'string'
 					? error.response.data?.msg
 					: 'Something went wrong'
 			);
+		}
 		return await Promise.reject(error.message);
 	}
 };

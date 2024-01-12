@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { type RequestHandler, Router } from 'express'
 
 import userRouters from './user.route'
 import friendRouters from './friend-request.route'
@@ -39,5 +39,20 @@ router.use('/reacts', reactRoutes)
 router.use('/notifies', notifyRoutes)
 router.use('/conversations', conversationRoutes)
 router.use('/messages', messageRoutes)
+// router.get('/link-preview', (async (req: any, res: any): Promise<any> => {
+//   try {
+//     getLinkPreview('https://www.youtube.com/watch?v=wcIGvCz3eKw', {
+//       headers: {
+//         'Accept-Language': 'en-US,en;q=0.5'
+//       }
+//     })
+//       .then(data => {
+//        res.sta
+//       })
+//       .catch(err => {
+//         console.log(err)
+//       })
+//   } catch (error) {}
+// }) as RequestHandler)
 
 export default router

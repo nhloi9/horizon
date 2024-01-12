@@ -61,13 +61,11 @@ const Header = () => {
         />
         <h1 className='font-[800] text-[22px]'>Horizon</h1>
       </div>
-      <Space>
-        <Search
-          placeholder='input search text'
-          onSearch={onSearch}
-          style={{ width: 200 }}
-        />
-      </Space>
+      <input
+        placeholder='🔍 Search on Horizon'
+        type='text'
+        className='block w-[230px] h-[40px] rounded-3xl px-3 bg-gray-100 border-none focus:outline-none '
+      />
       <div className='md:flex gap-3  hidden '>
         {leftNavItems.map((item, index) => (
           <NavLink
@@ -137,6 +135,10 @@ const Header = () => {
                         Logout
                       </Popconfirm>
                     )
+                  },
+                  user?.role === 'admin' && {
+                    key: '3',
+                    label: <Link to={'/admin'}>Admin tool</Link>
                   }
                 ]
               }}

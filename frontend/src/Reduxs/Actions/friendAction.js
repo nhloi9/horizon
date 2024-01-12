@@ -58,7 +58,7 @@ export const getAllFriendRequestsAction = () => async (dispatch, getState) => {
 export const friendCreateRequestAction =
 	(receiverId) => async (dispatch, getState) => {
 		try {
-			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: true});
+			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: receiverId});
 			const {
 				data: {request},
 			} = await postApi('/friend-requests/', {receiverId});
@@ -77,7 +77,7 @@ export const friendCreateRequestAction =
 export const friendUpdateRequestAction =
 	(request) => async (dispatch, getState) => {
 		try {
-			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: true});
+			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: request?.id});
 			await putApi('/friend-requests/' + request?.id);
 			dispatch({
 				type: friendTypes.FRIEND_UPDATE_REQUEST_SUCCSESS,
@@ -98,7 +98,7 @@ export const friendUpdateRequestAction =
 export const friendDeleteRequestAction =
 	(request) => async (dispatch, getState) => {
 		try {
-			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: true});
+			dispatch({type: friendTypes.FRIEND_BUTTON_LOADING, payload: request?.id});
 			await deleteApi('/friend-requests/' + request?.id);
 			dispatch({
 				type: friendTypes.FRIEND_DELETE_REQUEST_SUCCSESS,

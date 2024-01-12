@@ -13,7 +13,7 @@ export const createMessage = async (
 ): Promise<any> => {
   try {
     await prisma.$transaction(async tx => {
-      const { conversationId, text } = req.body
+      const { conversationId, text, files } = req.body
       const userId = (req.payload as any).id
       const conversationMember = await tx.conversationMember.findFirst({
         where: {
@@ -29,9 +29,19 @@ export const createMessage = async (
       const message = await tx.message.create({
         data: {
           text,
-          memberId: conversationMember.id
+          memberId: conversationMember.id,
+          files: {
+            create: files
+          }
         },
         include: {
+          files: {
+            select: {
+              name: true,
+              id: true,
+              url: true
+            }
+          },
           member: {
             include: {
               user: {

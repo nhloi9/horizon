@@ -10,6 +10,9 @@ import {notifyReducer} from './Reducers/notifyReducer';
 import {conversationReducer} from './Reducers/conversationReducer';
 import {socketMiddleware} from './Middleware/socket';
 import {socket} from '../socket';
+import {onlineReducer} from './Reducers/onlineReducer';
+import {callReducer} from './Reducers/callReducer';
+import {postSaveReducer} from './Reducers/postSaveReducer';
 // import {signinReducer} from './Reducers/signinReducer';
 
 export const store = configureStore({
@@ -24,6 +27,9 @@ export const store = configureStore({
 		createGroup: createGroupReducer,
 		notifies: notifyReducer,
 		conversations: conversationReducer,
+		onlines: onlineReducer,
+		call: callReducer,
+		save: postSaveReducer,
 
 		// signin: signinReducer,
 	},

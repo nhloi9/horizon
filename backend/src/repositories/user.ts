@@ -35,6 +35,7 @@ const findUser = async (filter: any): Promise<any> => {
       }
     }
   })
+
   return user
 }
 

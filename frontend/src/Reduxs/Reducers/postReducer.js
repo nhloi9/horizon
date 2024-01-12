@@ -7,10 +7,13 @@ export const postReducer = createReducer(
 	(builder) => {
 		builder
 			.addCase(postTypes.GET_HOME_POST_SUCCESS, (state, action) => {
-				state.posts = [...state.posts, ...action.payload];
+				state.posts = action.payload;
 			})
 			.addCase(postTypes.POST, (state, action) => {
 				state.posts = updateToArray(state.posts, action.payload);
+			})
+			.addCase(postTypes.POST_CREATE_SUCCESS, (state, action) => {
+				state.posts = [action.payload, ...state.posts];
 			});
 	}
 );

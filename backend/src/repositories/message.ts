@@ -15,6 +15,13 @@ const getMessages = async (
       id: 'desc'
     },
     include: {
+      files: {
+        select: {
+          name: true,
+          id: true,
+          url: true
+        }
+      },
       member: {
         include: {
           user: {

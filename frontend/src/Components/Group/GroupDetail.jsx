@@ -1,8 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { MdOutlinePublic } from 'react-icons/md'
+import { MdArrowOutward, MdOutlinePublic } from 'react-icons/md'
 import { FaLock } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
-import { Avatar, Button, Modal, Popover, Select } from 'antd'
+import {
+  Avatar,
+  Button,
+  Cascader,
+  Checkbox,
+  ColorPicker,
+  DatePicker,
+  Form,
+  Image,
+  Input,
+  InputNumber,
+  Modal,
+  Popover,
+  Radio,
+  Select,
+  Slider,
+  Switch,
+  Tooltip,
+  TreeSelect,
+  Upload
+} from 'antd'
 import { CiSearch } from 'react-icons/ci'
 import { LuClock5 } from 'react-icons/lu'
 import { MdGroups } from 'react-icons/md'
@@ -13,16 +33,23 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FaBook } from 'react-icons/fa6'
 import { globalTypes, updateToArray } from '../../Reduxs/Types/globalType'
 import UserCard from '../Home/UserCard'
-import PostCard from '../PostCard/PostCard'
 import moment from 'moment'
 import { groupTypes } from '../../Reduxs/Types/groupType'
 import { defaulAvatar } from '../../Constants'
 import CreatePost from '../Home/CreatePost'
 import toast from 'react-hot-toast'
-import CardHeader from '../PostCard/CardHeader'
 import CardBody from '../PostCard/CardBody'
+import { FiSettings } from 'react-icons/fi'
+import { postTypes } from '../../Reduxs/Types/postType'
+import Posts from '../Home/Posts'
+import { IoIosVideocam } from 'react-icons/io'
+import CardHeader from '../PostCard/CardHeader'
 
 const GroupDetail = () => {
+  const { posts } = useSelector(state => state.post)
+  const dispatch = useDispatch()
+  const [files, setFiles] = useState([])
+
   const navigate = useNavigate()
   const [groupData, setGroupData] = useState(null)
   const [pendingPosts, setPendingPosts] = useState([])
@@ -33,7 +60,6 @@ const GroupDetail = () => {
   const [openCreatePost, setOpenCreatePost] = useState(false)
   const { requests } = useSelector(state => state.friend)
   const { user } = useSelector(state => state.auth)
-  const dispatch = useDispatch()
 
   const friends = useMemo(() => {
     const acceptedRequests = requests?.filter(req => req?.status === 'accepted')
@@ -63,9 +89,9 @@ const GroupDetail = () => {
       return [
         ...groupData.requests
           ?.filter(request => request.status === 'accepted')
-          ?.map(item => item.user),
-        groupData.admin
+          ?.map(item => item.user)
       ]
+    else return []
   }, [groupData])
 
   const joins = useMemo(() => {
@@ -74,17 +100,6 @@ const GroupDetail = () => {
         request => request.status === 'waiting' && request.type === 'join'
       )
     // ?.map(item => item.user) ?? []
-  }, [groupData])
-
-  const invites = useMemo(() => {
-    if (groupData)
-      return (
-        groupData.requests
-          ?.filter(
-            request => request.status === 'waiting' && request.type === 'invite'
-          )
-          ?.map(item => item.user) ?? []
-      )
   }, [groupData])
 
   const updateRequest = async request => {
@@ -219,6 +234,18 @@ const GroupDetail = () => {
   }, [groupData, user?.id])
 
   useEffect(() => {
+    if (id) {
+      dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: [] })
+      getApi('/posts/group/' + id)
+        .then(({ data: { posts } }) => {
+          dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: posts })
+        })
+        .catch(err => {})
+    }
+    return () =>
+      dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: [] })
+  }, [dispatch, id, myRequest?.status])
+  useEffect(() => {
     setGroupData(null)
     getApi('/groups/' + id)
       .then(({ data: { group } }) => {
@@ -250,6 +277,19 @@ const GroupDetail = () => {
     // user?.id,
     // type
   ])
+
+  // get files
+  useEffect(() => {
+    if (id) {
+      getApi('/groups/' + id + '/files')
+        .then(({ data: { files } }) => {
+          setFiles(files)
+        })
+        .catch(err => {
+          setFiles([])
+        })
+    }
+  }, [id, dispatch, myRequest?.status])
 
   //get pending posts
   useEffect(() => {
@@ -298,7 +338,7 @@ const GroupDetail = () => {
                   </span>
                   {' ' + groupData?.privacy + ' group  . '}
                   <span className='font-[600] text-sm'>
-                    {members.length + ' members'}
+                    {members.length + 1 + ' members'}
                   </span>
                 </span>
               </div>
@@ -341,7 +381,7 @@ const GroupDetail = () => {
               )
             )}
           </div>
-          {groupData.adminId === user.id && (
+          {groupData?.adminId === user?.id && (
             <div className=' p-3  border-t border-gray-300'>
               <p className='font-[600] text-gray-500'> Admin tools</p>
               <div
@@ -380,6 +420,20 @@ const GroupDetail = () => {
                   </p>
                 </div>
               </div>
+
+              <div
+                className={`flex items-center gap-2 px-1 my-3 py-4 rounded-md hover:bg-gray-200 cursor-pointer ${
+                  type === 'edit' && 'bg-gray-200'
+                }`}
+                onClick={() => {
+                  navigate('/groups/' + id + '/edit')
+                }}
+              >
+                <FiSettings size={20} className='!text-gray-600' />
+                <div className='flex flex-col justify-center  '>
+                  <h1>Group setting</h1>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -393,7 +447,10 @@ const GroupDetail = () => {
               updateRequest={updateRequest}
               deleteRequest={deleteRequest}
             />
-          ) : type === 'about' || type === undefined ? (
+          ) : type === 'about' ||
+            type === undefined ||
+            type === 'members' ||
+            type === 'files' ? (
             <div>
               {/* header */}
               <div className='relative'>
@@ -415,7 +472,7 @@ const GroupDetail = () => {
                       </span>
                       {' ' + groupData?.privacy + ' group  . '}
                       <span className='font-[600] '>
-                        {members?.length + ' members'}
+                        {members?.length + 1 + ' members'}
                       </span>
                     </span>
                   </div>
@@ -497,13 +554,17 @@ const GroupDetail = () => {
                       </Link>
                       <Link
                         to={`/groups/${groupData?.id}/members`}
-                        className=' no-underline text-[18px] text-black font-[500]'
+                        className={`text-[18px] font-[500]  no-underline ${
+                          type === 'members' ? 'text-blue-400' : 'text-black'
+                        }`}
                       >
                         Members
                       </Link>
                       <Link
                         to={`/groups/${groupData?.id}/files`}
-                        className=' no-underline  text-black text-[18px] font-[500]'
+                        className={`text-[18px] font-[500]  no-underline ${
+                          type === 'files' ? 'text-blue-400' : 'text-black'
+                        }`}
                       >
                         Files
                       </Link>
@@ -520,8 +581,16 @@ const GroupDetail = () => {
                 <>
                   <div className='flex w-full justify-center'>
                     <div className='w-[70%] mt-[70px] bg-white p-3 rounded-md '>
-                      <h1 className='!text-[18px]'>About this group</h1>
-                      <hr className='bg-gray-400 h-[1px] w-full mt-3 mb-2' />
+                      <h1 className='!text-[18px] my-2'>About this group</h1>
+
+                      <hr className='bg-gray-400 h-[1px] w-full mt-3 mb-3' />
+                      {groupData?.description && (
+                        <div className='my-2'>
+                          <span className='text-gray-500  '>
+                            {groupData?.description}
+                          </span>
+                        </div>
+                      )}
                       <div className='flex items-start gap-1'>
                         <div>
                           {groupData?.privacy === 'public' ? (
@@ -567,23 +636,76 @@ const GroupDetail = () => {
               {type === undefined && (
                 <div className='flex w-full justify-center gap-4'>
                   {/* left */}
-                  <div className='flex w-[80%] lg:w-[55%] mt-[70px] flex-col py-4  bg-white rounded-xl shadow-lg'>
-                    <div className='flex items-center border-b-2   border-blue-400 pb-4 pl-4 w-full'>
-                      <Avatar
-                        size='large'
-                        variant='circular'
-                        src={user.avatar?.url ?? defaulAvatar}
-                        alt='avatar'
-                      ></Avatar>
+                  <div className=' w-[80%] xl:w-[55%] mt-[70px]'>
+                    <div className='flex  flex-col py-4  bg-white rounded-xl shadow-lg'>
+                      <div className='flex items-center border-b-2   border-blue-400 pb-4 pl-4 w-full'>
+                        <Avatar
+                          size='large'
+                          variant='circular'
+                          src={user.avatar?.url ?? defaulAvatar}
+                          alt='avatar'
+                        ></Avatar>
 
-                      <div className='flex w-full justify-between items-center'>
-                        <div className='w-full ml-4'>
-                          <input
-                            type='text'
-                            name='text'
-                            placeholder={`Write something...`}
-                            className='outline-none w-full bg-gray-200 py-2 px-3 rounded-3xl cursor-pointer '
-                            readOnly={true}
+                        <div className='flex w-full justify-between items-center'>
+                          <div className='w-full ml-4'>
+                            <input
+                              type='text'
+                              name='text'
+                              placeholder={`Write something...`}
+                              className='outline-none w-full bg-gray-200 py-2 px-3 rounded-3xl cursor-pointer '
+                              readOnly={true}
+                              onClick={() => {
+                                if (
+                                  groupData?.adminId !== user?.id &&
+                                  myRequest?.status !== 'accepted'
+                                ) {
+                                  toast.error(
+                                    'Only members of this group can post'
+                                  )
+                                } else {
+                                  setOpenCreatePost(true)
+                                }
+                              }}
+                              // ref={text}
+                            ></input>
+                          </div>
+                          <div className='mx-4'>
+                            {/* {image && (
+                          <img
+                            className='h-24 rounded-xl'
+                            src={image}
+                            alt='previewImage'
+                          ></img>
+                        )} */}
+                          </div>
+                          <div className='mr-4'>
+                            <Button
+                              variant='text'
+                              type='submit'
+                              onClick={() => {
+                                if (
+                                  groupData?.adminId !== user?.id &&
+                                  myRequest?.status !== 'accepted'
+                                ) {
+                                  toast.error(
+                                    'Only members of this group can post'
+                                  )
+                                } else {
+                                  setOpenCreatePost(true)
+                                }
+                              }}
+                            >
+                              Share
+                            </Button>
+                          </div>
+                        </div>
+                        {/* </form> */}
+                      </div>
+
+                      <div className='flex justify-around items-center pt-4'>
+                        <div className='flex items-center'>
+                          <div
+                            className='cursor-pointer flex items-center'
                             onClick={() => {
                               if (
                                 groupData?.adminId !== user?.id &&
@@ -596,57 +718,51 @@ const GroupDetail = () => {
                                 setOpenCreatePost(true)
                               }
                             }}
-                            // ref={text}
-                          ></input>
+                          >
+                            <img
+                              className='h-6 w-6 object-cover mr-4'
+                              src={
+                                'https://static.xx.fbcdn.net/rsrc.php/v3/y-/r/WpZH_PxfuYV.png?_nc_eui2=AeEEsXViRBNHPBHANX1dAM91WdnC3Zi7PPBZ2cLdmLs88OYGM15Sf8aA6slNPP9t1DbiPmG92cD9epqCzigzstCF'
+                              }
+                              alt='addImage'
+                            ></img>
+                            <p>Anonymous post</p>
+                          </div>
                         </div>
-                        <div className='mx-4'>
-                          {/* {image && (
-                          <img
-                            className='h-24 rounded-xl'
-                            src={image}
-                            alt='previewImage'
-                          ></img>
-                        )} */}
-                        </div>
-                        <div className='mr-4'>
-                          <Button variant='text' type='submit'>
-                            Share
-                          </Button>
-                        </div>
-                      </div>
-                      {/* </form> */}
-                    </div>
-
-                    <div className='flex justify-around items-center pt-4'>
-                      <div className='flex items-center'>
-                        <div className='cursor-pointer flex items-center'>
+                        <div
+                          className='cursor-pointer flex items-center'
+                          onClick={() => {
+                            if (
+                              groupData?.adminId !== user?.id &&
+                              myRequest?.status !== 'accepted'
+                            ) {
+                              toast.error('Only members of this group can post')
+                            } else {
+                              setOpenCreatePost(true)
+                            }
+                          }}
+                        >
                           <img
                             className='h-6 w-6 object-cover mr-4'
                             src={
-                              'https://static.xx.fbcdn.net/rsrc.php/v3/y-/r/WpZH_PxfuYV.png?_nc_eui2=AeEEsXViRBNHPBHANX1dAM91WdnC3Zi7PPBZ2cLdmLs88OYGM15Sf8aA6slNPP9t1DbiPmG92cD9epqCzigzstCF'
+                              'https://static.xx.fbcdn.net/rsrc.php/v3/yC/r/a6OjkIIE-R0.png?_nc_eui2=AeFGzBWABkVgcqWhkTneuinsfK5Z1qDG7FV8rlnWoMbsVezNRPuu5wN0QcxQOaduofuemh1Q7l3tIcrG3mcLTQ9w'
                             }
                             alt='addImage'
                           ></img>
-                          <p>Anonymous post</p>
+                          <p> Photo/video</p>
                         </div>
                       </div>
-                      <div className='cursor-pointer flex items-center'>
-                        <img
-                          className='h-6 w-6 object-cover mr-4'
-                          src={
-                            'https://static.xx.fbcdn.net/rsrc.php/v3/yC/r/a6OjkIIE-R0.png?_nc_eui2=AeFGzBWABkVgcqWhkTneuinsfK5Z1qDG7FV8rlnWoMbsVezNRPuu5wN0QcxQOaduofuemh1Q7l3tIcrG3mcLTQ9w'
-                          }
-                          alt='addImage'
-                        ></img>
-                        <p> Photo/video</p>
-                      </div>
+                    </div>
+
+                    <div className='w-full py-4'>
+                      <Posts type={'detailGroup'} posts={posts} />
                     </div>
 
                     {/* {open && <CreatePost open={open} setOpen={setOpen} />} */}
                   </div>
 
                   {/* right */}
-                  <div className='hidden lg:block w-[35%] mt-[70px] bg-white p-3 rounded-md '>
+                  <div className='hidden xl:block w-[35%] h-min mt-[70px] bg-white p-3 rounded-md '>
                     <h1 className='!text-[18px]'>About this group</h1>
                     <hr className='bg-gray-400 h-[1px] w-full mt-3 mb-2' />
                     <div className='flex items-start gap-1'>
@@ -690,6 +806,118 @@ const GroupDetail = () => {
                   )}
                 </div>
               )}
+
+              {/* members */}
+              {type === 'members' && (
+                <div className='w-[80%] rounded-md min-h-[100px] bg-white mx-auto mt-[70px]  gap-3 p-3'>
+                  <h1>Number of members: {members?.length + 1}</h1>
+                  <hr className='h-[1px] my-2 bg-gray-400' />
+                  <h1>Admin</h1>
+                  <div className='border my-2 w-full lg:h-[115px] h-[90px] rounded-md flex px-4 items-center gap-4'>
+                    <img
+                      src={groupData?.admin?.avatar?.url ?? defaulAvatar}
+                      className='lg:w-20 lg:h-20 w-16 h-16 object-cover rounded-md cursor-pointer'
+                      alt=''
+                      onClick={() =>
+                        navigate('/profile/' + groupData?.admin?.id)
+                      }
+                    />
+                    <h1
+                      className='cursor-pointer'
+                      onClick={() =>
+                        navigate('/profile/' + groupData?.admin?.id)
+                      }
+                    >
+                      {groupData?.admin?.firstname +
+                        ' ' +
+                        groupData?.admin?.lastname}
+                    </h1>
+                  </div>
+                  {members?.length > 0 && (
+                    <>
+                      <hr className='h-[1px] my-3 bg-gray-400' />
+                      <h1 className='mb-2'>Other members</h1>
+                      {members?.map((friend, index) => (
+                        <div className='border my-2 w-full lg:h-[115px] h-[90px] rounded-md flex px-4 items-center gap-4'>
+                          <img
+                            src={friend?.avatar?.url ?? defaulAvatar}
+                            className='lg:w-20 lg:h-20 w-16 h-16 object-cover rounded-md cursor-pointer'
+                            alt=''
+                            onClick={() => navigate('/profile/' + friend?.id)}
+                          />
+                          <h1
+                            className='cursor-pointer'
+                            onClick={() => navigate('/profile/' + friend?.id)}
+                          >
+                            {friend?.firstname + ' ' + friend?.lastname}
+                          </h1>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {type === 'files' && (
+                <div className='mt-[70px] '>
+                  {files?.length > 0 ? (
+                    <div className='w-[80%] mx-auto bg-white rounded-md min-h-[100px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 gap-3 px-4 py-4 shadow-md'>
+                      {files?.map(item => (
+                        <div className='rounded-md overflow-hidden relative '>
+                          <Image
+                            preview={{
+                              destroyOnClose: true,
+                              mask: <div></div>,
+                              ...(item?.thumbnail && {
+                                imageRender: () => (
+                                  <video
+                                    disablePictureInPicture
+                                    // muted
+                                    controls
+                                    src={item?.url}
+                                    className='object-contain max-w-[80%] max-h-[80%] rounded-md'
+                                  />
+                                ),
+                                toolbarRender: () => null
+                              })
+                            }}
+                            src={item?.thumbnail ?? item?.url}
+                            alt=''
+                            height={'180px'}
+                            width={'100%'}
+                            className={` block  object-cover rounded-md !hover:rounded-md !shadow-md`}
+                          />
+                          <div className='absolute top-1 right-1 z-10'>
+                            <Tooltip title='Go to post'>
+                              <MdArrowOutward
+                                className='!text-gray-200 !text-[25px] cursor-pointer'
+                                onClick={() =>
+                                  navigate('/post/' + item?.postId)
+                                }
+                              />
+                            </Tooltip>
+                          </div>
+                          {item?.thumbnail && (
+                            <IoIosVideocam
+                              className='!absolute !top-1 !left-1 z-0 !text-gray-700 '
+                              size={20}
+                            />
+                          )}
+                        </div>
+                        // <img
+                        //   src={item.url}
+                        //   alt=''
+                        //   className='w-[180px] h-[170px] object-cover rounded-md'
+                        // />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className='w-[80%] mx-auto bg-white rounded-md h-[100px] flex items-center justify-center'>
+                      <span className='text-gray-400'>No files to show</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : type === 'pending_posts' && groupData?.adminId === user?.id ? (
             <PendingPosts
@@ -697,6 +925,46 @@ const GroupDetail = () => {
               approve={approvePost}
               decline={declinePost}
             />
+          ) : type === 'edit' && groupData?.adminId === user?.id ? (
+            <div className='w-full '>
+              <Form
+                labelCol={{
+                  span: 10
+                }}
+                wrapperCol={{
+                  span: 14
+                }}
+                layout='vertical'
+                // disabled={componentDisabled}
+                style={{
+                  maxWidth: 600,
+                  margin: ' 40px auto'
+                }}
+              >
+                <Form.Item label='Name'>
+                  <Input />
+                </Form.Item>
+                <Form.Item label='Description'>
+                  <Input />
+                </Form.Item>
+                <Form.Item label='Privacy'>
+                  <Select>
+                    <Select.Option value='demo'>Private</Select.Option>
+                    <Select.Option value='demo'>Public</Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item label='Require post approval'>
+                  <Radio.Group>
+                    <Radio value={true}> On </Radio>
+                    <Radio value={false}> Off </Radio>
+                  </Radio.Group>
+                </Form.Item>
+
+                <Form.Item label='ColorPicker'>
+                  <ColorPicker />
+                </Form.Item>
+              </Form>
+            </div>
           ) : (
             <div></div>
           )}
@@ -965,13 +1233,13 @@ const PendingPosts = ({ posts = [], approve, decline }) => {
         <h1 className='font-[700] text-[23px]'>Pending approvals</h1>
         <input
           className='block w-full mt-7 mb-3 px-4 py-2 bg-gray-200 rounded-2xl !border-none focus:outline-none'
-          placeholder='🔍 Search by name'
+          placeholder='🔍 Search'
         ></input>
         <div className='flex gap-4'>
           <Button className='bg-gray-200'>Clear filter</Button>
           <Select
-            className='!w-[170px] !bg-gray-200'
-            placeholder='Join Horizon date'
+            className='!w-[170px] !bg-gray-200 rounded-md'
+            placeholder='Select date'
             // defaultValue='lucy'
             style={{
               width: 120
@@ -998,7 +1266,7 @@ const PendingPosts = ({ posts = [], approve, decline }) => {
           />
 
           <Select
-            placeholder='Request age'
+            placeholder='Author'
             // defaultValue='lucy'
             style={{
               width: 140
@@ -1023,34 +1291,6 @@ const PendingPosts = ({ posts = [], approve, decline }) => {
               }
             ]}
           />
-
-          <Select
-            placeholder='Gender'
-            // defaultValue='lucy'
-            style={{
-              width: 120
-            }}
-            className='!w-[100px]'
-            // onChange={handleChange}
-            options={[
-              {
-                value: 'Less than 3 months ago',
-                label: 'Male'
-              },
-              {
-                value: 'Less than 6 months ago',
-                label: 'Female'
-              },
-              {
-                value: 'Over  a year ago',
-                label: 'Other'
-              },
-              {
-                value: 'Over two year ago',
-                label: 'Unknown'
-              }
-            ]}
-          />
         </div>
       </div>
       <div>
@@ -1064,29 +1304,17 @@ const PendingPosts = ({ posts = [], approve, decline }) => {
           </div>
         )}
         {posts?.length > 0 && (
-          <div className='pt-5 w-full flex justify-center'>
+          <div className='py-5 w-full flex flex-col items-center gap-4'>
             {posts.map(post => (
               <div className='w-[95%] bg-white rounded-md md:w-[600px]'>
-                <div className='px-3 pb-3'>
-                  {' '}
-                  <UserCard
-                    size='sm'
-                    userInfo={post?.user}
-                    text={
-                      'Request ' +
-                      moment(
-                        post?.createdAt ?? new Date().toISOString()
-                      ).fromNow()
-                    }
+                <div className='pb-3'>
+                  <CardHeader
+                    type={'detailGroup'}
+                    post={post}
+                    disableEdit={true}
                   />
                 </div>
-                <CardBody
-                  post={{
-                    text: post.text ?? '',
-                    files: post.files ?? [],
-                    user: post.user
-                  }}
-                />
+                <CardBody post={post} />
                 <div className='flex gap-2 p-4'>
                   <Button
                     className='w-full md:w-min bg-blue-400'

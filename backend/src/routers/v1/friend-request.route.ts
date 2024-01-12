@@ -15,6 +15,7 @@ router
   .get(verifyToken, controller.getAllRequests)
   .post(verifyToken, controller.createRequestFriend)
 
+router.get('/suggests', controller.getSuggestFriends)
 router
   .route('/:id')
   .delete(verifyToken, controller.deleteRequestFriend)

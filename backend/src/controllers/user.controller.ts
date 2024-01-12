@@ -6,7 +6,7 @@ import queryString from 'qs'
 import Axios from 'axios'
 import jwt from 'jsonwebtoken'
 
-import { userRepo } from '../repositories'
+import { friendRepo, postRepo, userRepo } from '../repositories'
 import { generateToken, getApiResponse } from '../utils'
 import { messages } from '../constants'
 import { userMail } from '../mail'
@@ -14,6 +14,7 @@ import { tokenSettings, oauth2Settings, socketTokenSettings } from '../configs'
 import type { RequestPayload } from '../types'
 import { prisma } from '../database/postgres'
 import { error } from 'console'
+import { auth } from 'firebase-admin'
 
 export const registerUser = async (
   req: Request,
@@ -281,11 +282,12 @@ export const getUserInfo = async (
         .status(httpStatus.NOT_FOUND)
         .json(getApiResponse(messages.USER_NOT_FOUND, res, 'USER_NOT_FOUND'))
     }
+    const friends = await friendRepo.findAllFriends(Number(id))
     delete user?.password
     res.status(httpStatus.OK).json(
       getApiResponse({
         data: {
-          user: { ...user, password: undefined }
+          user: { ...user, password: undefined, friends }
         }
       })
     )
@@ -387,9 +389,11 @@ export const getOauthToken = async (
       grant_type: 'authorization_code',
       redirect_uri: oauth2Settings.redirectUrl
     })
+
     const {
       data: { id_token } // eslint-disable-line
     } = await Axios.post(`${oauth2Settings.tokenUrl}?${tokenParam}`)
+
     if (id_token === undefined) {
       return res
         .status(httpStatus.UNAUTHORIZED)
@@ -852,6 +856,127 @@ export const search = async (
     // }
     console.log(users)
     res.status(httpStatus.OK).json(getApiResponse({ data: { users } }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getAllFilesOfUser = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const userId = (req.payload as any).id
+    const posts = await postRepo.getAllPostsOfUser(userId, Number(id))
+    const files = await prisma.file.findMany({
+      where: {
+        postId: {
+          in: posts.map((post: any) => post.id)
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    res.status(httpStatus.OK).json(getApiResponse({ data: { files } }))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getAllStoriesOfUser = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const stories = await prisma.story.findMany({
+      where: {
+        userId: Number(id)
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        video: {
+          select: {
+            id: true,
+            name: true,
+            url: true
+          }
+        },
+        texts: true,
+
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: {
+              select: {
+                id: true,
+                name: true,
+                url: true
+              }
+            }
+          }
+        },
+        views: {
+          select: {
+            id: true
+          }
+        },
+        comments: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        },
+        reacts: {
+          include: {
+            react: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: {
+                    id: true,
+                    name: true,
+                    url: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: {
+          stories
+        }
+      })
+    )
   } catch (error) {
     next(error)
   }

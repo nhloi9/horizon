@@ -15,6 +15,7 @@ import { upload } from '../../utils/imageUpload'
 import { postApi } from '../../network/api'
 import { globalTypes } from '../../Reduxs/Types/globalType'
 import { useNavigate } from 'react-router-dom'
+import { storyTypes } from '../../Reduxs/Types/storyType'
 
 const request = axios.create({
   baseURL: 'https://deezerdevs-deezer.p.rapidapi.com/',
@@ -109,20 +110,37 @@ const CreateStory = () => {
       })
       const [file] = await upload([myvideo])
 
+      const contentedTexts = texts.filter(
+        text =>
+          document.getElementById(text?.id) &&
+          document.getElementById(text?.id)?.innerText &&
+          document.getElementById(text.id)?.innerText?.trim().length > 0
+      )
+
       const {
         data: { story }
       } = await postApi('/stories', {
         file,
         mutedOriginal: muted,
-        song: selectSong
+        song: selectSong,
+        texts: contentedTexts.map(item => ({
+          x: item.clientX / 172 ?? 0,
+          y: item.clientY / 210 ?? 0,
+          content: document.getElementById(item?.id)?.innerText?.trim() || ''
+        }))
       })
+
       dispatch({
         type: globalTypes.ALERT,
         payload: {
           success: 'Create story successfully'
         }
       })
-      navigate('/')
+      dispatch({
+        type: storyTypes.CREATE_STORY_SUCCESS,
+        payload: story
+      })
+      navigate('/stories')
     } catch (error) {
       dispatch({
         type: globalTypes.ALERT,
@@ -193,12 +211,11 @@ const CreateStory = () => {
             {
               //   input text to story
               myvideo && (
-                <div className='z-20 absolute w-full px-1 h-[260px] top-[50px] bg-transparent  '>
+                <div className='z-20 absolute rounded-md  w-[180px] px-1 pt-1 pb-4  h-[230px] top-[50px] left-1 bg-transparent  hover:bg-[#0000004b]'>
                   <Tooltip color='cyan' title='Add text'>
                     <div
-                      className='rounded-md w-[190px] h-[220px]  relative cursor-pointer text-white hover:bg-[#00000078] '
+                      className='w-full h-full  rounded-md  relative cursor-pointer text-white  '
                       onClick={e => {
-                        console.log(3)
                         const contentedTexts = texts.filter(
                           text =>
                             document.getElementById(text.id) &&
@@ -207,17 +224,13 @@ const CreateStory = () => {
                               .length > 0
                         )
                         setTexts(contentedTexts)
-                        console.log(
-                          e.clientX,
-                          e.clientY,
-                          e.target.getBoundingClientRect().top
-                        )
+
                         const newText = {
                           clientX:
                             e.clientX - e.target.getBoundingClientRect().left,
                           clientY:
                             e.clientY - e.target.getBoundingClientRect().top,
-                          id: Math.random().toString()
+                          id: (Math.random() * 1e9).toString().slice(0, 5)
                         }
                         setTexts(pre => [...pre, newText])
                         setTimeout(() => {
@@ -236,15 +249,15 @@ const CreateStory = () => {
                           style={{
                             top: `${text.clientY}px`,
 
-                            maxWidth: `${200 - text.clientX}px`,
-                            maxHeight: `${200 - text.clientY}px`,
+                            maxWidth: `${172 - text.clientX}px`,
+                            maxHeight: `${216 - text.clientY}px`,
                             // width: `min-`,
                             left: `${text.clientX}px`,
                             textShadow: '1px 1px #FF0000'
                           }}
                           type='text'
                           id={text.id}
-                          className={`drop-shadow-2xl font-sevil text-[14px] italic absolute outline-none min-h-[15px] px-[1px]  min-w-[10px] hover:overflow-y-scroll scroll-min  overflow-hidden   `}
+                          className={`drop-shadow-2xl font-sevil text-[14px] italic absolute outline-none min-h-[15px] px-[1px]   hover:overflow-y-scroll scroll-min  overflow-hidden   `}
                         />
                       ))}
                     </div>
@@ -335,7 +348,7 @@ const CreateStory = () => {
                     playMyvieo && 'animate-bounce'
                   }`}
                 >
-                  <p className='text-gray-100 text-center '>
+                  <p className='text-gray-100 text-sm text-center '>
                     <LuMusic
                       className='!text-gray-100 shadow-md translate-y-1'
                       size={20}

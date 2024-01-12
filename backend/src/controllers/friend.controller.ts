@@ -5,24 +5,60 @@ import { friendRepo, notifyRepo, userRepo } from '../repositories'
 import { messages } from '../constants'
 import type { RequestPayload } from '../types'
 import { getApiResponse } from '../utils'
+import { prisma } from '../database/postgres'
 
-// export const getAllFriends = async (
-//   req: RequestPayload,
-//   res: Response,
-//   next: NextFunction
-// ): Promise<any> => {
-//   try {
-//     const userId = (req.payload as any).id
-//     const friendsRequest = await friendRepo.findAllFriends(userId)
-//     const friendsId = friendsRequest.map((request: any) =>
-//       request.senderId === userId ? request.receiverId : request.senderId
-//     )
-//     const friends = await userRepo.findUsers({ id: { in: friendsId } })
-//     return res.status(httpStatus.OK).json(getApiResponse({ data: { friends } }))
-//   } catch (error) {
-//     next(error)
-//   }
-// }
+export const getSuggestFriends = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const userId = (req.payload as any).id
+    const myRequests = await prisma.friendRequest.findMany({
+      where: {
+        OR: [
+          {
+            senderId: userId
+          },
+          {
+            receiverId: userId
+          }
+        ]
+      }
+    })
+    const myRequestIds = myRequests.map((request: any) =>
+      request?.senderId === userId ? request.receiverId : request.senderId
+    )
+    const suggests = await prisma.user.findMany({
+      where: {
+        id: {
+          notIn: [...myRequestIds, userId]
+        }
+      },
+      select: {
+        lastname: true,
+        firstname: true,
+        id: true,
+        avatar: true
+      }
+    })
+    return res.status(200).json(
+      getApiResponse({
+        data: {
+          suggests
+        }
+      })
+    )
+  } catch (error) {
+    return res.status(200).json(
+      getApiResponse({
+        data: {
+          suggests: []
+        }
+      })
+    )
+  }
+}
 
 // export const getReceiveRequests = async (
 //   req: RequestPayload,

@@ -1,4 +1,8 @@
-import {globalTypes, updateToArray} from '../Types/globalType';
+import {
+	addOrUpdateToArray,
+	globalTypes,
+	updateToArray,
+} from '../Types/globalType';
 import {upload} from '../../utils/imageUpload';
 import {deleteApi, getApi, postApi, putApi} from '../../network/api';
 import {postTypes} from '../Types/postType';
@@ -25,7 +29,9 @@ export const createPostAction =
 
 			const images = await upload(photos.map((photo) => photo.file));
 
-			const res = await postApi('/posts', {
+			const {
+				data: {post},
+			} = await postApi('/posts', {
 				files: images.map((image) => ({
 					...image,
 					thumbnail: thumbnails.find(
@@ -39,19 +45,20 @@ export const createPostAction =
 				location,
 				groupId,
 			});
-			dispatch({
-				type: postTypes.POST_CREATE_SUCCESS,
-				// payload: {
-				// 	...res?.data?.post,
-				// 	user: getState().auth.user,
-				// 	likes: [],
-				// 	comments: [],
-				// },
-			});
+			if (post?.accepted) {
+				dispatch({
+					type: postTypes.POST_CREATE_SUCCESS,
+
+					payload: post,
+				});
+			}
 			dispatch({
 				type: globalTypes.ALERT,
 				payload: {
-					success: res?.msg,
+					success:
+						post?.accepted === false
+							? 'Your post is waiting for approval by the administrator'
+							: 'You have successfully created the post',
 				},
 			});
 			// const msg = {
@@ -69,6 +76,66 @@ export const createPostAction =
 			// 	// res.data.posts.map((post) => post._id)
 			// 	[res?.data.post._id]
 			// );
+		} catch (error) {
+			console.log(error);
+			dispatch({type: globalTypes.ALERT, payload: {loading: false}});
+		}
+	};
+
+export const sharePostAction =
+	({postId, groupId}) =>
+	async (dispatch, getState) => {
+		try {
+			dispatch({
+				type: globalTypes.ALERT,
+				payload: {
+					loading: true,
+				},
+			});
+
+			const {
+				data: {post},
+			} = await postApi('/posts', {
+				shareId: postId,
+				privacy: groupId ? 'public' : 'friend',
+				groupId,
+			});
+
+			if (post?.accepted === false) {
+			} else {
+				let sharedPost = getState().post?.posts?.find((item) => item.id === postId);
+
+				if (sharedPost) {
+					sharedPost = structuredClone(sharedPost);
+					sharedPost.shareBys = [post, ...sharedPost.shareBys];
+					dispatch({
+						type: postTypes.POST,
+						payload: sharedPost,
+					});
+				}
+
+				const shareBys = getState()?.post?.posts?.filter(
+					(item) => item?.shareId === postId
+				);
+				shareBys?.forEach((element) => {
+					let copy = structuredClone(element);
+					if (copy.share) copy.share.shareBys = [post, ...copy.share.shareBys];
+					dispatch({
+						type: postTypes.POST,
+						payload: copy,
+					});
+				});
+			}
+
+			dispatch({
+				type: globalTypes.ALERT,
+				payload: {
+					success:
+						post?.accepted === false
+							? 'Your share is waiting for admin approval'
+							: 'Share post successfully',
+				},
+			});
 		} catch (error) {
 			console.log(error);
 			dispatch({type: globalTypes.ALERT, payload: {loading: false}});
@@ -136,7 +203,10 @@ export const updatePostAction =
 			dispatch({
 				type: globalTypes.ALERT,
 				payload: {
-					success: 'Updated successfully',
+					success:
+						post?.accepted === false
+							? 'Your post is waiting for approval by the administrator'
+							: 'You have successfully created the post',
 				},
 			});
 			// const msg = {
@@ -187,19 +257,21 @@ export const reactPost = (postId, reactId) => async (dispatch, getState) => {
 		const post = structuredClone(
 			getState().post.posts.find((item) => item.id === postId)
 		);
-		post.reacts = post.reacts.filter((react) => react.userId !== user.id);
-		const react = reacts.find((react) => react.id === reactId);
-		post.reacts.push({
-			userId: user.id,
-			user,
-			reactId,
-			react,
-			postId,
-		});
-		dispatch({
-			type: postTypes.POST,
-			payload: post,
-		});
+		if (post) {
+			post.reacts = post.reacts.filter((react) => react.userId !== user.id);
+			const react = reacts.find((react) => react.id === reactId);
+			post.reacts.push({
+				userId: user.id,
+				user,
+				reactId,
+				react,
+				postId,
+			});
+			dispatch({
+				type: postTypes.POST,
+				payload: post,
+			});
+		}
 	} catch (error) {
 		console.log(error);
 		// dispatch({type: globalTypes.ALERT, payload: {loading: false}});
@@ -216,18 +288,20 @@ export const likePost = (postId) => async (dispatch, getState) => {
 		const post = structuredClone(
 			getState().post?.posts.find((item) => item.id === postId)
 		);
-		post.reacts = post.reacts.filter((react) => react.userId !== user.id);
-		const react = reacts.find((react) => react.id === 1);
-		post.reacts.push({
-			userId: user.id,
-			user,
-			reactId: 1,
-			react,
-		});
-		dispatch({
-			type: postTypes.POST,
-			payload: post,
-		});
+		if (post) {
+			post.reacts = post.reacts.filter((react) => react.userId !== user.id);
+			const react = reacts.find((react) => react.id === 1);
+			post.reacts.push({
+				userId: user.id,
+				user,
+				reactId: 1,
+				react,
+			});
+			dispatch({
+				type: postTypes.POST,
+				payload: post,
+			});
+		}
 	} catch (error) {
 		console.log(error);
 		// dispatch({type: globalTypes.ALERT, payload: {loading: false}});
@@ -267,7 +341,9 @@ export const createCommentAction =
 				type: postTypes.POST,
 				payload: post,
 			});
-		} catch (error) {}
+		} catch (error) {
+			toast.error(error);
+		}
 	};
 
 // export const likeComment = (comment, post) => async (dispatch, getState) => {
@@ -311,6 +387,68 @@ export const createCommentAction =
 // 	}
 // };
 
+export const reactComment =
+	(comment, postId, type) => async (dispatch, getState) => {
+		try {
+			const {
+				data: {react},
+			} = await postApi(`/comments/${comment?.id}/react`, {
+				type,
+			});
+
+			const post = structuredClone(
+				getState().post?.posts?.find((item) => item.id === postId)
+			);
+			const updatedComment = {
+				...comment,
+				reacts: addOrUpdateToArray(comment.reacts, react),
+			};
+
+			if (post) {
+				const newPost = {
+					...post,
+					comments: updateToArray(post.comments, updatedComment),
+				};
+				dispatch({
+					type: postTypes.POST,
+					payload: newPost,
+				});
+			}
+		} catch (err) {
+			toast.error(err);
+		}
+	};
+
+export const unReactComment =
+	(comment, postId) => async (dispatch, getState) => {
+		try {
+			await deleteApi(`/comments/${comment?.id}/react`);
+
+			const post = structuredClone(
+				getState().post?.posts?.find((item) => item.id === postId)
+			);
+			const updatedComment = {
+				...comment,
+				reacts: comment?.reacts?.filter(
+					(item) => item?.userId !== getState()?.auth?.user?.id
+				),
+			};
+
+			if (post) {
+				const newPost = {
+					...post,
+					comments: updateToArray(post.comments, updatedComment),
+				};
+				dispatch({
+					type: postTypes.POST,
+					payload: newPost,
+				});
+			}
+		} catch (err) {
+			toast.error(err);
+		}
+	};
+
 export const updateComment =
 	({commentId, postId, content}) =>
 	async (dispatch, getState) => {
@@ -353,3 +491,31 @@ export const updateComment =
 			toast.error(err);
 		}
 	};
+
+export const getSavePostsAction = () => async (dispatch, getState) => {
+	try {
+		const {
+			data: {posts},
+		} = await getApi('/posts/save');
+		dispatch({type: postTypes.GET_SAVE_POSTS_SUCCESS, payload: posts});
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const savePostsAction = (post) => async (dispatch, getState) => {
+	try {
+		await postApi('/posts/' + post?.id + '/save');
+		dispatch({type: postTypes.SAVE_POST, payload: post});
+	} catch (error) {
+		toast.error(error);
+	}
+};
+export const unsavePostsAction = (postId) => async (dispatch, getState) => {
+	try {
+		await postApi('/posts/' + postId + '/un-save');
+		dispatch({type: postTypes.UN_SAVE_POST, payload: postId});
+	} catch (error) {
+		toast.error(error);
+	}
+};

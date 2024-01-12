@@ -7,6 +7,7 @@ import { MdOutlineComment } from 'react-icons/md'
 import millify from 'millify'
 import { IoMdClose } from 'react-icons/io'
 import { CiStar } from 'react-icons/ci'
+// import  ShowReacts from '../PostCard/C'
 
 import {
   FaGooglePlay,
@@ -23,8 +24,10 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { commentStory, reactStory } from '../../Reduxs/Actions/storyAction'
 import moment from 'moment'
+import ShowReacts from '../PostCard/ShowReacts'
 
-const RightSide = ({ current, stories, setCurrent }) => {
+const RightSide = ({ current, stories, setCurrent, type }) => {
+  const [openShowReacts, setOpenShowReacts] = useState(false)
   const [percent, setPercent] = useState(0)
   const [play, setPlay] = useState(true)
   const [muted, setMuted] = useState(false)
@@ -40,7 +43,11 @@ const RightSide = ({ current, stories, setCurrent }) => {
   const handleNext = () => {
     if (current < stories.length - 1) {
       setCurrent(current + 1)
-    } else navigate('/')
+    } else if (type === 'profile') {
+      navigate('/profile/' + stories[0]?.user?.id)
+    } else {
+      navigate('/')
+    }
   }
 
   const handlePre = () => {
@@ -158,6 +165,32 @@ const RightSide = ({ current, stories, setCurrent }) => {
                 </div>
               </div>
             )}
+
+            {/* texts */}
+            <div className='z-20 rounded-md absolute w-[255px] px-1 h-[360px] top-[70px] left-1 bg-transparent  pt-1 pb-4  hover:bg-[#0000004e]  '>
+              <div className=' w-full h-full  relative cursor-pointer text-white '>
+                {story?.texts?.map(text => (
+                  <span
+                    key={text.id}
+                    style={{
+                      top: `${text?.y * 340}px`,
+
+                      maxWidth: `${247 - text?.x * 247}px`,
+                      maxHeight: `${340 - text?.y * 340}px`,
+                      // width: `min-`,
+                      left: `${text?.x * 247}px`,
+                      textShadow: '1px 1px #FF0000'
+                    }}
+                    type='text'
+                    id={text.id}
+                    className={`drop-shadow-2xl text-white font-sevil text-[14px] italic absolute outline-none  px-[1px]   hover:overflow-y-scroll scroll-min  overflow-hidden   `}
+                  >
+                    {text?.content}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             <ReactPlayer
               muted={story?.mutedOriginal ? true : muted}
               loop={false}
@@ -234,7 +267,12 @@ const RightSide = ({ current, stories, setCurrent }) => {
                     topRates.length === 0 && 'opacity-0'
                   }`}
                 >
-                  <div className={` ${topRates.length > 1 && 'relative'}`}>
+                  <div
+                    className={` ${
+                      topRates.length > 1 && 'relative'
+                    } cursor-pointer`}
+                    onClick={() => setOpenShowReacts(true)}
+                  >
                     {topRates.map((react, index) => (
                       <img
                         key={index}
@@ -273,6 +311,15 @@ const RightSide = ({ current, stories, setCurrent }) => {
                   setOpenComment(false)
                 }}
                 comments={story.comments ?? []}
+              />
+            )}
+            {openShowReacts && (
+              <ShowReacts
+                reactsArray={story?.reacts}
+                open={openShowReacts}
+                onCancel={() => {
+                  setOpenShowReacts(false)
+                }}
               />
             )}
           </div>

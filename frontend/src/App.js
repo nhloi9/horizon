@@ -1,7 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {Toaster} from 'react-hot-toast';
-import Cookies from 'js-cookie';
 
 import './i18n';
 
@@ -9,7 +8,7 @@ import {AiOutlineGlobal} from 'react-icons/ai';
 
 import NoPage from './Pages/NoPage';
 import Signin from './Pages/Signin';
-import {Suspense, useEffect, useReducer} from 'react';
+import {Suspense, useEffect} from 'react';
 import {checkAuthAction} from './Reduxs/Actions/authAction';
 import Alert from './Components/Alert/Alert';
 import Protected from './Components/Protect/Protected';
@@ -19,7 +18,6 @@ import ActivationPage from './Pages/ActivationPage';
 import {ConfigProvider, theme} from 'antd';
 import ProfilePage from './Pages/ProfilePage';
 import {getAllFriendRequestsAction} from './Reduxs/Actions/friendAction';
-import {getHomePostsAction} from './Reduxs/Actions/postAction';
 import PhotoPage from './Pages/PhotoPage';
 import ForgetPasswordPage from './Pages/ForgetPasswordPage';
 import StoriesPage from './Pages/StoriesPage';
@@ -30,22 +28,25 @@ import DetailGroupPage from './Pages/DetailGroupPage';
 import {getAllNotifiesAction} from './Reduxs/Actions/notifyAction ';
 import MessagePage from './Pages/MessagePage';
 import {getAllConversations} from './Reduxs/Actions/conversationAction ';
-import {socket} from './socket';
 import GroupFeedPage from './Pages/GroupFeedPage';
 import {
 	getAllGroupRequestsOfUser,
 	getAllOwnGroupOfUser,
 } from './Reduxs/Actions/groupAction';
-import FriendPage from './Pages/FriendPage';
 import CreateLocation from './Pages/CreateLocation';
-import PlacesAutocomplete from './Pages/PlacesAutocomplete';
-import Test from './Pages/Test';
-// import PostModal from './Components/PostCard/PostModal';
+import AdminPage from './Pages/AdminPage';
+import CallModal from './Components/Message/CallModal';
+import FriendsPage from './Pages/FriendsPage';
+import DetailPostPage from './Pages/DetailPostPage';
+import GroupsJoinedPage from './Pages/GroupsJoinedPage';
+import {getSavePostsAction} from './Reduxs/Actions/postAction';
+import SavePostPage from './Pages/SavePostPage';
 function App() {
 	const dispatch = useDispatch();
 	const {darkAlgorithm, defaultAlgorithm} = theme;
 	const themeApp = useSelector((state) => state.theme);
 	const {user, socketToken} = useSelector((state) => state.auth);
+	const {call} = useSelector((state) => state);
 	// const {activePost} = useSelector((state) => state.homePost);
 
 	console.log(
@@ -69,13 +70,14 @@ function App() {
 
 	useEffect(() => {
 		if (user?.id) {
-			dispatch(getHomePostsAction());
-			dispatch(getHomeStoriesAction());
+			// dispatch(getHomePostsAction());
+
 			dispatch(getAllNotifiesAction());
 			dispatch(getAllConversations());
 			dispatch(getAllGroupRequestsOfUser());
 			dispatch(getAllOwnGroupOfUser());
 			dispatch(getAllFriendRequestsAction());
+			dispatch(getSavePostsAction());
 
 			dispatch({
 				type: 'socket/connect',
@@ -99,13 +101,14 @@ function App() {
 				>
 					<BrowserRouter>
 						<Alert />
-						<div className="fixed left-0 bottom-[100px] w-min h-min p-2 bg-[#00000076]">
+						{/* <div className="fixed left-0 bottom-[100px] w-min h-min p-2 bg-[#00000076]">
 							<AiOutlineGlobal
 								size={'18px'}
 								color="white"
 								className="cursor-pointer"
 							/>
-						</div>
+						</div> */}
+						{call && <CallModal call={call} />}
 
 						{/* {activePost && <PostModal />} */}
 
@@ -146,6 +149,22 @@ function App() {
 								}
 							/>
 							<Route
+								path="/saves"
+								element={
+									<Protected>
+										<SavePostPage />
+									</Protected>
+								}
+							/>
+							<Route
+								path="/post/:id"
+								element={
+									<Protected>
+										<DetailPostPage />
+									</Protected>
+								}
+							/>
+							<Route
 								path="/signin"
 								element={<Signin />}
 							/>
@@ -178,6 +197,14 @@ function App() {
 									</Protected>
 								}
 							/>
+							<Route
+								path="/groups/join"
+								element={
+									<Protected>
+										<GroupsJoinedPage />
+									</Protected>
+								}
+							/>
 
 							<Route
 								path="/groups/:id/:type?"
@@ -196,22 +223,6 @@ function App() {
 									</Protected>
 								}
 							/>
-							<Route
-								path="/test"
-								element={
-									<Protected>
-										<Test />
-									</Protected>
-								}
-							/>
-							<Route
-								path="/locations/suggest"
-								element={
-									<Protected>
-										<PlacesAutocomplete />
-									</Protected>
-								}
-							/>
 
 							<Route
 								path="/message/:id?"
@@ -223,13 +234,31 @@ function App() {
 							/>
 
 							<Route
-								path="/friends"
+								path="/admin"
 								element={
 									<Protected>
-										<FriendPage />
+										<AdminPage />
 									</Protected>
 								}
 							/>
+
+							<Route
+								path="/friends/:type?"
+								element={
+									<Protected>
+										<FriendsPage />
+									</Protected>
+								}
+							/>
+
+							{/* <Route
+								path="/friends/requests"
+								element={
+									<Protected>
+										<FriendRequestPage />
+									</Protected>
+								}
+							/> */}
 
 							<Route
 								path="/active-email/:token"

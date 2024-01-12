@@ -10,7 +10,8 @@ const createPost: schema = {
     tags: Joi.array().items(Joi.number()),
     feel: Joi.object(),
     location: Joi.object(),
-    groupId: Joi.number()
+    groupId: Joi.number(),
+    shareId: Joi.number()
   })
 }
 const reactPost: schema = {

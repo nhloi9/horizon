@@ -3,6 +3,19 @@ import jwt from 'jsonwebtoken'
 
 import { prisma } from '../../database/postgres'
 import { socketTokenSettings, tokenSettings } from '../../configs'
+import { number } from 'joi'
+
+let onlineUsers: number[] = []
+const users: any = {}
+const calls: any = {}
+const userToCall: any = {}
+
+// const checkBusyCall = (io: any, userId: number): boolean => {
+//   return (
+//     io?.sockets?.adapter?.rooms?.get('user_' + userId.toString())?.call !==
+//     undefined
+//   )
+// }
 
 export const soketRoute = (io: Server): void => {
   io.use(async (socket: any, next) => {
@@ -28,13 +41,26 @@ export const soketRoute = (io: Server): void => {
   })
 
   io.on('connection', (socket: any) => {
-    console.log('user connection established with id', socket.id)
+    if (!onlineUsers.includes(socket?.userId)) {
+      onlineUsers.push(socket?.userId)
+      socket.broadcast.emit('online', socket?.userId)
+    }
+
+    if (users[socket.userId] !== undefined) {
+      users[socket.userId].push(socket.id)
+    } else users[socket.userId] = [socket.id]
+
     // const ip = socket.handshake.headers['x-forwarded-for']
     // socket.conn.remoteAddress.split(':')[3]
     // console.log(ip)
     // console.log(socket.request.connection.remoteAddress)
     // console.log(socket.handshake, socket.handshake.address.port)
-    // console.log('connection', socket.user)
+    console.log('connection', socket.id)
+    console.log({ users })
+    // socket.emit('onlineUsers', onlineUsers)
+    const onlineUsers = Object.keys(users).filter(
+      (item: any) => users[item] !== un
+    )
     socket.on('test', (params: any) => {
       console.log(params)
     })
@@ -86,8 +112,77 @@ export const soketRoute = (io: Server): void => {
         ])
         .emit('deleteFriendRequest', request?.id)
     })
+
+    // calll
+    socket.on('call', async (payload: any) => {
+      const { type, conversation }: any = payload
+      if (userToCall[socket?.userId] === undefined) {
+        return socket.emit('meBusy')
+      }
+      const otherMemberIds = (
+        await prisma.conversationMember.findMany({
+          where: {
+            conversationId: Number(conversation?.id)
+          }
+        })
+      )
+        .map((member: any) => member?.userId)
+        .filter((item: number) => item !== socket?.userId)
+
+      if (
+        otherMemberIds?.every(
+          (memberId: number) => userToCall[memberId] !== undefined
+        )
+      ) {
+        socket.emit('otherBusy')
+      } else {
+        calls[conversation?.id] = [socket.id]
+
+        for (const id of otherMemberIds) {
+          if (userToCall[id] !== undefined) {
+            socket.to('user_' + (id as string)).emit('call', payload)
+          }
+        }
+      }
+    })
+
+    socket.on('joinRoom', (conversationId: number) => {
+      if (calls[conversationId] !== undefined) {
+        const length = calls[conversationId].length
+        if (length === 4) {
+          socket.emit('roomFull')
+          return
+        }
+        calls[conversationId].push(socket.id)
+      } else {
+        // users[roomID] = [socket.id]
+      }
+      userToCall[socket.userId] = conversationId
+      const usersInThisRoom = calls[conversationId].filter(
+        (id: string) => id !== socket.id
+      )
+
+      console.log({ calls })
+      socket.emit('allUsers', usersInThisRoom)
+    })
+
     socket.on('disconnect', (resonse: any) => {
       console.log('disconnect', socket.id)
+
+      if (users[socket.userId] !== undefined) {
+        users[socket.userId] = users[socket.userId].filter(
+          (item: string) => item !== socket.id
+        )
+        if (users[socket.userId].length === 0) users[socket.userId] = undefined
+      }
+      console.log({ users })
+      if (
+        io.sockets.adapter.rooms.get('user_' + (socket?.userId as string)) ===
+        undefined
+      ) {
+        onlineUsers = onlineUsers.filter((id: number) => id !== socket?.userId)
+        socket.broadcast.emit('offline', socket?.userId)
+      }
     })
   })
 }

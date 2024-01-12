@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Avatar, Button } from 'antd'
 import { useSelector } from 'react-redux'
+import { MdEditLocationAlt } from 'react-icons/md'
+import { TbPhotoFilled } from 'react-icons/tb'
 
 import live from '../../assets/images/live.png'
 import addImage from '../../assets/images/add-image.png'
@@ -50,7 +52,12 @@ const Status = () => {
                 )} */}
             </div>
             <div className='mr-4'>
-              <Button variant='text' type='submit'>
+              <Button
+                type='link'
+                onClick={() => {
+                  setOpen(true)
+                }}
+              >
                 Share
               </Button>
             </div>
@@ -59,33 +66,35 @@ const Status = () => {
       </div>
 
       <div className='flex justify-around items-center pt-4'>
-        <div className='flex items-center'>
-          <label
-            htmlFor='addImage'
-            className='cursor-pointer flex items-center'
-          >
-            <img className='h-10 mr-4' src={addImage} alt='addImage'></img>
-            <input
-              id='addImage'
-              type='file'
-              style={{ display: 'none' }}
-              // onChange={handleUpload}
-            ></input>
-          </label>
-          {/* {file && (
-              <Button variant='text' onClick={submitImage}>
-                Upload
-              </Button>
-            )} */}
-        </div>
-        <div className='flex items-center'>
-          <img className='h-10 mr-4' src={live} alt='live'></img>
+        <div
+          className='flex gap-1 cursor-pointer items-center'
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          <TbPhotoFilled size={27} className='!text-blue-500' />
           <p className='font-roboto font-medium text-md text-gray-700 no-underline tracking-normal leading-none'>
-            Live
+            Photo/video
           </p>
         </div>
-        <div className='flex items-center'>
-          <img className='h-10 mr-4' src={smile} alt='feeling'></img>
+        <div
+          className='flex gap-1 cursor-pointer items-center'
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          <MdEditLocationAlt size={27} className='!text-green-500' />
+          <p className='font-roboto font-medium text-md text-gray-700 no-underline tracking-normal leading-none'>
+            Checkin
+          </p>
+        </div>
+        <div
+          className='flex gap-1 cursor-pointer items-center'
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          <img className='h-8 ' src={smile} alt='feeling'></img>
           <p className='font-roboto font-medium text-md text-gray-700 no-underline tracking-normal leading-none'>
             Feeling
           </p>

@@ -130,4 +130,35 @@ const getGroup = async (groupId: number): Promise<any> => {
   return group
 }
 
-export { createGroup, getGroup }
+const checkIsMember = async (
+  userId: number,
+  groupId: number
+): Promise<boolean> => {
+  const request = await prisma?.groupReqest.findFirst({
+    where: {
+      groupId,
+      userId,
+      status: 'accepted'
+    }
+  })
+  if (request !== null) {
+    return true
+  } else return false
+}
+
+const checkIsAdmin = async (
+  userId: number,
+  groupId: number
+): Promise<boolean> => {
+  const group = await prisma?.group.findFirst({
+    where: {
+      id: groupId,
+      adminId: userId
+    }
+  })
+  if (group !== null) {
+    return true
+  } else return false
+}
+
+export { createGroup, getGroup, checkIsAdmin, checkIsMember }

@@ -12,10 +12,11 @@ import ReactLoading from 'react-loading'
 import { FaCircleInfo } from 'react-icons/fa6'
 
 import { format, startOfWeek } from 'date-fns'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getApi, postApi } from '../../network/api'
-import { Avatar, Spin, Tooltip, message } from 'antd'
+import { Avatar, Tooltip } from 'antd'
 import { defaulAvatar } from '../../Constants'
+import { upload } from '../../utils/imageUpload'
 import {
   getImageOfConversation,
   getNameOfConversation
@@ -25,6 +26,10 @@ import {
   seenConversation
 } from '../../Reduxs/Actions/conversationAction '
 import { socket } from '../../socket'
+import toast from 'react-hot-toast'
+import { IoMdClose } from 'react-icons/io'
+import { callTypes } from '../../Reduxs/Types/callType'
+// import { da } from 'date-fns/locale'
 // import * as animationData from '../../animation/animation_ll70lfkr.json'
 // import Lottie from 'react-lottie'
 // import { socket } from '../../socket'
@@ -33,14 +38,11 @@ import { socket } from '../../socket'
 const RightSide = ({ id }) => {
   const [messages, setMessages] = useState([])
   const [conversation, setConversation] = useState(null)
-  const textRef = useRef(null)
-  const { conversations } = useSelector(state => state.conversations)
   const dispatch = useDispatch()
 
-  const [seen, setSeen] = useState(false)
-  const [chat, setChat] = useState(null)
   const { user } = useSelector(state => state.auth)
   const [inputMessage, setInputMessage] = useState('')
+  const [images, setImages] = useState([])
   const listRef = useRef(null)
 
   //to force rerender
@@ -48,14 +50,43 @@ const RightSide = ({ id }) => {
 
   const handleLoadMore = () => {}
 
+  const handeSelectPhoto = e => {
+    try {
+      const max = 20 - images.length
+      if (e.target.files?.length > max) {
+        toast.error('Too many photos and videos')
+      }
+      Array.from(e.target.files)
+        ?.slice(0, max)
+        .forEach(file => {
+          if (file.type.match('image.*')) {
+            const newFile = {
+              name: file.name,
+              url: URL.createObjectURL(file),
+
+              file
+            }
+            setImages(pre => [...pre, newFile])
+          }
+        })
+    } catch (error) {
+      toast.error('Something went wrong')
+    }
+  }
+
   const handleCreateMessage = async e => {
     e.preventDefault()
     try {
+      let uploadedImages = []
+      if (images?.length > 0) {
+        uploadedImages = await upload(images.map(image => image.file))
+      }
       const {
         data: { message }
       } = await postApi('/messages', {
         conversationId: id,
-        text: inputMessage
+        text: inputMessage,
+        files: uploadedImages
       })
       socket.emit('addMessage', {
         message
@@ -133,69 +164,15 @@ const RightSide = ({ id }) => {
     if (conversation) socket.on('seenConversation', onSeenConversation)
     return () => socket.off('seenConversation', onSeenConversation)
   }, [conversation, id])
-  // useEffect(() => {
-  //   if (active?._id) {
-  //     const chat = chats.find(item => item._id === active._id)
-  //     if (chat) {
-  //       // setMessages([...chat.messages].reverse())
-  //       setChat(chat)
-  //     } else {
-  //       dispatch(addChat(active._id))
-  //     }
-  //   }
-  // }, [active?._id, chats, dispatch])
 
-  //scroll to bottom when have a new message
-  // const lasteMessageId = chat?.messages[0]?._id
-  // useEffect(() => {
-  //   listRef.current &&
-  //     listRef.current.scrollIntoView({
-  //       behavior: 'instant',
-  //       // behavior: 'smooth',
-  //       block: 'end',
-  //       inline: 'nearest'
-  //     })
-  // }, [lasteMessageId, seen, active?._id])
+  const handleCall = ({ video }) => {
+    dispatch({ type: callTypes.CALL, payload: { type: 'video', conversation } })
 
-  // useEffect(() => {
-  //   if (active) {
-  //     const conversation = conversations.find(item => item._id === active._id)
-  //     const indexOfOther = conversation.members.findIndex(
-  //       member => member._id === active.other._id
-  //     )
-  //     setSeen(conversation.seen[indexOfOther])
-  //   }
-  // }, [active?._id, active?.other._id, conversations, active])
-
-  //delete active chat
-  // useEffect(() => {
-  //   return () =>
-  //     dispatch({
-  //       type: CONVERSATION_TYPES.ACTIVE_CONVERSATION,
-  //       payload: null
-  //     })
-  // }, [dispatch])
-
-  // call
-  // const handleCall = ({ video }) => {
-  //   const msg = {
-  //     sender: user._id,
-  //     receiver: active.other._id,
-  //     other: active.other,
-  //     video
-  //   }
-  //   dispatch({ type: CALL_TYPES.CALL, payload: msg })
-  //   const { _id, username, fullname, avatar } = user
-  //   if (window.peer?.open) {
-  //     socket.emit('call', {
-  //       sender: user._id,
-  //       receiver: active.other._id,
-  //       other: { _id, username, fullname, avatar },
-  //       video,
-  //       peerId: peer?._id
-  //     })
-  //   }
-  // }
+    socket.emit('call', {
+      type: 'video',
+      conversation: conversation
+    })
+  }
 
   useEffect(() => {
     if (id) {
@@ -260,8 +237,19 @@ const RightSide = ({ id }) => {
                 </p>
               </div>
             </div>
-            <div className='flex px-2'>
-              {' '}
+            <div className='flex gap-3 px-2'>
+              <IoCall
+                size={23}
+                className='cursor-pointer text-[#ff0d9e]'
+                onClick={() => {
+                  handleCall({ video: false })
+                }}
+              />
+              <FcVideoCall
+                size={23}
+                onClick={() => handleCall({ video: true })}
+                className=' cursor-pointer !text-[#ff0d9e] '
+              />
               <Tooltip placement='leftTop' title='Conversation information'>
                 <FaCircleInfo
                   size={20}
@@ -405,18 +393,63 @@ const RightSide = ({ id }) => {
             </InfiniteScroll>
           </div>
 
+          {images && images.length > 0 && (
+            <div className=' px-[40px] w-[80%] max-h-[120px] overflow-y-scroll scroll-min flex min-h-[50px] flex-wrap gap-2'>
+              {images.map((image, i) => {
+                return (
+                  <div key={i} className={`w-12 h-12 relative`}>
+                    {
+                      <img
+                        alt=''
+                        src={image?.url}
+                        className={` block w-full h-full object-cover rounded-md`}
+                      />
+                    }
+                    <div className='absolute -top-1 -right-1 border flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-sm cursor-pointer'>
+                      <IoMdClose
+                        fontSize='medium'
+                        className=' text-red-400 cursor-pointer z-10'
+                        onClick={() => {
+                          const copy = [...images]
+                          copy.splice(i, 1)
+                          setImages(copy)
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
           {/* input message */}
           <form
             className=' w-full h-min flex  items-center gap-1 mt-1 relative '
             onSubmit={handleCreateMessage}
           >
-            <BsPlusCircle color='blue' size={20} className='mb-2' />
+            <label htmlFor='123'>
+              <Tooltip color='#bfc2c6' title='Attach a file'>
+                <BsPlusCircle
+                  color='blue'
+                  size={20}
+                  className='mb-2 cursor-pointer'
+                />
+              </Tooltip>
+            </label>
+            <input
+              className='hidden'
+              type='file'
+              id='123'
+              multiple
+              onChange={handeSelectPhoto}
+              accept='image/*'
+            />
 
             {/* <textarea
                 onChange={() => setKey(cur => cur + 1)}
                 ref={textRef}
                 className=' rounded-lg  border-none focus:outline-none  w-full min-h-[30px] my-1 pt-[2px] bg-slate-50 px-[6px] resize-none'
               /> */}
+
             <InputEmoji
               cleanOnEnter
               placeholder=''
@@ -427,6 +460,7 @@ const RightSide = ({ id }) => {
                 console.log(3)
               }}
             />
+
             <button
               type='submit'
               className={`absolute top-[50%] -translate-y-[50%] right-14 p-[1px]  !bg-transparent ${
@@ -454,19 +488,67 @@ const RightSide = ({ id }) => {
 export default RightSide
 
 function MessageCard ({ message, user, children }) {
+  const [preview, setPreview] = useState(null)
+  useEffect(() => {
+    if (
+      /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(
+        message?.text
+      )
+    ) {
+      getApi('/files/link-preview', {
+        link: message.text
+      })
+        .then(({ data: { preview: i } }) => setPreview(i))
+        .catch(err => {
+          console.log({ err })
+        })
+    }
+  }, [message?.text])
+
   if (message?.member?.userId === user.id) {
     return (
       <div className='p-2  w-full'>
         {children}
-        <div className='flex justify-end '>
-          <div
-            className={`${
-              message.id ? '' : 'opacity-50 '
-            } max-w-[60%] bg-[#f0f0f0] rounded-[10px] py-1 px-2  min-w-[30px]  overflow-hidden`}
-          >
-            {message.text}
+        {preview ? (
+          <div className='flex justify-end py-1 px-2 '>
+            <LinkPreview data={preview} />
           </div>
-        </div>
+        ) : (
+          <>
+            <div className='flex justify-end '>
+              <div
+                className={`${
+                  message.id ? '' : 'opacity-50 '
+                } max-w-[60%] bg-[#f0f0f0] rounded-[10px] py-1 px-2  min-w-[30px]  overflow-hidden`}
+              >
+                {/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(
+                  message?.text
+                ) ? (
+                  <a href={message.text} target='_blank' rel='noreferrer'>
+                    {message.text}
+                  </a>
+                ) : (
+                  message.text
+                )}
+              </div>
+            </div>
+            {message?.files?.length > 0 && (
+              <div className='flex justify-end '>
+                <div
+                  className={` max-w-[60%] flex justify-end flex-wrap  pt-1 px-2  min-w-[30px]  gap-2`}
+                >
+                  {message?.files?.map(file => (
+                    <img
+                      src={file?.url}
+                      alt=''
+                      className='w-20 h-20 rounded-md object-cover'
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     )
   } else
@@ -478,10 +560,49 @@ function MessageCard ({ message, user, children }) {
             src={message.member?.user?.avatar?.url ?? defaulAvatar}
             size='default'
           />
-          <div className=' max-w-[60%] !bg-gray-300 rounded-[10px]  py-1 px-2 mx-1 flex  min-w-[30px]  overflow-hidden '>
-            <p>{message.text}</p>
+          <div className='w-[calc(100%-40px)]'>
+            <div className='w-min max-w-[60%] !bg-gray-300 rounded-[10px]  py-1 px-2 mx-1 flex  min-w-[30px]  overflow-hidden '>
+              <p>{message.text}</p>
+            </div>
+            {message?.files?.length > 0 && (
+              <div
+                className={` max-w-[60%] flex justify-start flex-wrap  pt-1 px-2  min-w-[30px]  gap-2`}
+              >
+                {message?.files?.map(file => (
+                  <img
+                    src={file?.url}
+                    alt=''
+                    className='w-20 h-20 rounded-md object-cover'
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
     )
+}
+
+const LinkPreview = ({ data }) => {
+  const navigate = useNavigate()
+  return (
+    <div
+      className='w-[300px] cursor-pointer rounded-md shadow-md overflow-hidden'
+      onClick={() => {
+        window.open(data?.link, '_blank')
+      }}
+    >
+      <div className='p-2 bg-gray-500 text-center'>
+        <span>{data?.link}</span>
+      </div>
+      <img
+        src={data?.image}
+        className='w-[300px] h-[156px] object-cover '
+        alt=''
+      />
+      <div className='p-2 bg-gray-200 text-center'>
+        <span>{data?.title}</span>
+      </div>
+    </div>
+  )
 }

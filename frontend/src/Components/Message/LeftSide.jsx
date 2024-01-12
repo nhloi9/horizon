@@ -23,6 +23,7 @@ import { IoCreateOutline } from 'react-icons/io5'
 import InputEmoji from 'react-input-emoji'
 
 import {
+  checkConversationOnline,
   getImageOfConversation,
   getNameOfConversation
 } from '../../utils/conversation'
@@ -38,6 +39,7 @@ import toast from 'react-hot-toast'
 
 const LeftSide = ({ id }) => {
   const navigate = useNavigate()
+  const onlineUsers = useSelector(state => state.onlines)
   // const { active } = useSelector(state => state.conversation)
   const { user } = useSelector(state => state.auth)
   const [term, setTerm] = useState('')
@@ -176,6 +178,7 @@ const LeftSide = ({ id }) => {
                   // other={other}
                   userId={user?.id}
                   dispatch={dispatch}
+                  online={checkConversationOnline(con, user?.id, onlineUsers)}
                   // following={checkFollowing(other._id)}
                 />
               )
@@ -213,6 +216,7 @@ const UserCard = ({ user }) => {
 }
 
 const ConversationCard = ({
+  online,
   seen,
   conversation,
   other,
@@ -220,7 +224,7 @@ const ConversationCard = ({
   userId,
   navigate
 }) => {
-  console.log(seen)
+  console.log({ seen, online })
   // const indexOfOther = conversation?.members?.indexOf(other)
   // const indexOfUser = [0, 1].find(index => index !== indexOfOther)
   console.log({ conversation, imge: getImageOfConversation(conversation) })
@@ -241,6 +245,9 @@ const ConversationCard = ({
           }}
         >
           <div className='relative'>
+            {online && (
+              <div className='w-3 h-3 bg-green-700 z-10 border border-white rounded-full absolute bottom-[2px] right-[2px]'></div>
+            )}
             {getImageOfConversation(conversation, userId).length === 1 ? (
               <Avatar
                 size={40}

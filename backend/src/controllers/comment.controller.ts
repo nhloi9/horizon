@@ -29,13 +29,19 @@ export const createComment = async (
   const { content, receiverId, parentId, postId } = req.body
 
   try {
+    if (analysisSentiment(content) < 0) {
+      return res.status(400).json(
+        getApiResponse({
+          msg: 'Your comment has been deleted due to negative emotions'
+        })
+      )
+    }
     const comment = await commentRepo.createComment({
       content,
       receiverId,
       parentId,
       postId,
-      senderId: (req.payload as any).id,
-      negative: analysisSentiment(content) < 0
+      senderId: (req.payload as any).id
     })
     res.status(httpStatus.OK).json(
       getApiResponse({
@@ -111,6 +117,13 @@ export const updateComment = async (
   const { content } = req.body
 
   try {
+    if (analysisSentiment(content) < 0) {
+      return res.status(400).json(
+        getApiResponse({
+          msg: 'You cannot update your comment because it contains negative emotions'
+        })
+      )
+    }
     const comment = await prisma.comment.update({
       where: {
         id: Number(id),
@@ -147,12 +160,102 @@ export const updateComment = async (
               }
             }
           }
+        },
+        reacts: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: true
+              }
+            }
+          }
         }
       }
     })
     res.status(httpStatus.OK).json(
       getApiResponse({
         data: { comment }
+      })
+    )
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const reactComment = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+  const { type } = req.body
+
+  try {
+    const react = await prisma.commentReact.upsert({
+      where: {
+        userId_commentId: {
+          commentId: Number(id),
+          userId: (req.payload as any).id
+        }
+      },
+      update: {
+        type
+      },
+      create: {
+        commentId: Number(id),
+        userId: (req.payload as any).id,
+        type
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: true
+          }
+        }
+      }
+    })
+
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: {
+          react
+        }
+      })
+    )
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteReactComment = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params
+
+  try {
+    await prisma.commentReact
+      .delete({
+        where: {
+          userId_commentId: {
+            commentId: Number(id),
+            userId: (req.payload as any).id
+          }
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        msg: 'Delete react comment success'
       })
     )
   } catch (error) {

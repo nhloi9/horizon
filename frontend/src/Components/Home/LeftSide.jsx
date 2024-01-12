@@ -11,9 +11,18 @@ import laptop from '../../assets/images/laptop.jpg'
 import media from '../../assets/images/media.jpg'
 import apps from '../../assets/images/apps.jpg'
 import tik from '../../assets/images/tik.jpg'
+import { useSelector } from 'react-redux'
+import { Avatar } from 'antd'
+import { defaulAvatar } from '../../Constants'
+import { useNavigate } from 'react-router-dom'
+import { FaFacebookMessenger, FaUserFriends } from 'react-icons/fa'
+import { HiMiniUserGroup } from 'react-icons/hi2'
+import { IoBookmark } from 'react-icons/io5'
+import { CiBookmark } from 'react-icons/ci'
+
 // import { AuthContext } from '../AppContext/AppContext'
 
-const LeftSide = () => {
+const LeftSide = ({ type }) => {
   const [data, setData] = useState([])
   const count = useRef(0)
   // const { user, userData } = useContext(AuthContext)
@@ -74,81 +83,72 @@ const LeftSide = () => {
     }
   }
 
+  const { user } = useSelector(state => state.auth)
+  const navigate = useNavigate()
+
   return (
-    <div className='left-side w-full h-full  bg-gray-100    overflow-y-hidden hover:overflow-y-scroll scroll-min  pb-4 border-2 rounded-r-xl shadow-lg'>
-      <div className='flex flex-col items-center relative pt-5'>
-        <img
-          className='h-28 w-full rounded-r-xl'
-          src={nature}
-          alt='nature'
-        ></img>
-        <div className='absolute -bottom-4'>
-          {/* <Tooltip content='Profile' placement='top'>
-            <Avatar
-              size='md'
-              src={user?.photoURL || avatar}
-              alt='avatar'
-            ></Avatar>
-          </Tooltip> */}
+    <div className=' relative left-side w-full h-full   bg-gray-100    overflow-y-hidden hover:overflow-y-scroll scroll-min  pb-4 border-2 rounded-r-xl shadow-lg'>
+      <div className='flex flex-col gap-1 pt-4 px-1 '>
+        <div
+          className='w-full h-[52px] px-2 flex items-center hover:bg-gray-200 cursor-pointer rounded-md'
+          onClick={() => {
+            navigate('/profile/' + user?.id)
+          }}
+        >
+          <div className='h-full w-[40px] flex gap-1 items-center justify-center'>
+            <Avatar size={36} src={user?.avatar?.url ?? defaulAvatar} />
+          </div>
+          <h1>{user?.firstname + ' ' + user?.lastname}</h1>
+        </div>
+
+        <div
+          className='w-full h-[52px] px-2 flex items-center hover:bg-gray-200 cursor-pointer rounded-md'
+          onClick={() => {
+            navigate('/friends')
+          }}
+        >
+          <div className='h-full w-[40px] gap-1 flex items-center justify-center'>
+            <FaUserFriends className='!text-blue-400 text-[27px]' />
+          </div>
+          <h1>Friends</h1>
+        </div>
+        <div
+          className='w-full h-[52px] px-2 flex items-center hover:bg-gray-200 cursor-pointer rounded-md'
+          onClick={() => {
+            navigate('/groups/feed')
+          }}
+        >
+          <div className='h-full w-[40px] gap-1 flex items-center justify-center'>
+            <HiMiniUserGroup className='!text-blue-400 text-[27px]' />
+          </div>
+          <h1>Groups</h1>
+        </div>
+        <div
+          className='w-full h-[52px] px-2 flex items-center hover:bg-gray-200 cursor-pointer rounded-md'
+          onClick={() => {
+            navigate('/message')
+          }}
+        >
+          <div className='h-full w-[40px] gap-1 flex items-center justify-center'>
+            <FaFacebookMessenger className='!text-blue-700 text-[27px]' />
+          </div>
+          <h1>Chat</h1>
+        </div>
+        <div
+          className={`w-full h-[52px] px-2 flex items-center hover:bg-gray-200 cursor-pointer rounded-md ${
+            type === 'save' && 'bg-gray-200'
+          }`}
+          onClick={() => {
+            navigate('/saves')
+          }}
+        >
+          <div className='h-full w-[40px] gap-1 flex items-center justify-center'>
+            <IoBookmark className='!text-blue-400 text-[27px]' />
+          </div>
+          <h1>Saved</h1>
         </div>
       </div>
-      <div className='flex flex-col items-center pt-6'>
-        <p className='font-roboto font-medium text-md text-gray-700 no-underline tracking-normal leading-none'>
-          {/* {user?.email || userData?.email} */}
-        </p>
-        <p className='font-roboto font-medium text-xs text-gray-700 no-underline tracking-normal leading-none'>
-          Access exclusive tools & insights
-        </p>
-        <p className='font-roboto font-medium text-sm text-gray-700 no-underline tracking-normal leading-none py-2'>
-          Try premium for free
-        </p>
-      </div>
-      <div className='flex  flex-col  pl-2'>
-        <div className='flex items-center pb-4'>
-          <img className='h-10' src={location} alt='location'></img>
-          <p className='font-roboto font-bold text-lg no-underline tracking-normal leading-none'>
-            California
-          </p>
-        </div>
-        <div className='flex items-center '>
-          <img className='h-10' src={job} alt='job'></img>
-          <p className='font-roboto font-bold text-lg no-underline tracking-normal leading-none'>
-            React Developer
-          </p>
-        </div>
-        <div className='flex justify-center items-center pt-4'>
-          <p className='font-roboto font-bold text-md text-[#0177b7] no-underline tracking-normal leading-none'>
-            Events
-          </p>
-          <p className='font-roboto font-bold text-md text-[#0177b7] no-underline tracking-normal leading-none mx-2'>
-            Groups
-          </p>
-          <p className='font-roboto font-bold text-md text-[#0177b7] no-underline tracking-normal leading-none'>
-            Follow
-          </p>
-          <p className='font-roboto font-bold text-md text-[#0177b7] no-underline tracking-normal leading-none mx-2'>
-            More
-          </p>
-        </div>
-      </div>
-      <div className='ml-2'>
-        <p className='font-roboto font-bold text-lg no-underline tracking-normal leading-none py-2'>
-          Social Profiles
-        </p>
-        <div className='flex items-center'>
-          <img className='h-10 mb-3 mr-2' src={facebook} alt='facebook'></img>
-          <p className='font-roboto font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r to-red-700 from-blue-500 no-underline tracking-normal leading-none py-2'>
-            Social Network
-          </p>
-        </div>
-        <div className='flex items-center'>
-          <img className='h-10 mb-3 mr-2' src={twitter} alt='twitteer'></img>
-          <p className='font-roboto font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r to-red-700 from-blue-500 no-underline tracking-normal leading-none py-2'>
-            Social Network
-          </p>
-        </div>
-      </div>
-      <div className='flex flex-col justify-center items-center pt-4'>
+      <div className=' absolute bottom-16  w-full flex flex-col justify-center items-center pt-4'>
         <p className='font-roboto font-bold text-lg no-underline tracking-normal leading-none py-2'>
           Random Ads
         </p>

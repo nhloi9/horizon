@@ -24,7 +24,19 @@ const createComment = async (data: any): Promise<any> => {
           }
         }
       },
-      answers: true
+      answers: true,
+      reacts: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              avatar: true
+            }
+          }
+        }
+      }
     }
   })
   return comment
@@ -87,6 +99,18 @@ const getComments = async (
               avatar: {
                 select: { name: true, url: true }
               }
+            }
+          }
+        }
+      },
+      reacts: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true,
+              avatar: true
             }
           }
         }

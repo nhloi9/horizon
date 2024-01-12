@@ -6,15 +6,44 @@ import {globalTypes} from '../Types/globalType';
 
 export const getHomeStoriesAction = () => async (dispatch, getState) => {
 	try {
+		dispatch({
+			type: storyTypes.GET_HOME_STORIES_SUCCESS,
+			payload: [],
+		});
 		const res = await getApi('/stories');
 		dispatch({
 			type: storyTypes.GET_HOME_STORIES_SUCCESS,
 			payload: res.data.stories,
 		});
+		dispatch({
+			type: storyTypes.STORY_PROFILE,
+			payload: 'home',
+		});
 	} catch (error) {
 		// dispatch({type: globalTypes.ALERT, payload: {loading: false}});
 	}
 };
+
+export const getProfileStoriesAction =
+	(userId) => async (dispatch, getState) => {
+		try {
+			dispatch({
+				type: storyTypes.GET_HOME_STORIES_SUCCESS,
+				payload: [],
+			});
+			const res = await getApi('/users/' + userId + '/stories');
+			dispatch({
+				type: storyTypes.GET_HOME_STORIES_SUCCESS,
+				payload: res.data.stories,
+			});
+			dispatch({
+				type: storyTypes.STORY_PROFILE,
+				payload: 'profile',
+			});
+		} catch (error) {
+			// dispatch({type: globalTypes.ALERT, payload: {loading: false}});
+		}
+	};
 
 export const commentStory =
 	(storyId, content) => async (dispatch, getState) => {

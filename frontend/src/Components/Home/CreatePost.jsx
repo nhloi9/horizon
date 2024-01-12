@@ -346,6 +346,7 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
   console.log({ post })
   return (
     <Modal
+      destroyOnClose
       // onOk={handleOk}
       maskClosable={false}
       open={open}
@@ -381,7 +382,9 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
             Tag people
           </div>
         ) : (
-          <div className='pb-2 border-b border-gray-400'>Create a new post</div>
+          <div className='pb-2 border-b border-gray-400'>
+            {post ? 'Edit post' : 'Create a new post'}
+          </div>
         )
       }
       okText='Create'
@@ -404,7 +407,7 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
             className='w-full '
             onClick={handleOk}
           >
-            Post
+            {post ? 'Update' : 'Post'}
           </Button>
         ]
       }
@@ -641,7 +644,7 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
                     onClick={handleOpenFrontCamera}
                   />
                 </Tooltip>
-                <label htmlFor='select-photo'>
+                <label htmlFor='select-photo_create_post'>
                   <Tooltip color='#bfc2c6' title='Photo/video from library'>
                     <MdAddPhotoAlternate
                       size={22}
@@ -652,7 +655,7 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
                 <input
                   className='hidden'
                   type='file'
-                  id='select-photo'
+                  id='select-photo_create_post'
                   multiple
                   onChange={handeSelectPhoto}
                   accept='image/*, video/*'
@@ -664,15 +667,17 @@ const CreatePost = ({ open, setOpen, post, groupId }) => {
                     onClick={() => setType('location')}
                   />
                 </Tooltip>
-                <Tooltip color='#bfc2c6' title='Tag people'>
-                  <FaUserTag
-                    size={18}
-                    className='text-blue-400 cursor-pointer'
-                    onClick={() => {
-                      setType('tag')
-                    }}
-                  />
-                </Tooltip>
+                {!groupId && (
+                  <Tooltip color='#bfc2c6' title='Tag people'>
+                    <FaUserTag
+                      size={18}
+                      className='text-blue-400 cursor-pointer'
+                      onClick={() => {
+                        setType('tag')
+                      }}
+                    />
+                  </Tooltip>
+                )}
                 <Tooltip color='#bfc2c6' title='Feeling'>
                   <BsEmojiSmile
                     size={18}
@@ -796,7 +801,7 @@ const SearchLocation = ({ setLocation, onCancel }) => {
         onChange={e => setTerm(e.target.value)}
         type='text'
         className='block w-full px-4 py-2 rounded-[20px] border-none focus:outline-none bg-gray-200 mb-1'
-        placeholder='🔍 Wher are you'
+        placeholder='🔍 Where are you'
       />
 
       <div className='min-h-[30vh] max-h-[60vh]  overflow-y-scroll scroll-min'>

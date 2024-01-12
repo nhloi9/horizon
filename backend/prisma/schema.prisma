@@ -13,6 +13,7 @@ datasource db {
 
 model User {
   id       Int @id @default(autoincrement())
+  savedPost Post[] @relation("save")
   
   avatar File? 
   firstname String 
@@ -30,6 +31,7 @@ model User {
   receiveComments Comment[] @relation("receiver")
   reacts PostUserReact[] 
   resetPasswordCode ResetPasswordCode?
+  createdAt DateTime @default(now())
  
   adminGroups Group[] @relation("admin")
   createGroups Group[] @relation("create")
@@ -42,6 +44,9 @@ model User {
   reactStories ReactStory[]
   commentsStory CommentStory[]
   taggedPosts Post[] @relation("tag")
+
+  reactMessages MessageReact[]
+  reports Report[]
 
   @@map("users")
 }
@@ -104,8 +109,8 @@ model File {
   groupId Int? @unique
   group Group? @relation(fields: [groupId], references:[id])
   story Story?
-
-  
+  reportId Int?
+  report Report? @relation(fields: [reportId], references: [id], onDelete: SetNull)
 
   @@map("files")
 }
@@ -121,7 +126,7 @@ model Post {
   files File[]
   comments Comment[]
   reacts PostUserReact[]
-  privacy access?
+  privacy access? @default(public)
   negative Boolean?
   shareId Int?
   share Post? @relation("share", fields: [shareId], references: [id], onDelete: SetNull)
@@ -131,6 +136,8 @@ model Post {
   accepted Boolean? @default(true)
   groupId Int?
   group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  reports Report[]
+  saveBys User[] @relation("save")
 
   @@map("posts")
 }
@@ -215,7 +222,16 @@ model Message {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   files File[]
+  reacts MessageReact[]
    @@map("messages")
+}
+
+model MessageReact {
+  id Int @id @default(autoincrement())
+  userId Int
+  messageId Int
+  user User @relation(fields: [userId], references: [id], onDelete:Cascade)
+  message Message @relation(fields: [messageId], references: [id], onDelete:Cascade)
 }
 
 model React {
@@ -309,7 +325,22 @@ user User? @relation("stories",fields: [userId], references: [id] , onDelete: Ca
 reacts ReactStory[]
 comments CommentStory[]
 @@map("stories")
+texts StoryText[]
 }
+
+model StoryText {
+  id Int @id @default(autoincrement())
+  storyId Int
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  content String
+  x Float
+  y Float
+  @@map("story_texts")
+
+}
+
+
+
 
 
 
@@ -337,6 +368,20 @@ story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 react React @relation(fields: [reactId], references: [id], onDelete: Cascade)
 @@unique([storyId, userId])
 @@map("react_story")
+}
+
+
+model Report {
+  id Int @id @default(autoincrement())
+  postId Int
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type  report
+  files File[]
+  description String?
+
+  @@map("reports")
 
 }
 
@@ -390,5 +435,11 @@ enum commentReact {
 enum notify {
   iviteGroup
 
+}
+
+enum report {
+  negative
+  spam
+  fake
 }
 

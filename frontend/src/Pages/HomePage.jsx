@@ -1,14 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Header from '../Components/Layout/Header'
 import LeftSide from '../Components/Home/LeftSide'
 import RightSide from '../Components/Home/RightSide'
 import Status from '../Components/Home/Status'
 import Posts from '../Components/Home/Posts'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Stories from '../Components/Home/Stories'
+import { getApi } from '../network/api'
+import { postTypes } from '../Reduxs/Types/postType'
+import { getHomeStoriesAction } from '../Reduxs/Actions/storyAction'
 
 const HomePage = () => {
   const { posts } = useSelector(state => state.post)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getApi('/posts/home')
+      .then(({ data: { posts } }) => {
+        dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: posts })
+      })
+      .catch(err => {})
+    return () =>
+      dispatch({ type: postTypes.GET_HOME_POST_SUCCESS, payload: [] })
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(getHomeStoriesAction())
+  }, [dispatch])
 
   return (
     <div>

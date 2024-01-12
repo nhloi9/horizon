@@ -238,3 +238,8 @@ i.leave-group {
   background-repeat: no-repeat;
   display: inline-block;
 }
+
+.ant-dropdown-menu {
+  max-height: 250px !important;
+  overflow: auto !important;
+}

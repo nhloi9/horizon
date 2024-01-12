@@ -10,6 +10,7 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { PeerServer } from 'peer'
 
 import { emitter } from './event-emitter'
 import { vars } from './vars'
@@ -32,6 +33,7 @@ import { soketRoute } from '../routers/v1/socket.route'
 
 const app: Express = express()
 const httpServer = createServer(app)
+
 const io = new Server(httpServer, {
   /* options */
   cors: {
@@ -39,6 +41,8 @@ const io = new Server(httpServer, {
     methods: ['GET', 'POST']
   }
 })
+
+PeerServer({ port: 9000, path: '/' })
 
 // const haltOnTimedout = (req: Request, _res: Response, next: any): void => {
 //   if (!req.timedout) {

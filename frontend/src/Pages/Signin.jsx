@@ -140,6 +140,16 @@ const Signin = () => {
               ]}
             >
               <Input.Password placeholder='******' />
+              {/* <Button type='link' className='!-mt-3'>
+                <span
+                  className='text-[13px] !text-red-400'
+                  onClick={() => {
+                    navigate('/forget-password')
+                  }}
+                >
+                  Forgot password
+                </span>
+              </Button> */}
             </Form.Item>
 
             <Form.Item

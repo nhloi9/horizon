@@ -199,7 +199,7 @@ const CreateGroupPage = () => {
 
             <Form.Item className='!px-2'>
               <Button type='primary' htmlType='submit' className=' !w-full'>
-                Submit
+                Create
               </Button>
             </Form.Item>
           </Form>

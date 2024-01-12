@@ -70,5 +70,7 @@ router.put(
 )
 
 router.get('/search', validation.searchUser, verifyToken, controller.search)
+router.get('/:id/files', verifyToken, controller.getAllFilesOfUser)
+router.get('/:id/stories', verifyToken, controller.getAllStoriesOfUser)
 
 export default router

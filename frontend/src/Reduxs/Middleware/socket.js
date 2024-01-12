@@ -2,6 +2,8 @@ import {message} from 'antd';
 import {addMessage, seenConversation} from '../Actions/conversationAction ';
 import {notifyTypes} from '../Types/notifyType';
 import {friendTypes} from '../Types/friendType';
+import {onlineTypes} from '../Types/onlineType';
+import {callTypes} from '../Types/callType';
 
 function spawnNotification(body, icon, title, url) {
 	const notification = new Notification(title, {body, icon});
@@ -18,6 +20,17 @@ export const socketMiddleware = (socket) => (params) => (next) => (action) => {
 	switch (type) {
 		case 'socket/connect':
 			socket.connect(getState().auth?.socketToken);
+
+			socket.on('onlineUsers', (payload) => {
+				dispatch({type: onlineTypes.ONLINE_USERS, payload});
+			});
+
+			socket.on('online', (userId) => {
+				dispatch({type: onlineTypes.ONLINE, payload: userId});
+			});
+			socket.on('offline', (userId) => {
+				dispatch({type: onlineTypes.OFFLINE, payload: userId});
+			});
 
 			// socket.connect();
 			// socket.on('connect', () => {
@@ -118,7 +131,12 @@ export const socketMiddleware = (socket) => (params) => (next) => (action) => {
 					);
 				}
 				if (sound) {
-					document.getElementById('notification_sound')?.play();
+					document
+						.getElementById('notification_sound')
+						?.play()
+						?.catch((err) => {
+							console.log(err);
+						});
 				}
 				dispatch({type: notifyTypes.ADD_NOTIFY, payload: notify});
 				// if (getState().notify.sound) {
@@ -160,6 +178,13 @@ export const socketMiddleware = (socket) => (params) => (next) => (action) => {
 			//receive seen message
 			socket.on('seenConversation', (userId, conversationId) => {
 				dispatch(seenConversation(conversationId, userId));
+			});
+
+			socket.on('call', (payload) => {
+				dispatch({
+					type: callTypes.CALL,
+					payload: payload,
+				});
 			});
 
 			//receive message

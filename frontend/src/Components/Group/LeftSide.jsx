@@ -6,8 +6,9 @@ import { useSelector } from 'react-redux'
 const navItems = []
 
 const LeftSide = ({ active }) => {
-  const { ownGroups } = useSelector(state => state.group)
+  const { ownGroups, requests } = useSelector(state => state.group)
   const navigate = useNavigate()
+
   return (
     <div className='flex flex-col sticky top-[60px] w-[350px]  bg-white h-[calc(100vh-60px)] shadow-lg border-r border-gray-300 p-3 group-left-side'>
       <div className='border-b border-gray-300'>
@@ -23,6 +24,7 @@ const LeftSide = ({ active }) => {
             className={`flex gap-2 items-center h-[50px] px-1 rounded-md hover:bg-gray-200 cursor-pointer ${
               active === 1 ? 'bg-gray-200 ' : ''
             }`}
+            onClick={() => navigate('/groups/feed')}
           >
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center ${
@@ -37,6 +39,7 @@ const LeftSide = ({ active }) => {
             className={`flex gap-2 items-center h-[50px] px-1 rounded-md hover:bg-gray-200 cursor-pointer ${
               active === 2 ? 'bg-gray-200 ' : ''
             }`}
+            onClick={() => navigate('/groups/discover')}
           >
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center ${
@@ -51,6 +54,7 @@ const LeftSide = ({ active }) => {
             className={`flex gap-2 items-center h-[50px] px-1 rounded-md hover:bg-gray-200 cursor-pointer ${
               active === 3 ? 'bg-gray-200 ' : ''
             }`}
+            onClick={() => navigate('/groups/join')}
           >
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center ${
@@ -71,15 +75,32 @@ const LeftSide = ({ active }) => {
             + Create group
           </Button>
         </div>
+        {ownGroups?.length > 0 && (
+          <>
+            <hr className='h-[1px] bg-gray-300' />
 
-        <hr className='h-[1px] bg-gray-300' />
+            <div>
+              <h1 className='text-[18px] my-2'>Groups you manage</h1>
+              {ownGroups?.map(groupData => (
+                <GroupNavCard groupData={groupData} />
+              ))}
+            </div>
+          </>
+        )}
 
-        <div>
-          <h1 className='text-[18px] my-2'>Groups you manage</h1>
-          {ownGroups?.map(groupData => (
-            <GroupNavCard groupData={groupData} />
-          ))}
-        </div>
+        {requests?.filter(item => item?.status === 'accepted')?.length > 0 && (
+          <>
+            <hr className='h-[1px] bg-gray-300' />
+            <div>
+              <h1 className='text-[18px] my-2'>Groups you've joined</h1>
+              {requests
+                ?.filter(item => item?.status === 'accepted')
+                ?.map(({ group }) => (
+                  <GroupNavCard groupData={group} />
+                ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

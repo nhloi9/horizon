@@ -27,3 +27,18 @@ export function getImageOfConversation(conversation, userId) {
 		return otherMembers.map((item) => item.user?.avatar?.url).slice(0, 2);
 	}
 }
+
+export const checkConversationOnline = (conversation, userId, onlineUsers) => {
+	if (!conversation) return false;
+	const otherMembers = conversation.members.filter(
+		(item) => item.userId !== userId
+	);
+	let online = false;
+	for (let i = 0; i < otherMembers.length; i++) {
+		if (onlineUsers.includes(otherMembers[i].userId)) {
+			online = true;
+			break;
+		}
+	}
+	return online;
+};
