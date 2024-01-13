@@ -12,6 +12,7 @@ router
 
 router.get('/home', verifyToken, controller.getHomePosts)
 router.get('/save', verifyToken, controller.getSavePosts)
+router.get('/search', verifyToken, controller.searchPosts)
 
 router.get('/user/:id', verifyToken, controller.getUserPosts)
 router.get('/group/feed', verifyToken, controller.groupFeedPosts)

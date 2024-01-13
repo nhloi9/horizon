@@ -166,12 +166,26 @@ const RightSide = ({ id }) => {
   }, [conversation, id])
 
   const handleCall = ({ video }) => {
-    dispatch({ type: callTypes.CALL, payload: { type: 'video', conversation } })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video })
+      .then(stream => {
+        stream.getTracks().forEach(x => x.stop())
 
-    socket.emit('call', {
-      type: 'video',
-      conversation: conversation
-    })
+        dispatch({
+          type: callTypes.CALL,
+          payload: { type: 'video', conversation, author: true }
+        })
+
+        socket.emit('call', {
+          type: 'video',
+          conversation: conversation
+        })
+      })
+      .catch(err => {
+        toast.error(
+          "You need to give the app permission to access the device's audio or camera"
+        )
+      })
   }
 
   useEffect(() => {

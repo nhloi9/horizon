@@ -4,6 +4,8 @@ import {notifyTypes} from '../Types/notifyType';
 import {friendTypes} from '../Types/friendType';
 import {onlineTypes} from '../Types/onlineType';
 import {callTypes} from '../Types/callType';
+import toast from 'react-hot-toast';
+import tr from 'date-fns/esm/locale/tr/index';
 
 function spawnNotification(body, icon, title, url) {
 	const notification = new Notification(title, {body, icon});
@@ -181,10 +183,34 @@ export const socketMiddleware = (socket) => (params) => (next) => (action) => {
 			});
 
 			socket.on('call', (payload) => {
-				dispatch({
-					type: callTypes.CALL,
-					payload: payload,
-				});
+				if (true) {
+					dispatch({
+						type: callTypes.CALL,
+						payload: payload,
+					});
+				}
+			});
+
+			socket.on('meBusy', () => {
+				dispatch({type: callTypes.CALL, payload: null});
+				toast.error('you are on another call');
+			});
+
+			socket.on('otherOffline', () => {
+				dispatch({type: callTypes.CALL, payload: null});
+				toast.error('All members are offline');
+			});
+
+			socket.on('otherBusy', () => {
+				dispatch({type: callTypes.CALL, payload: null});
+				toast.error('All members are busy');
+			});
+
+			socket.on('endCall', (conversationId) => {
+				if (getState().call?.conversation?.id === conversationId) {
+					toast.error('End call');
+					dispatch({type: callTypes.CALL, payload: null});
+				}
 			});
 
 			//receive message

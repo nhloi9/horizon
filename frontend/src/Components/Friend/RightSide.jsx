@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import FriendCard from './FriendCard'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'antd'
+import { filterFriends } from '../../utils/other'
 
 export const RightSide = () => {
   const { type } = useParams()
@@ -140,27 +141,27 @@ export const RightSide = () => {
 
 const AllFriends = ({ friends }) => {
   const [term, setTerm] = useState('')
-  const filterFriends = () => {
-    if (!term?.trim()) return friends
-    const tokens = term
-      ?.trim()
-      .split(' ')
-      ?.filter(item => item !== '')
-    return friends?.filter(friend =>
-      tokens?.every(token =>
-        (friend?.firstname + ' ' + friend?.lastname)
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase()
-          ?.includes(
-            token
-              ?.normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .toLowerCase()
-          )
-      )
-    )
-  }
+  // const filterFriends = () => {
+  //   if (!term?.trim()) return friends
+  //   const tokens = term
+  //     ?.trim()
+  //     .split(' ')
+  //     ?.filter(item => item !== '')
+  //   return friends?.filter(friend =>
+  //     tokens?.every(token =>
+  //       (friend?.firstname + ' ' + friend?.lastname)
+  //         .normalize('NFD')
+  //         .replace(/[\u0300-\u036f]/g, '')
+  //         .toLowerCase()
+  //         ?.includes(
+  //           token
+  //             ?.normalize('NFD')
+  //             .replace(/[\u0300-\u036f]/g, '')
+  //             .toLowerCase()
+  //         )
+  //     )
+  //   )
+  // }
   return (
     <div className=' h-full bg-[#f0f2f5] pt-[30px] px-[20px]'>
       <div>
@@ -178,7 +179,7 @@ const AllFriends = ({ friends }) => {
           />
         </div>
         <div className='my-2 flex  flex-wrap gap-2'>
-          {filterFriends(friends)?.map(item => (
+          {filterFriends(term, friends)?.map(item => (
             <FriendCard friend={item} key={item?.id} />
           ))}
         </div>

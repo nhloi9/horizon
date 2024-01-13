@@ -41,6 +41,7 @@ import DetailPostPage from './Pages/DetailPostPage';
 import GroupsJoinedPage from './Pages/GroupsJoinedPage';
 import {getSavePostsAction} from './Reduxs/Actions/postAction';
 import SavePostPage from './Pages/SavePostPage';
+import SearchPage from './Pages/SearchPage';
 function App() {
 	const dispatch = useDispatch();
 	const {darkAlgorithm, defaultAlgorithm} = theme;
@@ -145,6 +146,14 @@ function App() {
 								element={
 									<Protected>
 										<StoriesPage />
+									</Protected>
+								}
+							/>
+							<Route
+								path="/search"
+								element={
+									<Protected>
+										<SearchPage />
 									</Protected>
 								}
 							/>

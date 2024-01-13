@@ -4,11 +4,14 @@ import jwt from 'jsonwebtoken'
 import { prisma } from '../../database/postgres'
 import { socketTokenSettings, tokenSettings } from '../../configs'
 import { number } from 'joi'
+import { io } from '../../configs/express'
+
+const change: any = {}
 
 let onlineUsers: number[] = []
 const users: any = {}
 const calls: any = {}
-const userToCall: any = {}
+const socketToCall: any = {}
 
 // const checkBusyCall = (io: any, userId: number): boolean => {
 //   return (
@@ -57,10 +60,7 @@ export const soketRoute = (io: Server): void => {
     // console.log(socket.handshake, socket.handshake.address.port)
     console.log('connection', socket.id)
     console.log({ users })
-    // socket.emit('onlineUsers', onlineUsers)
-    const onlineUsers = Object.keys(users).filter(
-      (item: any) => users[item] !== un
-    )
+    socket.emit('onlineUsers', onlineUsers)
     socket.on('test', (params: any) => {
       console.log(params)
     })
@@ -115,11 +115,12 @@ export const soketRoute = (io: Server): void => {
 
     // calll
     socket.on('call', async (payload: any) => {
-      const { type, conversation }: any = payload
-      if (userToCall[socket?.userId] === undefined) {
-        return socket.emit('meBusy')
+      const { conversation }: any = payload
+      if (checkBusy(socket.userId)) {
+        socket.emit('meBusy')
+        return
       }
-      const otherMemberIds = (
+      const otherOnlineMemberIds = (
         await prisma.conversationMember.findMany({
           where: {
             conversationId: Number(conversation?.id)
@@ -127,43 +128,93 @@ export const soketRoute = (io: Server): void => {
         })
       )
         .map((member: any) => member?.userId)
-        .filter((item: number) => item !== socket?.userId)
-
-      if (
-        otherMemberIds?.every(
-          (memberId: number) => userToCall[memberId] !== undefined
+        .filter(
+          (item: number) => item !== socket?.userId && users[item] !== undefined
         )
+
+      if (otherOnlineMemberIds?.length === 0) {
+        socket.emit('otherOffline')
+        return
+      } else if (
+        otherOnlineMemberIds?.every((memberId: number) => checkBusy(memberId))
       ) {
         socket.emit('otherBusy')
-      } else {
-        calls[conversation?.id] = [socket.id]
+        return
+      }
+      calls[conversation.id] = [socket.id]
+      socketToCall[socket.id] = conversation.id
+      for (const id of otherOnlineMemberIds) {
+        if (!checkBusy(id)) {
+          // socketToCall[
 
-        for (const id of otherMemberIds) {
-          if (userToCall[id] !== undefined) {
-            socket.to('user_' + (id as string)).emit('call', payload)
-          }
+          // ]
+          socket.to('user_' + (id as string)).emit('call', payload)
         }
       }
     })
 
     socket.on('joinRoom', (conversationId: number) => {
+      console.log({ conversationId })
       if (calls[conversationId] !== undefined) {
         const length = calls[conversationId].length
         if (length === 4) {
           socket.emit('roomFull')
           return
         }
+        socketToCall[socket.id] = conversationId
         calls[conversationId].push(socket.id)
+        const socketsInThisRoom = calls[conversationId].filter(
+          (id: string) => id !== socket.id
+        )
+
+        console.log({ calls, socketId: socket.id, socketsInThisRoom })
+        socket.emit('allUsers', socketsInThisRoom)
       } else {
         // users[roomID] = [socket.id]
       }
-      userToCall[socket.userId] = conversationId
-      const usersInThisRoom = calls[conversationId].filter(
-        (id: string) => id !== socket.id
-      )
+      // userToCall[socket.userId] = conversationId
+    })
 
-      console.log({ calls })
-      socket.emit('allUsers', usersInThisRoom)
+    socket.on('leftCall', (roomId: number) => {
+      if (calls[roomId] !== undefined) {
+        calls[roomId] = calls[roomId].filter(
+          (item: string) => item !== socket.id
+        )
+        if (calls[roomId].length === 0) {
+          calls[roomId] = undefined
+        }
+      }
+      if (calls[roomId] === undefined) {
+        io.emit('endCall', roomId)
+      } else {
+        socket.broadcast.emit('leftCall', roomId, socket.id)
+      }
+      if (socketToCall[socket.id] !== undefined) {
+        socketToCall[socket.id] = undefined
+      }
+    })
+    socket.on('getUserFromPeerId', (peerId: string) => {
+      const userId = Object.keys(users)?.find(item =>
+        users[item]?.includes(peerId)
+      )
+      console.log({ userId })
+      if (userId !== undefined) {
+        socket.emit('getUserFromPeerId', { userId, peerId })
+      }
+    })
+
+    // change audio or video flag
+    socket.on('change', (payload: any) => {
+      change[socket.id] = payload
+      io.emit('getChange', change)
+    })
+    socket.on('leave', () => {
+      change[socket.id] = undefined
+      io.emit('getChange', change)
+      console.log('leave')
+    })
+    socket.on('getChange', () => {
+      socket.emit('getChange', change)
     })
 
     socket.on('disconnect', (resonse: any) => {
@@ -173,9 +224,29 @@ export const soketRoute = (io: Server): void => {
         users[socket.userId] = users[socket.userId].filter(
           (item: string) => item !== socket.id
         )
-        if (users[socket.userId].length === 0) users[socket.userId] = undefined
+        if (users[socket.userId].length === 0) {
+          users[socket.userId] = undefined
+        }
       }
-      console.log({ users })
+      const roomID = socketToCall[socket.id]
+      if (roomID !== undefined) {
+        let room = calls[roomID]
+        if (room !== undefined) {
+          room =
+            room.filter((id: string) => id !== socket.id)?.length === 0
+              ? undefined
+              : room.filter((id: string) => id !== socket.id)
+
+          if (room === undefined) {
+            socket.broadcast.emit('endCall', roomID)
+          } else {
+            socket.broadcast.emit('leftCall', roomID, socket.id)
+          }
+          calls[roomID] = room
+        }
+        socketToCall[socket.id] = undefined
+      }
+
       if (
         io.sockets.adapter.rooms.get('user_' + (socket?.userId as string)) ===
         undefined
@@ -197,4 +268,15 @@ const getUserRoomsOfConversation = async (
   })
   const userIds = members.map(member => 'user_' + member.userId?.toString())
   return userIds
+}
+
+function checkBusy (userId: any): boolean {
+  if (users[userId] !== undefined) {
+    for (const socketId of users[userId]) {
+      if (socketToCall[socketId] !== undefined) {
+        return true
+      }
+    }
+  }
+  return false
 }

@@ -616,3 +616,154 @@ export const getSavePosts = async (
 // function getPostsByFriend (userId: number) {}
 // function getPostsByLike (userId: number) {}
 // function getPostsBy
+
+export const searchPosts = async (
+  req: RequestPayload,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { q } = req.query
+    const userId = Number((req.payload as any).id)
+    const posts = await prisma.post.findMany({
+      where: {
+        OR: [
+          {
+            groupId: null,
+            privacy: 'public'
+          },
+          {
+            group: {
+              privacy: 'public'
+            }
+          }
+        ],
+        text: {
+          search: q as string
+        },
+        accepted: true
+      },
+      include: {
+        shareBys: {
+          select: {
+            createdAt: true,
+
+            id: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            privacy: true,
+            image: true
+          }
+        },
+        files: true,
+        user: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: true
+          }
+        },
+        reacts: {
+          include: {
+            react: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: true
+              }
+            }
+          }
+        },
+        comments: {
+          include: {
+            sender: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: { name: true, url: true }
+                }
+              }
+            },
+            receiver: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                avatar: {
+                  select: { name: true, url: true }
+                }
+              }
+            },
+            reacts: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstname: true,
+                    lastname: true,
+                    avatar: true
+                  }
+                }
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+        tags: {
+          select: {
+            id: true,
+            firstname: true,
+            lastname: true,
+            avatar: true
+          }
+        }
+      },
+      orderBy: {
+        _relevance: {
+          fields: ['text'],
+          search: q as string,
+          sort: 'asc'
+        }
+      }
+    })
+
+    // for (const post of posts) {
+    //   if (post?.shareId !== null) {
+    //     const share = await postRepo.getSinglePost(userId, post.shareId)
+    //     post.share = share
+    //   }
+    // }
+    res.status(httpStatus.OK).json(
+      getApiResponse({
+        data: {
+          posts
+        }
+      })
+    )
+  } catch (error) {
+    next(error)
+  }
+}
